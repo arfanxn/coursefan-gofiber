@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/arfanxn/coursefan-gofiber/app/console"
+	"github.com/arfanxn/coursefan-gofiber/bootstrap"
 	"github.com/arfanxn/coursefan-gofiber/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -13,14 +14,14 @@ import (
 func main() {
 	console.Execute() // CMD Exception
 
-	// err := logger.SetOutputBasedOnENV()
-	// if err != nil {
-	// 	logrus.Fatal(err)
-	// }
+	err := bootstrap.SetLoggerOutputBasedOnENV()
+	if err != nil {
+		logrus.Fatal(err)
+	}
 
 	app := fiber.New()
 
-	err := routes.InjectRoutes(app)
+	err = routes.InjectRoutes(app)
 	if err != nil {
 		logrus.Fatal(err)
 	}
