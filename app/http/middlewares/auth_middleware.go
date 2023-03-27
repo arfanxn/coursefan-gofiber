@@ -41,8 +41,8 @@ func AuthMiddleware(next http.Handler) fiber.Handler {
 		}
 
 		// Update token expiration
-		authExpSecs, err := strconv.ParseInt(os.Getenv("AUTH_EXP"), 10, 64)
-		authExpTime := time.Now().Add(time.Minute * time.Duration(authExpSecs))
+		authExpSec, err := strconv.ParseInt(os.Getenv("AUTH_EXP"), 10, 64)
+		authExpTime := time.Now().Add(time.Minute * time.Duration(authExpSec))
 		claims["exp"] = authExpTime.Unix()
 		// Regenerate new token every request
 		token, err = jwth.Encode(signature, claims)
@@ -56,7 +56,7 @@ func AuthMiddleware(next http.Handler) fiber.Handler {
 			Path:     "/",
 			Value:    token,
 			HTTPOnly: true,
-			MaxAge:   int(authExpSecs),
+			MaxAge:   int(authExpSec),
 			Expires:  authExpTime,
 		})
 
