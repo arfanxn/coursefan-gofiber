@@ -11,6 +11,7 @@ import (
 func SetLoggerOutputBasedOnENV() error {
 	// Get log file output name from environment variable
 	logFilename := os.Getenv("LOG_OUTPUT")
+	logFilename = "storage" + "/" + logFilename
 
 	// Create log directory if it doesn't exist
 	err := os.MkdirAll(path.Dir(logFilename), os.ModePerm)
