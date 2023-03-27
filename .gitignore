@@ -25,5 +25,8 @@ vendor/
 !example.env
 !env.example
 
+# Ignore Storage directory 
+storage/
+
 # Ignore Log Files
 logs/
