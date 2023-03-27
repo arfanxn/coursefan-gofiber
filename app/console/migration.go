@@ -1,6 +1,8 @@
 package console
 
-import "github.com/arfanxn/coursefan-gofiber/database/migrations"
+import (
+	"github.com/arfanxn/coursefan-gofiber/database/migrations"
+)
 
 var (
 	migrateUp   *bool
