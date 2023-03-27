@@ -1,6 +1,10 @@
 package resources
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 type Response struct {
 	Code    int    `json:"code"`
@@ -14,4 +18,13 @@ func (response Response) Bytes() []byte {
 		return []byte{}
 	}
 	return bytes
+
+}
+
+// ResponseFromError makes/fills Response from the given error
+func ResponseFromError(err fiber.Error) Response {
+	return Response{
+		Code:    err.Code,
+		Message: err.Message,
+	}
 }
