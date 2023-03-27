@@ -5,7 +5,7 @@ import (
 	conn "github.com/arfanxn/coursefan-gofiber/database/connection"
 )
 
-func Migrate() error {
+func MigrateUp() error {
 	db, err := conn.GetGORM()
 	if err != nil {
 		return err

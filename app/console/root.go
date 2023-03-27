@@ -24,6 +24,7 @@ func Execute() {
 
 	errs := []error{
 		envFlag(),
+		migrateFlag(),
 	}
 	for _, err := range errs {
 		if err != nil {
