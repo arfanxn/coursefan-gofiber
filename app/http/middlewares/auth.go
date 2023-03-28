@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -13,7 +12,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func Auth(next http.Handler) fiber.Handler {
+func Auth() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authCookieName := "Authorization"
 		token := c.Cookies(authCookieName)
