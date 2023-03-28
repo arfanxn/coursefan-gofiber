@@ -34,9 +34,13 @@ func NewResponseError(err *fiber.Error) *Response {
 
 // NewResponseValidationErrs instantiates Response with the given validation errors
 func NewResponseValidationErrs(errs []*exceptions.ValidationError) *Response {
-	response := NewResponseError(fiber.ErrUnprocessableEntity)
+	response := new(Response)
+	response.Code = fiber.StatusUnprocessableEntity
 	response.Errors = map[string]string{}
-	for _, err := range errs {
+	for index, err := range errs {
+		if index == 0 {
+			response.Message = err.Message
+		}
 		response.Errors[err.Field] = err.Message
 	}
 	return response
