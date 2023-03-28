@@ -43,11 +43,8 @@ func GetGORM() (*gorm.DB, error) {
 
 // MustGetGORM returns the singleton of *gorm.DB or panic
 func MustGetGORM() *gorm.DB {
-	if gormDB != nil {
-		return gormDB
-	}
 	var err error
-	gormDB, err = InitGORM()
+	gormDB, err = GetGORM()
 	if err != nil {
 		panic(err)
 	}
