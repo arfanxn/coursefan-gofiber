@@ -6,7 +6,6 @@ require (
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.12.0
-	github.com/gofiber/fiber v1.14.6
 	github.com/gofiber/fiber/v2 v2.43.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.3.0
@@ -23,8 +22,6 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
-	github.com/gofiber/utils v0.0.10 // indirect
-	github.com/gorilla/schema v1.1.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
