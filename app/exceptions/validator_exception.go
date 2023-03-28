@@ -2,16 +2,16 @@ package exceptions
 
 import "github.com/gofiber/fiber/v2"
 
-type ValidatorError struct {
+type ValidationError struct {
 	Field, Message string
 }
 
-func (validatorError *ValidatorError) Error() string {
-	return validatorError.Message
+func (ValidationError *ValidationError) Error() string {
+	return ValidationError.Message
 }
 
-func NewValidatorError(field, message string) *ValidatorError {
-	return &ValidatorError{
+func NewValidationError(field, message string) *ValidationError {
+	return &ValidationError{
 		Field:   field,
 		Message: message,
 	}
