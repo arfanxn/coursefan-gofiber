@@ -8,13 +8,10 @@ import (
 )
 
 // EnglishTranslator returns validator english translator
-func EnglishTranslator(validate *validator.Validate) (trans ut.Translator, err error) {
+func EnglishTranslator(validate *validator.Validate) (trans ut.Translator) {
 	english := en.New()
 	uni := ut.New(english, english)
 	trans, _ = uni.GetTranslator("en")
-	err = en_translations.RegisterDefaultTranslations(validate, trans)
-	if err != nil {
-		return
-	}
+	en_translations.RegisterDefaultTranslations(validate, trans)
 	return
 }
