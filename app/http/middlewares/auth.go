@@ -14,7 +14,7 @@ import (
 
 func Auth() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		authCookieName := "Authorization"
+		authCookieName := os.Getenv("AUTH_COOKIE_NAME")
 		token := c.Cookies(authCookieName)
 		if token == "" {
 			return c.Send(resources.NewResponseError(fiber.ErrUnauthorized).Bytes())
