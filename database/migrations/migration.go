@@ -2,11 +2,11 @@ package migrations
 
 import (
 	"github.com/arfanxn/coursefan-gofiber/app/models"
-	conn "github.com/arfanxn/coursefan-gofiber/database/connection"
+	"github.com/arfanxn/coursefan-gofiber/database"
 )
 
 func MigrateUp() error {
-	db, err := conn.GetGORM()
+	db, err := database.GetGORM()
 	if err != nil {
 		return err
 	}
