@@ -32,7 +32,7 @@ func AuthMiddleware(next http.Handler) fiber.Handler {
 			case jwt.ValidationErrorSignatureInvalid:
 				return c.Send(resources.NewResponseError(fiber.ErrUnauthorized).Bytes())
 			case jwt.ValidationErrorExpired:
-				return c.Send(resources.NewResponseError(exceptions.JWTExpired).Bytes())
+				return c.Send(resources.NewResponseError(exceptions.AuthSessionExpired).Bytes())
 			default:
 				return c.Send(resources.NewResponseError(fiber.ErrInternalServerError).Bytes())
 			}
