@@ -38,3 +38,15 @@ func GetGORM() (*gorm.DB, error) {
 	gormDB, err = InitGORM()
 	return gormDB, err
 }
+
+func MustGetGORM() *gorm.DB {
+	if gormDB != nil {
+		return gormDB
+	}
+	var err error
+	gormDB, err = InitGORM()
+	if err != nil {
+		panic(err)
+	}
+	return gormDB
+}
