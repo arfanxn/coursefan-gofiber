@@ -22,7 +22,7 @@ func InitGORM() (*gorm.DB, error) {
 
 	config := &gorm.Config{}
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, database)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", username, password, host, port, database)
 	db, err := gorm.Open(mysql.Open(dsn), config)
 	if err != nil {
 		return nil, err
