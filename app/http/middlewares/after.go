@@ -23,6 +23,6 @@ func After() fiber.Handler {
 			}
 		}
 
-		return c.Next()
+		return err
 	}
 }
