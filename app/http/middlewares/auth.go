@@ -13,7 +13,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func AuthMiddleware(next http.Handler) fiber.Handler {
+func Auth(next http.Handler) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authCookieName := "Authorization"
 		token := c.Cookies(authCookieName)
