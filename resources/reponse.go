@@ -24,18 +24,20 @@ func (response Response) Bytes() []byte {
 
 }
 
-// MakeResponseFromError makes/fills Response from the given error
-func MakeResponseFromError(err *fiber.Error) Response {
-	return Response{
+// NewResponseError instantiates Response with the given error
+func NewResponseError(err *fiber.Error) *Response {
+	return &Response{
 		Code:    err.Code,
 		Message: err.Message,
 	}
 }
 
-// SetValidationErrors sets the response.Errors with validation errors
-func (response *Response) SetValidationErrors(errs []*exceptions.ValidationError) {
+// NewResponseValidationErrs instantiates Response with the given validation errors
+func NewResponseValidationErrs(errs []*exceptions.ValidationError) *Response {
+	response := NewResponseError(fiber.ErrUnprocessableEntity)
 	response.Errors = map[string]string{}
 	for _, err := range errs {
 		response.Errors[err.Field] = err.Message
 	}
+	return response
 }
