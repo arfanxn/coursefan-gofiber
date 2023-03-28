@@ -18,7 +18,7 @@ func AuthMiddleware(next http.Handler) fiber.Handler {
 		authCookieName := "Authorization"
 		token := c.Cookies(authCookieName)
 		if token == "" {
-			return c.Send(resources.ResponseFromError(fiber.ErrUnauthorized).Bytes())
+			return c.Send(resources.MakeResponseFromError(fiber.ErrUnauthorized).Bytes())
 		}
 
 		signature := os.Getenv("APP_KEY")
@@ -30,14 +30,14 @@ func AuthMiddleware(next http.Handler) fiber.Handler {
 			v, _ := err.(*jwt.ValidationError)
 			switch v.Errors {
 			case jwt.ValidationErrorSignatureInvalid:
-				return c.Send(resources.ResponseFromError(fiber.ErrUnauthorized).Bytes())
+				return c.Send(resources.MakeResponseFromError(fiber.ErrUnauthorized).Bytes())
 			case jwt.ValidationErrorExpired:
-				return c.Send(resources.ResponseFromError(exceptions.JWTExpired).Bytes())
+				return c.Send(resources.MakeResponseFromError(exceptions.JWTExpired).Bytes())
 			default:
-				return c.Send(resources.ResponseFromError(fiber.ErrInternalServerError).Bytes())
+				return c.Send(resources.MakeResponseFromError(fiber.ErrInternalServerError).Bytes())
 			}
 		} else if !ok || !tokenizer.Valid {
-			return c.Send(resources.ResponseFromError(fiber.ErrInternalServerError).Bytes())
+			return c.Send(resources.MakeResponseFromError(fiber.ErrInternalServerError).Bytes())
 		}
 
 		// Update token expiration
