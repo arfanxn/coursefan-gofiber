@@ -24,8 +24,8 @@ func (response Response) Bytes() []byte {
 
 }
 
-// ResponseFromError makes/fills Response from the given error
-func ResponseFromError(err *fiber.Error) Response {
+// MakeResponseFromError makes/fills Response from the given error
+func MakeResponseFromError(err *fiber.Error) Response {
 	return Response{
 		Code:    err.Code,
 		Message: err.Message,
