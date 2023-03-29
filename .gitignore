@@ -25,6 +25,9 @@ vendor/
 !example.env
 !env.example
 
+# Ignore Public inner directory 
+public/medias/
+
 # Ignore Storage directory 
 storage/
 
