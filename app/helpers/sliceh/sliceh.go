@@ -48,3 +48,8 @@ func Random[T any](slice []T) T {
 		return slice[0]
 	}
 }
+
+// Merge merges two slices
+func Merge[T any](first, second []T) []T {
+	return append(first, second...)
+}
