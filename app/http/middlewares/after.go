@@ -4,6 +4,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/exceptions"
 	"github.com/arfanxn/coursefan-gofiber/resources"
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 )
 
 func After() fiber.Handler {
@@ -11,6 +12,7 @@ func After() fiber.Handler {
 		err = c.Next()
 
 		if err != nil {
+			logrus.Error(err)
 			switch err.(type) {
 			default: // sends internal server error if error is default error
 				return c.Send(resources.NewResponseError(fiber.ErrInternalServerError).Bytes())
