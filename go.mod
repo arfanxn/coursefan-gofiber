@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/clarketm/json v1.17.1
+	github.com/gabriel-vasile/mimetype v1.4.2
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.12.0
@@ -23,7 +24,6 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
