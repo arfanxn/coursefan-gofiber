@@ -1,8 +1,11 @@
 package repositories
 
 import (
+	"time"
+
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -17,7 +20,20 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 
 // FindByEmail finds a user by email
 func (repository *UserRepository) FindByEmail(c *fiber.Ctx, email string) (user models.User, err error) {
-	result := repository.db.Where("email = ?", email).First(&user)
-	err = result.Error
+	repository.db.Where("email = ?", email).First(&user)
+	err = repository.db.Error
+	return
+}
+
+// Insert inserts users into the database
+func (repository *UserRepository) Insert(c *fiber.Ctx, users ...*models.User) (err error) {
+	for _, user := range users {
+		if user.Id == uuid.Nil {
+			user.Id = uuid.New()
+		}
+		user.CreatedAt = time.Now()
+	}
+	repository.db.Create(users)
+	err = repository.db.Error
 	return
 }
