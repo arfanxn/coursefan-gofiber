@@ -17,17 +17,17 @@ func NewSyncronizer() *Syncronizer {
 	}
 }
 
-// GetWG returns pointer of sync.WaitGroup
-func (s Syncronizer) GetWG() *sync.WaitGroup {
+// WG returns pointer of sync.WaitGroup
+func (s Syncronizer) WG() *sync.WaitGroup {
 	return s.waitGroup
 }
 
-// GetRM returns pointer of sync.RWMutex
-func (s Syncronizer) GetRM() *sync.RWMutex {
+// RM returns pointer of sync.RWMutex
+func (s Syncronizer) RM() *sync.RWMutex {
 	return s.rwMutex
 }
 
-// GetM returns pointer of sync.Mutex
-func (s Syncronizer) GetM() *sync.Mutex {
+// M returns pointer of sync.Mutex
+func (s Syncronizer) M() *sync.Mutex {
 	return s.mutex
 }
