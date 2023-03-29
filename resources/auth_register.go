@@ -2,5 +2,5 @@ package resources
 
 type AuthRegister struct {
 	User
-	Avatar Media `json:"avatar"`
+	Avatar *Media `json:"avatar"`
 }
