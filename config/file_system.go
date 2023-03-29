@@ -13,7 +13,7 @@ type fileSystemDisk struct {
 // FileSystemDisks (FileSystemDisks) represents a disk configuration
 var FileSystemDisks = map[string]fileSystemDisk{
 	"public": {
-		Root: "./public/",
+		Root: "./public",
 		URL:  fmt.Sprintf("%s/public", os.Getenv("APP_URL")),
 	},
 }
