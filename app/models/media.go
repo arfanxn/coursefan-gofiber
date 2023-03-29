@@ -3,8 +3,13 @@ package models
 import (
 	"database/sql"
 	"mime/multipart"
+	"os"
+	"path"
+	"strings"
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
+	"github.com/arfanxn/coursefan-gofiber/config"
 	"github.com/google/uuid"
 )
 
@@ -35,8 +40,79 @@ type Media struct {
 	UpdatedAt sql.NullTime `json:"updated_at"`
 
 	// File Metadata, not in table columns
-	fileHeader *multipart.FileHeader `json:"-"`
+	FileHeader *multipart.FileHeader `json:"-"`
 
 	// Model Relation
 	Model any `json:"model"`
+}
+
+// GetFileName returns media.FileName
+func (media *Media) GetFileName() string {
+	if media.FileName != "" {
+		return media.FileName
+	}
+	if media.FileHeader != nil {
+		media.FileName = path.Base(media.FileHeader.Filename)
+		return media.FileName
+	}
+	return ""
+}
+
+// SetFileName sets media.FileName
+func (media *Media) SetFileName(fileName string) {
+	media.FileName = path.Base(fileName) + path.Ext(media.GetFileName())
+}
+
+// GetMimeType returns media.MimeType
+func (media *Media) GetMimeType() string {
+	if media.MimeType != "" {
+		return media.MimeType
+	}
+	if media.FileHeader != nil {
+		media.MimeType = strings.Replace(path.Ext(media.GetFileName()), ".", "", 1)
+		return media.FileName
+	}
+	return ""
+}
+
+// GetDisk returns media.Disk
+func (media *Media) GetDisk() string {
+	if media.Disk != "" {
+		return media.Disk
+	}
+	media.Disk = os.Getenv("MEDIA_DISK")
+	return media.Disk
+}
+
+// SetDisk sets media.Disk
+func (media *Media) SetDisk(disk string) {
+	disks := config.GetFileSystemDiskKeys()
+	// if disk is not empty and disk is available in list of disks
+	if disk != "" && sliceh.Contains(disks, disk) {
+		media.Disk = disk
+		return
+	}
+	// otherwise assign default media disk to media.Disk
+	media.Disk = os.Getenv("MEDIA_DISK")
+}
+
+// GetSize returns media.Size
+func (media *Media) GetSize() int64 {
+	if media.Size > 0 {
+		return media.Size
+	}
+	if media.FileHeader != nil {
+		media.Size = media.FileHeader.Size
+	}
+	return media.Size
+}
+
+// SetFileHeader sets media.FileHeader
+func (media *Media) SetFileHeader(fh *multipart.FileHeader) {
+	media.FileHeader = fh
+	media.FileName = path.Base(fh.Filename)
+	media.Size = fh.Size
+
+	// TODO: get mimetype from file header and set to media.MimeType
+	media.MimeType = strings.Replace(path.Ext(fh.Filename), ".", "", 1)
 }
