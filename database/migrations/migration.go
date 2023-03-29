@@ -11,7 +11,10 @@ func MigrateUp() error {
 		return err
 	}
 
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(
+		&models.User{},
+		&models.Media{},
+	)
 	if err != nil {
 		return err
 	}
