@@ -9,6 +9,7 @@ import (
 func registerMainMiddlewares(router fiber.Router) {
 	router.Use(
 		middlewares.Recovery(),
+		middlewares.Language(),
 		middlewares.After(), // after middleware
 	)
 }
@@ -16,9 +17,13 @@ func registerMainMiddlewares(router fiber.Router) {
 // InjectRoutes will inject routes into application instance
 func InjectRoutes(app *fiber.App) error {
 
-	api := app.Group("/api")
-	registerMainMiddlewares(api)
-	registerAuthRoutes(api)
+	publicApi := app.Group("/api")
+	registerMainMiddlewares(publicApi)
+
+	protectedApi := publicApi.Group("", middlewares.Auth())
+
+	registerPublicAuthRoutes(publicApi)
+	registerProtectedAuthRoutes(protectedApi)
 
 	return nil
 }
