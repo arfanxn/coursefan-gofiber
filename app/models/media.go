@@ -50,7 +50,7 @@ type Media struct {
 // GetFilePath returns media file path based on media disk
 func (media *Media) GetFilePath() string {
 	fileSystemDisk := config.FileSystemDisks[media.GetDisk()]
-	filepath := fmt.Sprintf("%s/medias/%s", fileSystemDisk.Root, media.GetFileName())
+	filepath := fmt.Sprintf("%s/medias/%s/%s", fileSystemDisk.Root, media.Id.String(), media.GetFileName())
 	return filepath
 }
 
