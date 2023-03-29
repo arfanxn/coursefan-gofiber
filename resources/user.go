@@ -13,5 +13,5 @@ type User struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt null.Time `json:"updated_at"`
 
-	Avatar Media `json:"avatar"`
+	Avatar Media `json:"avatar,omitempty"`
 }
