@@ -1,10 +1,5 @@
 package config
 
-import (
-	"fmt"
-	"os"
-)
-
 type fileSystemDisk struct {
 	Root string // the root of the filesystem
 	URL  string // the URL to access file
@@ -14,7 +9,7 @@ type fileSystemDisk struct {
 var FileSystemDisks = map[string]fileSystemDisk{
 	"public": {
 		Root: "./public",
-		URL:  fmt.Sprintf("%s/public", os.Getenv("APP_URL")),
+		URL:  "/public",
 	},
 }
 
