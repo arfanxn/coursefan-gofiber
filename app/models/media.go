@@ -5,11 +5,11 @@ import (
 	"mime/multipart"
 	"os"
 	"path"
-	"strings"
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/config"
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/google/uuid"
 )
 
@@ -69,10 +69,18 @@ func (media *Media) GetMimeType() string {
 		return media.MimeType
 	}
 	if media.FileHeader != nil {
-		media.MimeType = strings.Replace(path.Ext(media.GetFileName()), ".", "", 1)
-		return media.FileName
+		file, err := media.FileHeader.Open()
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+		mime, err := mimetype.DetectReader(file)
+		if err != nil {
+			panic(err)
+		}
+		media.MimeType = mime.String()
 	}
-	return ""
+	return media.MimeType
 }
 
 // GetDisk returns media.Disk
@@ -112,7 +120,5 @@ func (media *Media) SetFileHeader(fh *multipart.FileHeader) {
 	media.FileHeader = fh
 	media.FileName = path.Base(fh.Filename)
 	media.Size = fh.Size
-
-	// TODO: get mimetype from file header and set to media.MimeType
-	media.MimeType = strings.Replace(path.Ext(fh.Filename), ".", "", 1)
+	media.MimeType = media.GetMimeType()
 }
