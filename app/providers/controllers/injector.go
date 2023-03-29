@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func AuthController(db *gorm.DB) *controllers.AuthController {
+func initAuthController(db *gorm.DB) *controllers.AuthController {
 	wire.Build(repositories.NewUserRepository, services.NewAuthService, controllers.NewAuthController)
 	return nil
 }
