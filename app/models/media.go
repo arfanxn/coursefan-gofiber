@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"mime/multipart"
 	"time"
 
 	"github.com/google/uuid"
@@ -33,11 +34,9 @@ type Media struct {
 	// UpdatedAt will be autofilled after updation
 	UpdatedAt sql.NullTime `json:"updated_at"`
 
-	// TODO: create file reqs
 	// File Metadata, not in table columns
-	// File *file_reqs.File `json:"-"`
+	fileHeader *multipart.FileHeader `json:"-"`
 
-	// Relations
-
+	// Model Relation
 	Model any `json:"model"`
 }
