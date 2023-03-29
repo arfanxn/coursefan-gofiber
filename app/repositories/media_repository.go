@@ -40,7 +40,6 @@ func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media)
 	}
 	syncronizer.WG().Wait()
 
-	repository.db.Create(medias)
-	err = repository.db.Error
+	err = repository.db.Create(medias).Error
 	return
 }

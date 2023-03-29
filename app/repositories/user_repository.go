@@ -20,8 +20,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 
 // FindByEmail finds a user by email
 func (repository *UserRepository) FindByEmail(c *fiber.Ctx, email string) (user models.User, err error) {
-	repository.db.Where("email = ?", email).First(&user)
-	err = repository.db.Error
+	err = repository.db.Where("email = ?", email).First(&user).Error
 	return
 }
 
@@ -33,7 +32,6 @@ func (repository *UserRepository) Insert(c *fiber.Ctx, users ...*models.User) (e
 		}
 		user.CreatedAt = time.Now()
 	}
-	repository.db.Create(users)
-	err = repository.db.Error
+	err = repository.db.Create(users).Error
 	return
 }
