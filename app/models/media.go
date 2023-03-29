@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"mime/multipart"
 	"os"
 	"path"
@@ -21,7 +22,7 @@ type Media struct {
 	// ModelId must be specified
 	ModelId uuid.UUID `json:"model_id"`
 	// CollectionName will be autofilled with default CollectionName if not specified
-	CollectionName string `json:"collection_name"`
+	CollectionName sql.NullString `json:"collection_name"`
 	// Name can be null if not specified
 	Name sql.NullString `json:"name"`
 	// FileName will be autofilled by random alphanumeric characters if not specified
@@ -46,7 +47,14 @@ type Media struct {
 	Model any `json:"model"`
 }
 
-// GetFileName returns media.FileName
+// GetFilePath returns media file path based on media disk
+func (media *Media) GetFilePath() string {
+	fileSystemDisk := config.FileSystemDisks[media.GetDisk()]
+	filepath := fmt.Sprintf("%s/medias/%s", fileSystemDisk.Root, media.GetFileName())
+	return filepath
+}
+
+// GetFileName returns media.FileName , example: image.png
 func (media *Media) GetFileName() string {
 	if media.FileName != "" {
 		return media.FileName

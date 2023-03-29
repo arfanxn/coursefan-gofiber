@@ -13,7 +13,7 @@ type Media struct {
 	Id             string      `json:"id"`
 	ModelType      string      `json:"model_type"`
 	ModelId        string      `json:"model_id"`
-	CollectionName string      `json:"collection_name"`
+	CollectionName null.String `json:"collection_name"`
 	Name           null.String `json:"name"`
 	FileName       string      `json:"file_name"`
 	FileUrl        string      `json:"file_url"` // url to the file
@@ -33,7 +33,7 @@ func NewMediaFromModel(mediaMdl models.Media) *Media {
 	mediaRes.Id = mediaMdl.Id.String()
 	mediaRes.ModelType = mediaMdl.ModelType
 	mediaRes.ModelId = mediaMdl.ModelId.String()
-	mediaRes.CollectionName = mediaMdl.CollectionName
+	mediaRes.CollectionName = null.NewString(mediaMdl.CollectionName.String, mediaMdl.CollectionName.Valid)
 	mediaRes.Name = null.NewString(mediaMdl.Name.String, mediaMdl.Name.Valid)
 	mediaRes.FileName = mediaMdl.GetFileName()
 	mediaRes.FileUrl = fmt.Sprintf("%s/medias/%s", fileSystemDisk.URL, mediaMdl.GetFileName())
