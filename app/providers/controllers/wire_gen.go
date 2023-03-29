@@ -17,7 +17,8 @@ import (
 
 func initAuthController(db *gorm.DB) *controllers.AuthController {
 	userRepository := repositories.NewUserRepository(db)
-	authService := services.NewAuthService(userRepository)
+	mediaRepository := repositories.NewMediaRepository(db)
+	authService := services.NewAuthService(userRepository, mediaRepository)
 	controllersAuthController := controllers.NewAuthController(authService)
 	return controllersAuthController
 }
