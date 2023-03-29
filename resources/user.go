@@ -12,4 +12,6 @@ type User struct {
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt null.Time `json:"updated_at"`
+
+	Avatar Media `json:"avatar"`
 }
