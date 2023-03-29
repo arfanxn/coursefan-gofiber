@@ -44,10 +44,18 @@ func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media)
 
 			media.CreatedAt = time.Now()
 
-			filePath := media.GetFilePath()
-			err := c.SaveFile(media.FileHeader, filePath)
+			file, err := media.FileHeader.Open()
 			if err != nil {
 				syncronizer.Err(err)
+				return
+			}
+			defer file.Close()
+
+			filePath := media.GetFilePath()
+			err = fileh.Save(filePath, file)
+			if err != nil {
+				syncronizer.Err(err)
+				return
 			}
 			syncronizer.M().Lock()
 			defer syncronizer.M().Unlock()
