@@ -14,4 +14,7 @@ type User struct {
 	Password  string       `json:"password"`
 	CreatedAt time.Time    `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt sql.NullTime `json:"updated_at" gorm:"autoUpdateTime"`
+
+	// Avatar relationship
+	Avatar Media `json:"avatar"`
 }
