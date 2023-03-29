@@ -4,6 +4,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/validationh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/services"
@@ -20,10 +21,11 @@ func NewAuthController(service *services.AuthService) *AuthController {
 	return &AuthController{service: service}
 }
 
+// Login
 func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 	var input requests.AuthLogin
 	c.BodyParser(&input)
-	if validationErrs := validationh.ValidateStruct(input, "en"); validationErrs != nil {
+	if validationErrs := validationh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
 		response := resources.NewResponseValidationErrs(validationErrs)
 		return c.Send(response.Bytes())
 	}
@@ -50,6 +52,25 @@ func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 	return c.Send(resources.Response{
 		Code:    fiber.StatusOK,
 		Message: "Login successfully",
+		Data:    data,
+	}.Bytes())
+}
+
+// Register
+func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
+	var input requests.AuthRegister
+	c.BodyParser(&input)
+	input.Avatar = ctxh.GetFileHeader(c, "avatar")
+	if validationErrs := validationh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+		response := resources.NewResponseValidationErrs(validationErrs)
+		return c.Send(response.Bytes())
+	}
+
+	data, err := controller.service.Register(c, input)
+
+	return c.Send(resources.Response{
+		Code:    fiber.StatusCreated,
+		Message: "Register successfully",
 		Data:    data,
 	}.Bytes())
 }
