@@ -1,6 +1,7 @@
 package ctxh
 
 import (
+	"mime/multipart"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,4 +18,14 @@ func GetAcceptLang(c *fiber.Ctx) string {
 		lang = c.Query(queryKey, defaultAppLang)
 	}
 	return lang
+}
+
+// GetFileHeader returns file header from the given ctx with the given key or nil if no file header provided
+func GetFileHeader(c *fiber.Ctx, key string) (fileHeader *multipart.FileHeader) {
+	fileHeader, err := c.FormFile(key)
+	if err != nil {
+		fileHeader = nil
+		return
+	}
+	return
 }
