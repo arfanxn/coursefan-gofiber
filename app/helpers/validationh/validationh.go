@@ -9,7 +9,9 @@ import (
 	"strings"
 
 	"github.com/arfanxn/coursefan-gofiber/app/exceptions"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	validator_provider "github.com/arfanxn/coursefan-gofiber/app/providers/validators"
+	"github.com/gabriel-vasile/mimetype"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/iancoleman/strcase"
@@ -96,7 +98,7 @@ func ValidateStructFileHeader[T any](structure T, lang string) (
 				exceptions.NewValidationError(jsonFieldName, jsonFieldName+" is required"))
 			continue
 		}
-		// check if file size is between the specified min and max size
+		// check if file size is not between the specified min and max size
 		if fileHeader.Size < min || fileHeader.Size > max {
 			validationErrs = append(
 				validationErrs,
@@ -109,8 +111,30 @@ func ValidateStructFileHeader[T any](structure T, lang string) (
 		}
 		// check if mimetype are available in rules
 		if len(mimeTypes) > 0 {
-			// TODO: check mimetype for validation
-			continue
+			file, err := fileHeader.Open()
+			if err != nil {
+				panic(err)
+			}
+			defer file.Close()
+			fileHeaderMime, err := mimetype.DetectReader(file)
+			matchedMimeTypes := sliceh.Filter(mimeTypes, func(mimeType string) bool {
+				return strings.ToLower(fileHeaderMime.String()) == strings.ToLower(mimeType)
+			})
+
+			// if no matching mime types found append an error
+			if len(matchedMimeTypes) == 0 {
+				validationErrs = append(
+					validationErrs,
+					exceptions.NewValidationError(jsonFieldName,
+						fmt.Sprintf(
+							"%s must be a file of types %s",
+							jsonFieldName,
+							strings.Join(mimeTypes, ", "),
+						),
+					),
+				)
+				continue
+			}
 		}
 	}
 	return
