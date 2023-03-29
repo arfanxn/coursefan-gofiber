@@ -1,7 +1,9 @@
 package fileh
 
 import (
+	"io"
 	"os"
+	"path"
 	"sync"
 )
 
@@ -19,6 +21,29 @@ func BatchRemove(paths ...string) (err error) {
 		}(wg, path)
 	}
 	wg.Wait()
+
+	return
+}
+
+// Save saves a file by given path
+func Save(dstPath string, file io.Reader) (err error) {
+	errMkdir := os.MkdirAll(path.Dir(dstPath), os.ModePerm)
+	if errMkdir != nil {
+		err = errMkdir
+		return
+	}
+	fileDst, errCreate := os.Create(dstPath)
+	if errCreate != nil {
+		err = errCreate
+		return
+	}
+	defer fileDst.Close()
+
+	_, errCopy := io.Copy(fileDst, file)
+	if errCopy != nil {
+		err = errCopy
+		return
+	}
 
 	return
 }
