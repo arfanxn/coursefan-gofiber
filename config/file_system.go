@@ -9,7 +9,7 @@ type fileSystemDisk struct {
 var FileSystemDisks = map[string]fileSystemDisk{
 	"public": {
 		Root: "./public",
-		URL:  "/public",
+		URL:  "public",
 	},
 }
 
