@@ -41,10 +41,10 @@ type Media struct {
 	UpdatedAt sql.NullTime `json:"updated_at"`
 
 	// File Metadata, not in table columns
-	FileHeader *multipart.FileHeader `json:"-"`
+	FileHeader *multipart.FileHeader `json:"-" gorm:"-"`
 
 	// Model Relation
-	Model any `json:"model"`
+	Model any `json:"model" gorm:"-"`
 }
 
 // GetFilePath returns media file path based on media disk
