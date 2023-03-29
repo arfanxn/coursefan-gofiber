@@ -1,11 +1,16 @@
 package synch
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/chanh"
+)
 
 type Syncronizer struct {
 	waitGroup *sync.WaitGroup
 	rwMutex   *sync.RWMutex
 	mutex     *sync.Mutex
+	errChan   chan error
 }
 
 // NewSyncronizer instantiates a new Syncronizer
@@ -14,6 +19,7 @@ func NewSyncronizer() *Syncronizer {
 		waitGroup: new(sync.WaitGroup),
 		rwMutex:   new(sync.RWMutex),
 		mutex:     new(sync.Mutex),
+		errChan:   chanh.Make[error](nil, 1),
 	}
 }
 
@@ -30,4 +36,13 @@ func (s Syncronizer) RM() *sync.RWMutex {
 // M returns pointer of sync.Mutex
 func (s Syncronizer) M() *sync.Mutex {
 	return s.mutex
+}
+
+// Err returns value of errChan, if argument is provided it will set "errChan" with the given argument
+func (s Syncronizer) Err(errs ...error) error {
+	if len(errs) >= 1 {
+		err := errs[0]
+		chanh.ReplaceVal(s.errChan, err)
+	}
+	return chanh.GetValAndKeep(s.errChan)
 }
