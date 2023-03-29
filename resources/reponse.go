@@ -1,9 +1,8 @@
 package resources
 
 import (
-	"encoding/json"
-
 	"github.com/arfanxn/coursefan-gofiber/app/exceptions"
+	"github.com/clarketm/json"
 	"github.com/gofiber/fiber/v2"
 )
 
