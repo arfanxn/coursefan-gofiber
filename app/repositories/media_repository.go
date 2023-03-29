@@ -3,6 +3,7 @@ package repositories
 import (
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/fileh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/synch"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
@@ -20,12 +21,18 @@ func NewMediaRepository(db *gorm.DB) *MediaRepository {
 }
 
 // Insert inserts medias into the database
-func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media) (err error) {
+func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media) error {
+	var savedFilePaths []string
 	syncronizer := synch.NewSyncronizer()
+	defer syncronizer.Close()
 	for _, media := range medias {
 		syncronizer.WG().Add(1)
 		go func(media *models.Media) {
 			defer syncronizer.WG().Done()
+			if syncronizer.Err() != nil {
+				return
+			}
+
 			if media.Id == uuid.Nil {
 				media.Id = uuid.New()
 			}
@@ -36,10 +43,22 @@ func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media)
 			media.MimeType = media.GetMimeType()
 
 			media.CreatedAt = time.Now()
+
+			filePath := media.GetFilePath()
+			err := c.SaveFile(media.FileHeader, filePath)
+			if err != nil {
+				syncronizer.Err(err)
+			}
+			syncronizer.M().Lock()
+			defer syncronizer.M().Unlock()
+			savedFilePaths = append(savedFilePaths, filePath)
 		}(media)
 	}
 	syncronizer.WG().Wait()
 
-	err = repository.db.Create(medias).Error
-	return
+	if err := syncronizer.Err(); err != nil {
+		fileh.BatchRemove(savedFilePaths...)
+		return err
+	}
+	return repository.db.Create(medias).Error
 }
