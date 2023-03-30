@@ -12,17 +12,19 @@ func After() fiber.Handler {
 		err = c.Next()
 
 		if err != nil {
+			var resBody *resources.Response
 			logrus.Error(err)
 			switch err.(type) {
 			default: // sends internal server error if error is default error
-				return c.Send(resources.NewResponseError(fiber.ErrInternalServerError).Bytes())
+				resBody = resources.NewResponseError(fiber.ErrInternalServerError)
 			case *fiber.Error:
-				return c.Send(resources.NewResponseError(err.(*fiber.Error)).Bytes())
+				resBody = resources.NewResponseError(err.(*fiber.Error))
 			case *exceptions.ValidationError:
-				return c.Send(resources.NewResponseValidationErrs([]*exceptions.ValidationError{
+				resBody = resources.NewResponseValidationErrs([]*exceptions.ValidationError{
 					err.(*exceptions.ValidationError),
-				}).Bytes())
+				})
 			}
+			c.Status(resBody.Code).Send(resBody.Bytes())
 		}
 
 		return err

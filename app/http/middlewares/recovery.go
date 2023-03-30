@@ -12,7 +12,8 @@ func Recovery() fiber.Handler {
 			errAny := recover()
 			if errAny != nil {
 				logrus.Error(errAny) // logs any error
-				err = c.Send(resources.NewResponseError(fiber.ErrInternalServerError).Bytes())
+				resBody := resources.NewResponseError(fiber.ErrInternalServerError)
+				err = c.Status(resBody.Code).Send(resBody.Bytes())
 			}
 		}()
 		err = c.Next()
