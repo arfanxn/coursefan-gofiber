@@ -20,7 +20,7 @@ type Token struct {
 	Type          string       `json:"type" gorm:"index;type:VARCHAR(25) NOT NULL"`
 	Body          string       `json:"body" gorm:"type:VARCHAR(256) NOT NULL"` // the token content/body/string
 	UsedAt        sql.NullTime `json:"used_at"`
-	ExpiredAt     sql.NullTime `json:"expired_at"`
+	ExpiredAt     sql.NullTime `json:"expired_at" gorm:"NOT NULL"`
 	CreatedAt     time.Time    `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	UpdatedAt     sql.NullTime `json:"updated_at" gorm:"autoUpdateTime"`
 
