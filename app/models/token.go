@@ -36,3 +36,8 @@ func (token *Token) Generate(chars []rune, length int) {
 		token.Body = token.Body + string(char)
 	}
 }
+
+// IsExpired returns bool that determines the entity is expired or not
+func (token Token) IsExpired() bool {
+	return time.Now().After(token.ExpiredAt.Time) // if curremt time is after the expiration time it means token is expired
+}
