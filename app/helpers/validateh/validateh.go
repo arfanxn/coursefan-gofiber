@@ -1,4 +1,4 @@
-package validationh
+package validateh
 
 import (
 	"fmt"
@@ -13,6 +13,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/synch"
 	validator_provider "github.com/arfanxn/coursefan-gofiber/app/providers/validators"
+	"github.com/arfanxn/coursefan-gofiber/bootstrap"
 	"github.com/gabriel-vasile/mimetype"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -21,7 +22,7 @@ import (
 
 // ValidateStruct validates the given struct
 func ValidateStruct[T any](structure T, lang string) []*exceptions.ValidationError {
-	validate := validator.New()
+	validate := bootstrap.NewValidate()
 	err := validate.Struct(structure)
 	lang = strings.ToLower(lang)
 
