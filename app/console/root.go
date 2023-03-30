@@ -1,18 +1,24 @@
 package console
 
 import (
+	"os"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
+
+// exitAfterFinish variable is used to indicate if program should exit immediately after consoles/commands/processes has finished
+var exitAfterFinish bool = false
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "Coursefan",
 	Short: "Coursefan",
-	Long:  `Coursefan is an online course platform for everyone to learn`,
+	Long:  "----------------------------------------------------\nCoursefan - Online course platform\n----------------------------------------------------",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) {},
+	// Run: func(cmd *cobra.Command, args []string) {
+	// },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -30,6 +36,10 @@ func Execute() {
 		if err != nil {
 			logrus.Fatal(err)
 		}
+	}
+
+	if exitAfterFinish {
+		os.Exit(0)
 	}
 }
 
