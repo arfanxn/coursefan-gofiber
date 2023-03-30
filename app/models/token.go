@@ -15,7 +15,7 @@ var (
 
 type Token struct {
 	Id            uuid.UUID    `json:"id" gorm:"primaryKey"`
-	TokenableType string       `json:"tokenable_string"`
+	TokenableType string       `json:"tokenable_type"`
 	TokenableId   uuid.UUID    `json:"tokenable_id" gorm:"index"`
 	Type          string       `json:"type"`
 	Body          string       `json:"body"` // the token content/body/string
