@@ -77,3 +77,23 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 		Data:    data,
 	}.Bytes())
 }
+
+// ForgotPassword
+func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
+	var input requests.AuthForgotPassword
+	c.BodyParser(&input)
+	if validationErrs := validationh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+		response := resources.NewResponseValidationErrs(validationErrs)
+		return c.Send(response.Bytes())
+	}
+
+	err = controller.service.ForgotPassword(c, input)
+	if err != nil {
+		return err
+	}
+
+	return c.Send(resources.Response{
+		Code:    fiber.StatusCreated,
+		Message: "Successfully sent reset password token to " + input.Email,
+	}.Bytes())
+}

@@ -1,19 +1,24 @@
 package services
 
 import (
+	"database/sql"
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/exceptions"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/jwth"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/mailh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/reflecth"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/arfanxn/coursefan-gofiber/app/repositories"
 	"github.com/arfanxn/coursefan-gofiber/resources"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/guregu/null.v4"
 	"gorm.io/gorm"
@@ -22,16 +27,19 @@ import (
 type AuthService struct {
 	userRepository  *repositories.UserRepository
 	mediaRepository *repositories.MediaRepository
+	tokenRepository *repositories.TokenRepository
 }
 
 // NewAuthService instantiates a new AuthService
 func NewAuthService(
 	userRepository *repositories.UserRepository,
 	mediaRepository *repositories.MediaRepository,
+	tokenRepository *repositories.TokenRepository,
 ) *AuthService {
 	return &AuthService{
 		userRepository:  userRepository,
 		mediaRepository: mediaRepository,
+		tokenRepository: tokenRepository,
 	}
 }
 
@@ -84,6 +92,12 @@ func (service *AuthService) Register(c *fiber.Ctx, input requests.AuthRegister) 
 		return
 	}
 
+	// validate whether email already registered
+	if userMdl, _ := service.userRepository.FindByEmail(c, input.Email); userMdl.Id != uuid.Nil {
+		return data, exceptions.NewValidationError("email",
+			fmt.Sprintf(`email %s has already been taken.`, input.Email))
+	}
+
 	var (
 		userMdl = models.User{
 			Name:     input.Name,
@@ -93,7 +107,7 @@ func (service *AuthService) Register(c *fiber.Ctx, input requests.AuthRegister) 
 		avatarMediaMdl models.Media
 	)
 
-	service.userRepository.Insert(c, &userMdl)
+	_, err = service.userRepository.Insert(c, &userMdl)
 	if err != nil {
 		return
 	}
@@ -108,7 +122,7 @@ func (service *AuthService) Register(c *fiber.Ctx, input requests.AuthRegister) 
 		avatarMediaMdl.ModelType = reflecth.GetTypeName(userMdl)
 		avatarMediaMdl.ModelId = userMdl.Id
 		avatarMediaMdl.SetFileHeader(input.Avatar)
-		err = service.mediaRepository.Insert(c, &avatarMediaMdl)
+		_, err = service.mediaRepository.Insert(c, &avatarMediaMdl)
 		if err != nil {
 			return data, err
 		}
@@ -116,4 +130,55 @@ func (service *AuthService) Register(c *fiber.Ctx, input requests.AuthRegister) 
 	}
 
 	return data, nil
+}
+
+// Register
+func (service *AuthService) ForgotPassword(c *fiber.Ctx, input requests.AuthForgotPassword) (
+	err error) {
+	var (
+		userMdl  models.User
+		tokenMdl models.Token
+	)
+
+	// User relateds
+	userMdl, err = service.userRepository.FindByEmail(c, input.Email)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) { // return not found if not found
+			err = exceptions.NewValidationError("email", "No user found with email "+input.Email)
+		}
+		return
+	}
+
+	// Token relateds
+	tokenMdl, err = service.tokenRepository.FindByTokenableAndType(
+		c,
+		reflecth.GetTypeName(userMdl),
+		userMdl.Id.String(),
+		enums.TokenTypeResetPassword,
+	)
+	// if token not found or has been used or expired then  and create a new one
+	if errors.Is(err, gorm.ErrRecordNotFound) || (tokenMdl.IsUsed()) || tokenMdl.IsExpired() {
+		tokenMdl.TokenableType = reflecth.GetTypeName(userMdl)
+		tokenMdl.TokenableId = userMdl.Id
+		tokenMdl.Type = enums.TokenTypeResetPassword
+		tokenMdl.UsedAt = sql.NullTime{Time: time.Time{}, Valid: false}
+		tokenMdl.ExpiredAt = sql.NullTime{Time: time.Now().Add(time.Hour / 2), Valid: true} // give 30 mins expiration
+		tokenMdl.GenerateBody(models.TokenBodyNumeric, 6)
+		_, err = service.tokenRepository.Save(c, &tokenMdl)
+		if err != nil {
+			return
+		}
+	}
+
+	// Send Token to User's email
+	err = mailh.Send(os.Getenv("MAIL_SENDER"),
+		"OTP | Reset Password",
+		"Your reset password OTP is "+tokenMdl.Body,
+		input.Email,
+	)
+	if err != nil {
+		return
+	}
+
+	return nil
 }
