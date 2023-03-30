@@ -51,11 +51,12 @@ func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 		Expires:  time.Now().Add(time.Duration(authExpSec) * time.Second),
 	})
 
-	return c.Send(resources.Response{
+	resBody := resources.Response{
 		Code:    fiber.StatusOK,
 		Message: "Login successfully",
 		Data:    data,
-	}.Bytes())
+	}
+	return c.Status(resBody.Code).Send(resBody.Bytes())
 }
 
 // Logout will signing out the signed in if user
@@ -69,10 +70,11 @@ func (controller *AuthController) Logout(c *fiber.Ctx) error {
 		MaxAge:   -1,
 		Expires:  time.Now().Add(time.Second),
 	})
-	return c.Send(resources.Response{
+	resBody := resources.Response{
 		Code:    fiber.StatusOK,
 		Message: "Logout successfully",
-	}.Bytes())
+	}
+	return c.Status(resBody.Code).Send(resBody.Bytes())
 }
 
 // Register
@@ -90,11 +92,12 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	return c.Send(resources.Response{
+	resBody := resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Register successfully",
 		Data:    data,
-	}.Bytes())
+	}
+	return c.Status(resBody.Code).Send(resBody.Bytes())
 }
 
 // ForgotPassword
@@ -111,10 +114,11 @@ func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	return c.Send(resources.Response{
+	resBody := resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Successfully sent reset password token to " + input.Email,
-	}.Bytes())
+	}
+	return c.Status(resBody.Code).Send(resBody.Bytes())
 }
 
 // ResetPassword
@@ -131,8 +135,9 @@ func (controller *AuthController) ResetPassword(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	return c.Send(resources.Response{
+	resBody := resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Successfully reset password",
-	}.Bytes())
+	}
+	return c.Status(resBody.Code).Send(resBody.Bytes())
 }
