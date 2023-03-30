@@ -146,7 +146,7 @@ func ValidateStructFileHeader[T any](structure T, lang string) (
 							fmt.Sprintf(
 								"%s must be a file of types %s",
 								jsonFieldName,
-								strings.Join(mimeTypes, ", "),
+								strings.Join(mimeTypes, " or "),
 							),
 						),
 					)
