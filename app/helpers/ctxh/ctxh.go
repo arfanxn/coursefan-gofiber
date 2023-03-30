@@ -3,6 +3,7 @@ package ctxh
 import (
 	"mime/multipart"
 	"os"
+	"regexp"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -13,7 +14,10 @@ func GetAcceptLang(c *fiber.Ctx) string {
 	queryKey := "lang"
 	headers := c.GetReqHeaders()
 	lang, ok := headers[headerKey]
-	if !ok || lang == "" {
+	if lang != "" && ok {
+		lang = regexp.MustCompile("[a-z]{2}").FindString(lang)
+	}
+	if lang == "" {
 		defaultAppLang := os.Getenv("APP_LANGUAGE")
 		lang = c.Query(queryKey, defaultAppLang)
 	}
