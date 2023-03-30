@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/models"
@@ -52,6 +53,12 @@ func (repository *TokenRepository) Insert(c *fiber.Ctx, tokens ...*models.Token)
 func (repository *TokenRepository) Save(c *fiber.Ctx, token *models.Token) (int64, error) {
 	if token.Id == uuid.Nil {
 		token.Id = uuid.New()
+	}
+	// if model is already created then update the model updated_at
+	if token.CreatedAt != (time.Time{}) {
+		token.UpdatedAt = sql.NullTime{Time: time.Now(), Valid: true}
+	} else { // otherwise
+		token.CreatedAt = time.Now()
 	}
 	result := repository.db.Model(token).Save(token)
 	return result.RowsAffected, result.Error
