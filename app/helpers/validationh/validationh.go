@@ -60,7 +60,7 @@ func ValidateStructFileHeader[T any](structure T, lang string) (
 			if !ok || (len(rules) == 0) {
 				return // return if no rules
 			}
-			// Get max upload size from application environment variable
+			// Get max media upload size from application environment variable
 			maxUploadSize, err := strconv.ParseInt(os.Getenv("MEDIA_MAX_SIZE"), 10, 64)
 			if err != nil {
 				syncronizer.Err(err)
