@@ -18,7 +18,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	app, err := bootstrap.NewAppWithConfig()
+	app, err := bootstrap.NewApp()
 	if err != nil {
 		logrus.Fatal(err)
 	}

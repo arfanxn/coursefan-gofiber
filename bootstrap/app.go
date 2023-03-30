@@ -8,8 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// NewAppWithConfig builds a new App with configured config from environment variables
-func NewAppWithConfig() (app *fiber.App, err error) {
+// NewApp instantiates a new App with configured config from environment variables
+func NewApp() (app *fiber.App, err error) {
 	bodyLimit, err := strconv.ParseInt(os.Getenv("REQUEST_BODY_LIMIT"), 10, 64)
 	if err != nil {
 		return
