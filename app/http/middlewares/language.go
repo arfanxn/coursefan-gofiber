@@ -14,7 +14,7 @@ func Language() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		lang := ctxh.GetAcceptLang(c)
 		input := struct {
-			Lang string `validate:"alpha,oneof=en id"`
+			Lang string `json:"lang" validate:"alpha,oneof=en id"`
 		}{
 			Lang: lang,
 		}
