@@ -29,13 +29,14 @@ type Token struct {
 	Tokenable any `json:"tokenable" gorm:"-"`
 }
 
-// GenerateBody generates a new token body and assigns it to models.Token.Body
-func (token *Token) GenerateBody(chars []rune, length int) {
-	token.Body = ""
+// BodyGenerate generates a new token body and assigns it to models.Token.Body
+func (token *Token) BodyGenerate(chars []rune, length int) {
+	tokenBody := ""
 	for i := 0; i < length; i++ {
 		char := chars[rand.Intn(len(chars))]
-		token.Body = token.Body + string(char)
+		tokenBody += string(char)
 	}
+	token.Body = tokenBody
 }
 
 // IsExpired returns bool that indicates token already expired or not
