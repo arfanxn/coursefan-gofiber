@@ -7,6 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// NewValidate instantiates a new validator.Validate configuration/bootstraption
 func NewValidate() *validator.Validate {
 	validate := validator.New()
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
