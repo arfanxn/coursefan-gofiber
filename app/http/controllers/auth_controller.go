@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/responseh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/validateh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/services"
@@ -27,8 +28,7 @@ func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 	var input requests.AuthLogin
 	c.BodyParser(&input)
 	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		response := resources.NewResponseValidationErrs(validationErrs)
-		return c.Send(response.Bytes())
+		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
 	}
 
 	data, err := controller.service.Login(c, input)
@@ -51,12 +51,11 @@ func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 		Expires:  time.Now().Add(time.Duration(authExpSec) * time.Second),
 	})
 
-	resBody := resources.Response{
+	return responseh.Write(c, &resources.Response{
 		Code:    fiber.StatusOK,
 		Message: "Login successfully",
 		Data:    data,
-	}
-	return c.Status(resBody.Code).Send(resBody.Bytes())
+	})
 }
 
 // Logout will signing out the signed in if user
@@ -70,11 +69,10 @@ func (controller *AuthController) Logout(c *fiber.Ctx) error {
 		MaxAge:   -1,
 		Expires:  time.Now().Add(time.Second),
 	})
-	resBody := resources.Response{
+	return responseh.Write(c, &resources.Response{
 		Code:    fiber.StatusOK,
 		Message: "Logout successfully",
-	}
-	return c.Status(resBody.Code).Send(resBody.Bytes())
+	})
 }
 
 // Register
@@ -83,8 +81,7 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 	c.BodyParser(&input)
 	input.Avatar = ctxh.GetFileHeader(c, "avatar")
 	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		response := resources.NewResponseValidationErrs(validationErrs)
-		return c.Send(response.Bytes())
+		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
 	}
 
 	data, err := controller.service.Register(c, input)
@@ -92,12 +89,11 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	resBody := resources.Response{
+	return responseh.Write(c, &resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Register successfully",
 		Data:    data,
-	}
-	return c.Status(resBody.Code).Send(resBody.Bytes())
+	})
 }
 
 // ForgotPassword
@@ -105,8 +101,7 @@ func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthForgotPassword
 	c.BodyParser(&input)
 	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		response := resources.NewResponseValidationErrs(validationErrs)
-		return c.Send(response.Bytes())
+		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
 	}
 
 	err = controller.service.ForgotPassword(c, input)
@@ -114,11 +109,10 @@ func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	resBody := resources.Response{
+	return responseh.Write(c, &resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Successfully sent reset password token to " + input.Email,
-	}
-	return c.Status(resBody.Code).Send(resBody.Bytes())
+	})
 }
 
 // ResetPassword
@@ -126,8 +120,7 @@ func (controller *AuthController) ResetPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthResetPassword
 	c.BodyParser(&input)
 	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		response := resources.NewResponseValidationErrs(validationErrs)
-		return c.Send(response.Bytes())
+		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
 	}
 
 	err = controller.service.ResetPassword(c, input)
@@ -135,9 +128,8 @@ func (controller *AuthController) ResetPassword(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	resBody := resources.Response{
+	return responseh.Write(c, &resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Successfully reset password",
-	}
-	return c.Status(resBody.Code).Send(resBody.Bytes())
+	})
 }

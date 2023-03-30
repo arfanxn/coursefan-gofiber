@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github.com/arfanxn/coursefan-gofiber/app/exceptions"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/responseh"
 	"github.com/arfanxn/coursefan-gofiber/resources"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -12,19 +13,19 @@ func After() fiber.Handler {
 		err = c.Next()
 
 		if err != nil {
-			var resBody *resources.Response
+			var response *resources.Response
 			logrus.Error(err)
 			switch err.(type) {
 			default: // sends internal server error if error is default error
-				resBody = resources.NewResponseError(fiber.ErrInternalServerError)
+				response = resources.NewResponseError(fiber.ErrInternalServerError)
 			case *fiber.Error:
-				resBody = resources.NewResponseError(err.(*fiber.Error))
+				response = resources.NewResponseError(err.(*fiber.Error))
 			case *exceptions.ValidationError:
-				resBody = resources.NewResponseValidationErrs([]*exceptions.ValidationError{
+				response = resources.NewResponseValidationErrs([]*exceptions.ValidationError{
 					err.(*exceptions.ValidationError),
 				})
 			}
-			err = c.Status(resBody.Code).Send(resBody.Bytes())
+			err = responseh.Write(c, response)
 		}
 
 		return err
