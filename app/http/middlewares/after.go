@@ -24,7 +24,7 @@ func After() fiber.Handler {
 					err.(*exceptions.ValidationError),
 				})
 			}
-			c.Status(resBody.Code).Send(resBody.Bytes())
+			err = c.Status(resBody.Code).Send(resBody.Bytes())
 		}
 
 		return err
