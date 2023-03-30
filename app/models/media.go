@@ -17,29 +17,29 @@ import (
 
 type Media struct {
 	// Id will be generated automatically, can be set manually if needed
-	Id uuid.UUID `json:"id"`
+	Id uuid.UUID `json:"id" gorm:"primaryKey;type:char(36)"`
 	// ModelType must be specified
-	ModelType string `json:"model_type"`
+	ModelType string `json:"model_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
 	// ModelId must be specified
-	ModelId uuid.UUID `json:"model_id"`
+	ModelId uuid.UUID `json:"model_id" gorm:"uniqueIndex;type:VARCHAR(36) NOT NULL"`
 	// CollectionName will be autofilled with default CollectionName if not specified
-	CollectionName sql.NullString `json:"collection_name"`
+	CollectionName sql.NullString `json:"collection_name"  gorm:"index;type:VARCHAR(50)"`
 	// Name can be null if not specified
-	Name sql.NullString `json:"name"`
+	Name sql.NullString `json:"name" gorm:"type:VARCHAR(100)"`
 	// FileName will be autofilled by random alphanumeric characters if not specified
-	FileName string `json:"file_name"`
+	FileName string `json:"file_name" gorm:"type:VARCHAR(256)  NOT NULL"`
 	// MimeType will be autofilled by guessing the file bytes if not specified
-	MimeType string `json:"mime_type"`
+	MimeType string `json:"mime_type" gorm:"type:VARCHAR(50) NOT NULL"`
 	// Disk will be autofilled with default disk if not specified
-	Disk string `json:"disk"`
+	Disk string `json:"disk" gorm:"type:VARCHAR(25) NOT NULL"`
 	// ConversionDisk can be null if not set
-	ConversionDisk sql.NullString `json:"conversion_disk"`
+	ConversionDisk sql.NullString `json:"conversion_disk" gorm:"type:VARCHAR(25)"`
 	// if not set will be autofilled with by guessing the file bytes size
-	Size int64 `json:"size"`
+	Size int64 `json:"size" gorm:"type:INTEGER UNSIGNED NOT NULL"`
 	// CreatedAt will be autofilled on creation
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	// UpdatedAt will be autofilled after updation
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	UpdatedAt sql.NullTime `json:"updated_at" gorm:"autoUpdateTime"`
 
 	// File Metadata, not in table columns
 	FileHeader *multipart.FileHeader `json:"-" gorm:"-"`

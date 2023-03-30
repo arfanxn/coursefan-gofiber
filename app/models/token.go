@@ -14,14 +14,14 @@ var (
 )
 
 type Token struct {
-	Id            uuid.UUID    `json:"id" gorm:"primaryKey"`
-	TokenableType string       `json:"tokenable_type"`
-	TokenableId   uuid.UUID    `json:"tokenable_id" gorm:"index"`
-	Type          string       `json:"type"`
-	Body          string       `json:"body"` // the token content/body/string
+	Id            uuid.UUID    `json:"id" gorm:"primaryKey;type:char(36)"`
+	TokenableType string       `json:"tokenable_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
+	TokenableId   uuid.UUID    `json:"tokenable_id" gorm:"uniqueIndex;type:VARCHAR(36) NOT NULL"`
+	Type          string       `json:"type" gorm:"index;type:VARCHAR(25) NOT NULL"`
+	Body          string       `json:"body" gorm:"type:VARCHAR(256) NOT NULL"` // the token content/body/string
 	UsedAt        sql.NullTime `json:"used_at"`
 	ExpiredAt     sql.NullTime `json:"expired_at"`
-	CreatedAt     time.Time    `json:"created_at" gorm:"autoCreateTime"`
+	CreatedAt     time.Time    `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	UpdatedAt     sql.NullTime `json:"updated_at" gorm:"autoUpdateTime"`
 
 	// Relations
