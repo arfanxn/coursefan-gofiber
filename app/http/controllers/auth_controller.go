@@ -3,6 +3,7 @@ package controllers
 import (
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/validateh"
@@ -47,12 +48,30 @@ func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 		Value:    data.AccessToken,
 		HTTPOnly: true,
 		MaxAge:   int(authExpSec),
+		Expires:  time.Now().Add(time.Duration(authExpSec) * time.Second),
 	})
 
 	return c.Send(resources.Response{
 		Code:    fiber.StatusOK,
 		Message: "Login successfully",
 		Data:    data,
+	}.Bytes())
+}
+
+// Logout will signing out the signed in if user
+func (controller *AuthController) Logout(c *fiber.Ctx) error {
+	// Delete token from cookie
+	c.Cookie(&fiber.Cookie{
+		Name:     os.Getenv("AUTH_COOKIE_NAME"),
+		Path:     "/",
+		Value:    "",
+		HTTPOnly: true,
+		MaxAge:   -1,
+		Expires:  time.Now().Add(time.Second),
+	})
+	return c.Send(resources.Response{
+		Code:    fiber.StatusOK,
+		Message: "Logout successfully",
 	}.Bytes())
 }
 

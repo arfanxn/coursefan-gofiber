@@ -9,6 +9,7 @@ func registerAuthRoutes(router fiber.Router) {
 	authController := controller_provider.GetAuthController()
 	users := router.Group("/users")
 	users.Post("/login", authController.Login).Name("login")
+	users.Delete("/logout", authController.Logout).Name("logout")
 	users.Post("/register", authController.Register).Name("register")
 	users.Post("/forgot-password", authController.ForgotPassword).Name("forgot-password")
 	users.Post("/reset-password", authController.ResetPassword).Name("reset-password")
