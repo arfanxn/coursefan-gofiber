@@ -14,6 +14,7 @@ func MigrateUp() error {
 	err = db.AutoMigrate(
 		&models.User{},
 		&models.Media{},
+		&models.Token{},
 	)
 	if err != nil {
 		return err
