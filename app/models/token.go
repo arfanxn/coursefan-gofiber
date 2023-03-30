@@ -29,8 +29,8 @@ type Token struct {
 	Tokenable any `json:"tokenable" gorm:"-"`
 }
 
-// Generate generates a new token and assigns it to models.Token.Body
-func (token *Token) Generate(chars []rune, length int) {
+// GenerateBody generates a new token body and assigns it to models.Token.Body
+func (token *Token) GenerateBody(chars []rune, length int) {
 	for i := 0; i < length; i++ {
 		char := chars[rand.Intn(len(chars))]
 		token.Body = token.Body + string(char)
