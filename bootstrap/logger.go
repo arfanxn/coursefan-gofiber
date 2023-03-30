@@ -7,8 +7,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// SetLoggerOutputBasedOnENV sets logger output globally based on the environment variable LOG_OUTPUT
-func SetLoggerOutputBasedOnENV() error {
+// ConfigureLogger will configure logger globally
+func ConfigureLogger() error {
 	// Get log file output name from environment variable
 	logFilename := os.Getenv("LOG_OUTPUT")
 	logFilename = "storage" + "/" + logFilename
