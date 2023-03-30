@@ -69,7 +69,7 @@ func Auth() fiber.Handler {
 	// Skip authentication at some scenarios
 	return skip.New(middleware, func(c *fiber.Ctx) bool {
 		// Route names to be excluded from authentication middleware
-		excludedPaths := []string{"login", "register", "forgot-password"}
+		excludedPaths := []string{"login", "logout", "register", "forgot-password", "reset-password"}
 
 		// Current accessed route path
 		routePath := c.Path()
