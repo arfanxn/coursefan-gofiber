@@ -24,8 +24,6 @@ func migrateFlag() (err error) {
 		exitAfterFinish = true
 	}
 
-	// TODO: implement migrate down
-
 	return
 }
 
