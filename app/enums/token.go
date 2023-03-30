@@ -1,5 +1,5 @@
 package enums
 
 const (
-	TokenTypeResetPassword = "reset_password"
+	TokenTypeResetPassword string = "reset_password"
 )
