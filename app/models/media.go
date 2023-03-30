@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
@@ -52,6 +53,18 @@ func (media *Media) GetFilePath() string {
 	fileSystemDisk := config.FileSystemDisks[media.GetDisk()]
 	filepath := fmt.Sprintf("%s/medias/%s/%s", fileSystemDisk.Root, media.Id.String(), media.GetFileName())
 	return filepath
+}
+
+// GetFilePath returns url string to the media file based on media disk
+func (media *Media) GetFileUrl() string {
+	fileSystemDisk := config.FileSystemDisks[media.GetDisk()]
+	urlStr := fmt.Sprintf("%s/%s/medias/%s/%s",
+		strings.Trim(os.Getenv("APP_URL"), "/"),
+		strings.Trim(fileSystemDisk.URL, "/"),
+		media.Id.String(),
+		media.GetFileName(),
+	)
+	return urlStr
 }
 
 // GetFileName returns media.FileName , example: image.png

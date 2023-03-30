@@ -1,11 +1,9 @@
 package resources
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/models"
-	"github.com/arfanxn/coursefan-gofiber/config"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -27,8 +25,6 @@ type Media struct {
 
 // NewMediaFromModel instantiates resources.Media with values from the given models.Media
 func NewMediaFromModel(mediaMdl models.Media) *Media {
-	fileSystemDisk := config.FileSystemDisks[mediaMdl.Disk]
-
 	mediaRes := new(Media)
 	mediaRes.Id = mediaMdl.Id.String()
 	mediaRes.ModelType = mediaMdl.ModelType
@@ -36,7 +32,7 @@ func NewMediaFromModel(mediaMdl models.Media) *Media {
 	mediaRes.CollectionName = null.NewString(mediaMdl.CollectionName.String, mediaMdl.CollectionName.Valid)
 	mediaRes.Name = null.NewString(mediaMdl.Name.String, mediaMdl.Name.Valid)
 	mediaRes.FileName = mediaMdl.GetFileName()
-	mediaRes.FileUrl = fmt.Sprintf("%s/medias/%s", fileSystemDisk.URL, mediaMdl.GetFileName())
+	mediaRes.FileUrl = mediaMdl.GetFileUrl()
 	mediaRes.MimeType = mediaMdl.GetMimeType()
 	mediaRes.Disk = mediaMdl.GetDisk()
 	mediaRes.ConversionDisk = null.NewString(mediaMdl.ConversionDisk.String, mediaMdl.ConversionDisk.Valid)
