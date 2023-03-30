@@ -1,29 +1,18 @@
 package routes
 
 import (
-	"github.com/arfanxn/coursefan-gofiber/app/http/middlewares"
 	"github.com/gofiber/fiber/v2"
 )
 
-// registerMainMiddlewares registers main middlewares (required middlewares) to the router
-func registerMainMiddlewares(router fiber.Router) {
-	router.Use(
-		middlewares.Recovery(),
-		middlewares.Language(),
-		middlewares.After(), // after middleware
-	)
-}
-
 // InjectRoutes will inject routes into application instance
-func InjectRoutes(app *fiber.App) error {
+func InjectRoutes(app *fiber.App) {
 
-	publicApi := app.Group("/api")
-	registerMainMiddlewares(publicApi)
+	router := app.Group("")
+	registerMainMiddlewares(router)
 
-	protectedApi := publicApi.Group("", middlewares.Auth())
+	router.Static("/public", "./public") // File server route
 
-	registerPublicAuthRoutes(publicApi)
-	registerProtectedAuthRoutes(protectedApi)
+	api := router.Group("/api")
 
-	return nil
+	registerAuthRoutes(api)
 }
