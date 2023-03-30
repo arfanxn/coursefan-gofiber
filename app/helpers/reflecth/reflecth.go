@@ -11,6 +11,14 @@ func GetTypeName(myvar any) string {
 	}
 }
 
+// GetStructFieldTag returns field tag
+func GetStructFieldTag(sf reflect.StructField, tagNames ...string) string {
+	if len(tagNames) == 0 {
+		return string(sf.Tag)
+	}
+	return sf.Tag.Get(tagNames[0])
+}
+
 // IsTypeOf checks if the type of first variable is a type of the second variable, returns true if type equals the first variable and false otherwise.
 func IsTypeOf(first, second any) bool {
 	return reflect.TypeOf(first) == reflect.TypeOf(second)
