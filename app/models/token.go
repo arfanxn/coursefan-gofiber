@@ -31,6 +31,7 @@ type Token struct {
 
 // GenerateBody generates a new token body and assigns it to models.Token.Body
 func (token *Token) GenerateBody(chars []rune, length int) {
+	token.Body = ""
 	for i := 0; i < length; i++ {
 		char := chars[rand.Intn(len(chars))]
 		token.Body = token.Body + string(char)
