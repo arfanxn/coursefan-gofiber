@@ -13,12 +13,14 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/jwth"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/mailh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/reflecth"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/synch"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/arfanxn/coursefan-gofiber/app/repositories"
 	"github.com/arfanxn/coursefan-gofiber/resources"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/guregu/null.v4"
 	"gorm.io/gorm"
@@ -156,17 +158,18 @@ func (service *AuthService) ForgotPassword(c *fiber.Ctx, input requests.AuthForg
 		userMdl.Id.String(),
 		enums.TokenTypeResetPassword,
 	)
-	// if token not found or has been used or expired then  and create a new one
+	// if token not found or has been used or expired then  create a new one
 	if errors.Is(err, gorm.ErrRecordNotFound) || (tokenMdl.IsUsed()) || tokenMdl.IsExpired() {
 		tokenMdl.TokenableType = reflecth.GetTypeName(userMdl)
 		tokenMdl.TokenableId = userMdl.Id
 		tokenMdl.Type = enums.TokenTypeResetPassword
 		tokenMdl.UsedAt = sql.NullTime{Time: time.Time{}, Valid: false}
 		tokenMdl.ExpiredAt = sql.NullTime{Time: time.Now().Add(time.Hour / 2), Valid: true} // give 30 mins expiration
-		tokenMdl.GenerateBody(models.TokenBodyNumeric, 6)
-		_, err = service.tokenRepository.Save(c, &tokenMdl)
+		tokenMdl.BodyGenerate(models.TokenBodyNumeric, 6)
+		affected, err := service.tokenRepository.Save(c, &tokenMdl)
+		logrus.Info(fmt.Sprintf("Affected %v", affected))
 		if err != nil {
-			return
+			return err
 		}
 	}
 
@@ -181,4 +184,77 @@ func (service *AuthService) ForgotPassword(c *fiber.Ctx, input requests.AuthForg
 	}
 
 	return nil
+}
+
+// ResetPassword resets User's password if the given otp is valid
+func (service *AuthService) ResetPassword(c *fiber.Ctx, input requests.AuthResetPassword) (err error) {
+	var (
+		syncronizer = synch.NewSyncronizer()
+		userMdl     models.User
+		tokenMdl    models.Token
+	)
+	defer syncronizer.Close()
+	userMdl, err = service.userRepository.FindByEmail(c, input.Email)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = exceptions.NewValidationError("email", "No user found with email "+input.Email)
+		return
+	} else if err != nil {
+		return
+	}
+	tokenMdl, err = service.tokenRepository.FindByTokenableAndType(
+		c,
+		reflecth.GetTypeName(userMdl),
+		userMdl.Id.String(),
+		enums.TokenTypeResetPassword,
+	)
+	if errors.Is(err, gorm.ErrRecordNotFound) ||
+		tokenMdl.IsUsed() ||
+		tokenMdl.IsExpired() ||
+		(tokenMdl.Body != input.Otp) {
+		err = exceptions.NewValidationError("otp", "OTP has been used or expired or invalid")
+		return
+	} else if err != nil {
+		return
+	}
+	syncronizer.WG().Add(2)
+	go func() { // goroutine for update token
+		defer syncronizer.WG().Done()
+		if syncronizer.Err() != nil {
+			return
+		}
+		syncronizer.M().Lock()
+		tokenMdl.UsedAt = sql.NullTime{Time: time.Now(), Valid: true}
+		_, err := service.tokenRepository.UpdateById(c, &tokenMdl)
+		syncronizer.M().Unlock()
+		if err != nil {
+			syncronizer.Err(err)
+			return
+		}
+	}()
+	go func() { // goroutine for update user
+		defer syncronizer.WG().Done()
+		if syncronizer.Err() != nil {
+			return
+		}
+		passwordBytes, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+		if err != nil {
+			syncronizer.Err(err)
+			return
+		}
+		syncronizer.M().Lock()
+		userMdl.Password = string(passwordBytes)
+		_, err = service.userRepository.UpdateById(c, &userMdl)
+		syncronizer.M().Unlock()
+		if err != nil {
+			syncronizer.Err(err)
+		}
+	}()
+	syncronizer.WG().Wait()
+	if err != nil {
+		return
+	}
+	if err = syncronizer.Err(); err != nil {
+		return
+	}
+	return
 }

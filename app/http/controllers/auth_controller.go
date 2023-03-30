@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
-	"github.com/arfanxn/coursefan-gofiber/app/helpers/validationh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/validateh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/services"
 	"github.com/arfanxn/coursefan-gofiber/resources"
@@ -25,7 +25,7 @@ func NewAuthController(service *services.AuthService) *AuthController {
 func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 	var input requests.AuthLogin
 	c.BodyParser(&input)
-	if validationErrs := validationh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
 		response := resources.NewResponseValidationErrs(validationErrs)
 		return c.Send(response.Bytes())
 	}
@@ -61,7 +61,7 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 	var input requests.AuthRegister
 	c.BodyParser(&input)
 	input.Avatar = ctxh.GetFileHeader(c, "avatar")
-	if validationErrs := validationh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
 		response := resources.NewResponseValidationErrs(validationErrs)
 		return c.Send(response.Bytes())
 	}
@@ -82,7 +82,7 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthForgotPassword
 	c.BodyParser(&input)
-	if validationErrs := validationh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
 		response := resources.NewResponseValidationErrs(validationErrs)
 		return c.Send(response.Bytes())
 	}
@@ -95,5 +95,25 @@ func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 	return c.Send(resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Successfully sent reset password token to " + input.Email,
+	}.Bytes())
+}
+
+// ResetPassword
+func (controller *AuthController) ResetPassword(c *fiber.Ctx) (err error) {
+	var input requests.AuthResetPassword
+	c.BodyParser(&input)
+	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+		response := resources.NewResponseValidationErrs(validationErrs)
+		return c.Send(response.Bytes())
+	}
+
+	err = controller.service.ResetPassword(c, input)
+	if err != nil {
+		return err
+	}
+
+	return c.Send(resources.Response{
+		Code:    fiber.StatusCreated,
+		Message: "Successfully reset password",
 	}.Bytes())
 }
