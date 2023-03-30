@@ -67,6 +67,9 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 	}
 
 	data, err := controller.service.Register(c, input)
+	if err != nil {
+		return err
+	}
 
 	return c.Send(resources.Response{
 		Code:    fiber.StatusCreated,
