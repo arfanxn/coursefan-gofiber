@@ -14,7 +14,7 @@ var exitAfterFinish bool = false
 var rootCmd = &cobra.Command{
 	Use:   "Coursefan",
 	Short: "Coursefan",
-	Long:  "----------------------------------------------------\nCoursefan - Online course platform\n----------------------------------------------------",
+	Long:  "-----------------------------------------------------\nCoursefan - Online course platform\n-----------------------------------------------------",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) {
