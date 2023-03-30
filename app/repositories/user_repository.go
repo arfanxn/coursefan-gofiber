@@ -25,13 +25,13 @@ func (repository *UserRepository) FindByEmail(c *fiber.Ctx, email string) (user 
 }
 
 // Insert inserts users into the database
-func (repository *UserRepository) Insert(c *fiber.Ctx, users ...*models.User) (err error) {
+func (repository *UserRepository) Insert(c *fiber.Ctx, users ...*models.User) (int64, error) {
 	for _, user := range users {
 		if user.Id == uuid.Nil {
 			user.Id = uuid.New()
 		}
 		user.CreatedAt = time.Now()
 	}
-	err = repository.db.Create(users).Error
-	return
+	result := repository.db.Create(users)
+	return result.RowsAffected, result.Error
 }

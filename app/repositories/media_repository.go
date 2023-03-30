@@ -21,7 +21,7 @@ func NewMediaRepository(db *gorm.DB) *MediaRepository {
 }
 
 // Insert inserts medias into the database
-func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media) error {
+func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media) (int64, error) {
 	var savedFilePaths []string
 	syncronizer := synch.NewSyncronizer()
 	defer syncronizer.Close()
@@ -66,7 +66,8 @@ func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media)
 
 	if err := syncronizer.Err(); err != nil {
 		fileh.BatchRemove(savedFilePaths...)
-		return err
+		return 0, err
 	}
-	return repository.db.Create(medias).Error
+	result := repository.db.Create(medias)
+	return result.RowsAffected, result.Error
 }
