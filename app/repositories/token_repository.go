@@ -28,10 +28,11 @@ func (repository *TokenRepository) Find(c *fiber.Ctx, id string) (token models.T
 func (repository *TokenRepository) FindByTokenableAndType(
 	c *fiber.Ctx, tokenableTyp string, tokenableId string, typ string,
 ) (token models.Token, err error) {
-	err = repository.db.Where(
-		" `tokenable_type` = ? AND `tokenable_id` = ? AND `type` = ? ",
-		tokenableTyp, tokenableId, typ,
-	).First(&token).Error
+	err = repository.db.
+		Where("tokenable_type = ?", tokenableTyp).
+		Where("tokenable_id = ?", tokenableId).
+		Where("type = ?", typ).
+		First(&token).Error
 	return
 }
 
@@ -44,6 +45,15 @@ func (repository *TokenRepository) Insert(c *fiber.Ctx, tokens ...*models.Token)
 		token.CreatedAt = time.Now()
 	}
 	result := repository.db.Create(tokens)
+	return result.RowsAffected, result.Error
+}
+
+// Save updates value in database. If value doesn't contain a matching primary key, value is inserted.
+func (repository *TokenRepository) Save(c *fiber.Ctx, token *models.Token) (int64, error) {
+	if token.Id == uuid.Nil {
+		token.Id = uuid.New()
+	}
+	result := repository.db.Model(token).Save(token)
 	return result.RowsAffected, result.Error
 }
 
