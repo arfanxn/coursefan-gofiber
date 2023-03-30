@@ -148,10 +148,10 @@ func TranslateErrs(errs error, trans ut.Translator) (translatedErrs []*exception
 	validationErrs := errs.(validator.ValidationErrors)
 	for _, validationErr := range validationErrs {
 		fieldNamespace := validationErr.StructNamespace()
-		jsonFieldName := strings.Join(strings.SplitAfter(fieldNamespace, ".")[1:], ".")
-		jsonFieldName = strcase.ToSnake(jsonFieldName)
+		fieldName := strings.Join(strings.SplitAfter(fieldNamespace, ".")[1:], ".")
+		jsonFieldName := strcase.ToSnake(fieldName)
 		if name := validationErr.Field(); name != "" {
-			jsonFieldName = name
+			jsonFieldName = strcase.ToSnake(name)
 		}
 		message := validationErr.Translate(trans)
 		translatedErr := exceptions.NewValidationError(jsonFieldName, message)
