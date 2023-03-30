@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
-	"github.com/arfanxn/coursefan-gofiber/app/helpers/validationh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/validateh"
 	"github.com/arfanxn/coursefan-gofiber/resources"
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,7 +19,7 @@ func Language() fiber.Handler {
 			Lang: lang,
 		}
 
-		if validationErrs := validationh.ValidateStruct(input, os.Getenv("APP_LANGUAGE")); validationErrs != nil {
+		if validationErrs := validateh.ValidateStruct(input, os.Getenv("APP_LANGUAGE")); validationErrs != nil {
 			response := resources.NewResponseValidationErrs(validationErrs)
 			return c.Send(response.Bytes())
 		}
