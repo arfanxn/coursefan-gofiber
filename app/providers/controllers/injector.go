@@ -12,6 +12,12 @@ import (
 )
 
 func initAuthController(db *gorm.DB) *controllers.AuthController {
-	wire.Build(repositories.NewUserRepository, repositories.NewMediaRepository, services.NewAuthService, controllers.NewAuthController)
+	wire.Build(
+		repositories.NewUserRepository,
+		repositories.NewMediaRepository,
+		repositories.NewTokenRepository,
+		services.NewAuthService,
+		controllers.NewAuthController,
+	)
 	return nil
 }
