@@ -12,15 +12,15 @@ var (
 )
 
 func migrateFlag() (err error) {
-	if *migrateUp == true {
-		err = migrations.MigrateUp()
-		fmt.Println("Successfully migrate up database")
-		exitAfterFinish = true
-	}
-
 	if *migrateDown == true {
 		err = migrations.MigrateDown()
 		fmt.Println("Successfully migrate down database")
+		exitAfterFinish = true
+	}
+
+	if *migrateUp == true {
+		err = migrations.MigrateUp()
+		fmt.Println("Successfully migrate up database")
 		exitAfterFinish = true
 	}
 
