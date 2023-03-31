@@ -19,3 +19,12 @@ func GetValidator() (*validator.Validate, error) {
 	validatorInstance, err = bootstrap.NewValidator()
 	return validatorInstance, err
 }
+
+// GetValidate returns a singleton of validator.Validate or panic if error is encountered
+func MustGetValidator() *validator.Validate {
+	instance, err := GetValidator()
+	if err != nil {
+		panic(err)
+	}
+	return instance
+}
