@@ -36,7 +36,7 @@ go run . --env={your_env_file} --migrate-down
 ```
 
 ### Guide
-- __ENV__ : You can also set your default *Environtment File* on *./app/env.go*, so you doesn't have to set it manualy via console whenever you run the program
+- __ENV__ : You can also set your default *Environtment File* on *./app/env.go*, so you doesn't have to set it manualy on console whenever you run the program
 
 
 ## License
