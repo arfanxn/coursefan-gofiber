@@ -17,45 +17,48 @@ import (
 
 var (
 	testApp *fiber.App = nil
+	testErr error      = nil
 )
 
 func TestMain(m *testing.M) {
 	// Set testing directory to root application directory
-	setDirToRoot()
+	testErr = setDirToRoot()
+	if testErr != nil {
+		logrus.Fatal(testErr)
+	}
 
 	// Load test environment variables
-	err := godotenv.Load(config.TestEnvironmentFileName)
-	if err != nil {
-		logrus.Fatal(err)
+	testErr = godotenv.Load(config.TestEnvironmentFileName)
+	if testErr != nil {
+		logrus.Fatal(testErr)
 	}
 	// Boot Logger
-	err = bootstrap.Logger()
-	if err != nil {
-		logrus.Fatal(err)
+	testErr = bootstrap.Logger()
+	if testErr != nil {
+		logrus.Fatal(testErr)
 	}
-
 	// Boot new Application and assign it to testApp variable
-	testApp, err = bootstrap.NewApp()
-	if err != nil {
-		logrus.Fatal(err)
+	testApp, testErr = bootstrap.NewApp()
+	if testErr != nil {
+		logrus.Fatal(testErr)
 	}
-
+	// inject/register routes into application instance
 	RegisterApp(testApp)
 
 	// Migrate up required tables
-	err = migrations.MigrateUp()
-	if err != nil {
-		logrus.Fatal(err)
+	testErr = migrations.MigrateUp()
+	if testErr != nil {
+		logrus.Fatal(testErr)
 	}
 
 	// Run tests
 	exitCode := m.Run()
 
-	// Migrate down
-	// migrations.MigrateDown()
-	// if err != nil {
-	// 	logrus.Fatal(err)
-	// }
+	// Migrate down after tests is finished
+	migrations.MigrateDown()
+	if testErr != nil {
+		logrus.Fatal(testErr)
+	}
 
 	os.Exit(exitCode)
 }
