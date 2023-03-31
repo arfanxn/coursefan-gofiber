@@ -10,7 +10,7 @@ var (
 	validatorInstance *validator.Validate = nil
 )
 
-// GetValidate returns a singleton of validator.Validate and error if there an error
+// GetValidator returns a singleton of validator.Validate and error if there an error
 func GetValidator() (*validator.Validate, error) {
 	if validatorInstance != nil {
 		return validatorInstance, nil
@@ -20,7 +20,7 @@ func GetValidator() (*validator.Validate, error) {
 	return validatorInstance, err
 }
 
-// GetValidate returns a singleton of validator.Validate or panic if error is encountered
+// MustGetValidator returns a singleton of validator.Validate or panic if error is encountered
 func MustGetValidator() *validator.Validate {
 	instance, err := GetValidator()
 	if err != nil {
