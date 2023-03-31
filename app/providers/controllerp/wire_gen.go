@@ -4,7 +4,7 @@
 //go:build !wireinject
 // +build !wireinject
 
-package controllers
+package controllerp
 
 import (
 	"github.com/arfanxn/coursefan-gofiber/app/http/controllers"
@@ -15,7 +15,7 @@ import (
 
 // Injectors from injector.go:
 
-func AuthController(db *gorm.DB) *controllers.AuthController {
+func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	userRepository := repositories.NewUserRepository(db)
 	mediaRepository := repositories.NewMediaRepository(db)
 	tokenRepository := repositories.NewTokenRepository(db)

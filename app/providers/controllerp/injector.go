@@ -1,7 +1,8 @@
 //go:build wireinject
 // +build wireinject
 
-package controllers
+// controllerp  stands for Controller Provider
+package controllerp
 
 import (
 	"github.com/arfanxn/coursefan-gofiber/app/http/controllers"
@@ -11,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func AuthController(db *gorm.DB) *controllers.AuthController {
+func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	wire.Build(
 		repositories.NewUserRepository,
 		repositories.NewMediaRepository,

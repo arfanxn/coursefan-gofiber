@@ -1,4 +1,4 @@
-package validators
+package validatorp
 
 import (
 	"github.com/go-playground/locales/en"
@@ -7,8 +7,8 @@ import (
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 )
 
-// EnglishTranslator returns validator english translator
-func EnglishTranslator(validate *validator.Validate) (trans ut.Translator) {
+// InitEnglishTranslator returns validator english translator
+func InitEnglishTranslator(validate *validator.Validate) (trans ut.Translator) {
 	english := en.New()
 	uni := ut.New(english, english)
 	trans, _ = uni.GetTranslator("en")
