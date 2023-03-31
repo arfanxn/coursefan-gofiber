@@ -8,11 +8,11 @@ import (
 func RegisterApp(app *fiber.App) {
 
 	router := app.Group("")
-	registerMainMiddlewares(router)
+	registerMiddlewareRouter(router)
 
 	router.Static("/public", "./public") // File server route
 
 	api := router.Group("/api")
 
-	registerAuthRoutes(api)
+	registerAuthRouter(api)
 }

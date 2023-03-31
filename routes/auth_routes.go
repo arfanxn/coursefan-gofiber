@@ -6,7 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func registerAuthRoutes(router fiber.Router) {
+// registerAuthRouter registers auth module routes into the router
+func registerAuthRouter(router fiber.Router) {
 	authController := controllerp.InitAuthController(database.MustGetGormDB())
 	users := router.Group("/users")
 	users.Post("/login", authController.Login).Name("login")

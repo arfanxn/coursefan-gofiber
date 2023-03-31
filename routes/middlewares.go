@@ -5,8 +5,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// registerMainMiddlewares registers main middlewares (required middlewares) to the router
-func registerMainMiddlewares(router fiber.Router) {
+// registerMiddlewareRouter registers main middlewares (required middlewares) to the router
+func registerMiddlewareRouter(router fiber.Router) {
 	router.Use(
 		middlewares.Recovery(),
 		middlewares.Language(),
