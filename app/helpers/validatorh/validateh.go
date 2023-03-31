@@ -1,4 +1,4 @@
-package validateh
+package validatorh
 
 import (
 	"fmt"

@@ -7,7 +7,7 @@ import (
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/responseh"
-	"github.com/arfanxn/coursefan-gofiber/app/helpers/validateh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/validatorh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/services"
 	"github.com/arfanxn/coursefan-gofiber/resources"
@@ -27,7 +27,7 @@ func NewAuthController(service *services.AuthService) *AuthController {
 func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 	var input requests.AuthLogin
 	c.BodyParser(&input)
-	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
 		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
 	}
 
@@ -80,7 +80,7 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 	var input requests.AuthRegister
 	c.BodyParser(&input)
 	input.Avatar = ctxh.GetFileHeader(c, "avatar")
-	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
 		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
 	}
 
@@ -100,7 +100,7 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthForgotPassword
 	c.BodyParser(&input)
-	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
 		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
 	}
 
@@ -119,7 +119,7 @@ func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 func (controller *AuthController) ResetPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthResetPassword
 	c.BodyParser(&input)
-	if validationErrs := validateh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
+	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
 		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
 	}
 
