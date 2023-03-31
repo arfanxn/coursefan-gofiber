@@ -18,11 +18,6 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	err = bootstrap.Validator()
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
 	app, err := bootstrap.NewApp()
 	if err != nil {
 		logrus.Fatal(err)
