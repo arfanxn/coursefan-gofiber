@@ -1,6 +1,7 @@
 package console
 
 import (
+	"github.com/arfanxn/coursefan-gofiber/config"
 	"github.com/joho/godotenv"
 )
 
@@ -18,6 +19,5 @@ func envFlag() (err error) {
 }
 
 func init() {
-	defaultEnvFilename := "local.env"
-	envFilename = rootCmd.Flags().StringP("env", "e", defaultEnvFilename, "The environment variable")
+	envFilename = rootCmd.Flags().StringP("env", "e", config.EnvironmentFileName, "The environment variable")
 }
