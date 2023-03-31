@@ -41,7 +41,7 @@ func Contains[T comparable](items []T, predicate T) bool {
 }
 
 // Random return a random T from the given slice of T
-func Random[T any](slice []T) T {
+func Random[T any](slice ...T) T {
 	if len(slice) > 1 {
 		return slice[rand.Intn(len(slice)-1)]
 	} else {
