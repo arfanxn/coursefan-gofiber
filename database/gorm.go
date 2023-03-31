@@ -31,8 +31,8 @@ func InitGORM() (*gorm.DB, error) {
 	return db, nil
 }
 
-// GetGORM returns the singleton of *gorm.DB or error if it fails
-func GetGORM() (*gorm.DB, error) {
+// GetGORMDB returns the singleton of *gorm.DB or error if it fails
+func GetGORMDB() (*gorm.DB, error) {
 	if gormDB != nil {
 		return gormDB, nil
 	}
@@ -41,10 +41,10 @@ func GetGORM() (*gorm.DB, error) {
 	return gormDB, err
 }
 
-// MustGetGORM returns the singleton of *gorm.DB or panic
-func MustGetGORM() *gorm.DB {
+// MustGetGORMDB returns the singleton of *gorm.DB or panic
+func MustGetGORMDB() *gorm.DB {
 	var err error
-	gormDB, err = GetGORM()
+	gormDB, err = GetGORMDB()
 	if err != nil {
 		panic(err)
 	}

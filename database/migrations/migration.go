@@ -12,7 +12,7 @@ var tables []any = []any{
 }
 
 func MigrateUp() error {
-	db, err := database.GetGORM()
+	db, err := database.GetGORMDB()
 	if err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func MigrateUp() error {
 }
 
 func MigrateDown() error {
-	db, err := database.GetGORM()
+	db, err := database.GetGORMDB()
 	if err != nil {
 		return err
 	}
