@@ -2,7 +2,7 @@ package migrations
 
 import (
 	"github.com/arfanxn/coursefan-gofiber/app/models"
-	"github.com/arfanxn/coursefan-gofiber/database"
+	"github.com/arfanxn/coursefan-gofiber/app/providers/databasep"
 )
 
 var tables []any = []any{
@@ -12,7 +12,7 @@ var tables []any = []any{
 }
 
 func MigrateUp() error {
-	db, err := database.GetGormDB()
+	db, err := databasep.GetGormDB()
 	if err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func MigrateUp() error {
 }
 
 func MigrateDown() error {
-	db, err := database.GetGormDB()
+	db, err := databasep.GetGormDB()
 	if err != nil {
 		return err
 	}
