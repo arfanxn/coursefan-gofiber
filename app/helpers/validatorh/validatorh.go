@@ -21,7 +21,7 @@ import (
 
 // ValidateStruct validates the given struct
 func ValidateStruct[T any](structure T, lang string) []*exceptions.ValidationError {
-	validate := validator.New()
+	validate := validatorp.MustGetValidator()
 	err := validate.Struct(structure)
 	lang = strings.ToLower(lang)
 

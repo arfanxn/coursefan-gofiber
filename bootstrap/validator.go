@@ -7,8 +7,8 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// Validator bootstraps application validator
-func Validator() error {
+// NewValidator bootstraps application validator
+func NewValidator() (*validator.Validate, error) {
 	validate := validator.New()
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
@@ -19,5 +19,5 @@ func Validator() error {
 		return name
 	})
 
-	return nil
+	return validate, nil
 }
