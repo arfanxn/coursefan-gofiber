@@ -15,11 +15,11 @@ import (
 
 // Injectors from injector.go:
 
-func initAuthController(db *gorm.DB) *controllers.AuthController {
+func AuthController(db *gorm.DB) *controllers.AuthController {
 	userRepository := repositories.NewUserRepository(db)
 	mediaRepository := repositories.NewMediaRepository(db)
 	tokenRepository := repositories.NewTokenRepository(db)
 	authService := services.NewAuthService(userRepository, mediaRepository, tokenRepository)
-	controllersAuthController := controllers.NewAuthController(authService)
-	return controllersAuthController
+	authController := controllers.NewAuthController(authService)
+	return authController
 }
