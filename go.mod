@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/clarketm/json v1.17.1
 	github.com/gabriel-vasile/mimetype v1.4.2
+	github.com/go-faker/faker/v4 v4.1.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.12.0
