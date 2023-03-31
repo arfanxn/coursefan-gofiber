@@ -7,8 +7,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// ConfigureLogger will configure logger globally
-func ConfigureLogger() error {
+// Logger will bootstraping application logger
+func Logger() error {
 	// Get log file output name from environment variable
 	logFilename := os.Getenv("LOG_OUTPUT")
 	logFilename = "storage" + "/" + logFilename
