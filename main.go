@@ -13,7 +13,12 @@ import (
 func main() {
 	console.Execute() // CMD Execution
 
-	err := bootstrap.ConfigureLogger()
+	err := bootstrap.Logger()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	err = bootstrap.Validator()
 	if err != nil {
 		logrus.Fatal(err)
 	}
