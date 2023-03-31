@@ -12,8 +12,8 @@ var (
 	gormDB *gorm.DB
 )
 
-// InitGORMDB initializes database with configuration
-func InitGORMDB() (*gorm.DB, error) {
+// InitGormDB initializes database with configuration
+func InitGormDB() (*gorm.DB, error) {
 	database := os.Getenv("DB_DATABASE")
 	username := os.Getenv("DB_USERNAME")
 	password := os.Getenv("DB_PASSWORD")
@@ -31,20 +31,20 @@ func InitGORMDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-// GetGORMDB returns the singleton of *gorm.DB or error if it fails
-func GetGORMDB() (*gorm.DB, error) {
+// GetGormDB returns the singleton of *gorm.DB or error if it fails
+func GetGormDB() (*gorm.DB, error) {
 	if gormDB != nil {
 		return gormDB, nil
 	}
 	var err error
-	gormDB, err = InitGORMDB()
+	gormDB, err = InitGormDB()
 	return gormDB, err
 }
 
-// MustGetGORMDB returns the singleton of *gorm.DB or panic
-func MustGetGORMDB() *gorm.DB {
+// MustGetGormDB returns the singleton of *gorm.DB or panic
+func MustGetGormDB() *gorm.DB {
 	var err error
-	gormDB, err = GetGORMDB()
+	gormDB, err = GetGormDB()
 	if err != nil {
 		panic(err)
 	}
