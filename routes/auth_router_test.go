@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAuthRoutes(t *testing.T) {
+func TestAuthRouter(t *testing.T) {
 	require := require.New(t)
 
 	t.Run("Register", func(t *testing.T) {

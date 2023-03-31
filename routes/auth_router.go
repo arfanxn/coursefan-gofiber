@@ -2,13 +2,13 @@ package routes
 
 import (
 	"github.com/arfanxn/coursefan-gofiber/app/providers/controllerp"
-	"github.com/arfanxn/coursefan-gofiber/database"
+	"github.com/arfanxn/coursefan-gofiber/app/providers/databasep"
 	"github.com/gofiber/fiber/v2"
 )
 
 // registerAuthRouter registers auth module routes into the router
 func registerAuthRouter(router fiber.Router) {
-	authController := controllerp.InitAuthController(database.MustGetGormDB())
+	authController := controllerp.InitAuthController(databasep.MustGetGormDB())
 	users := router.Group("/users")
 	users.Post("/login", authController.Login).Name("login")
 	users.Delete("/logout", authController.Logout).Name("logout")
