@@ -23,7 +23,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	routes.InjectRoutes(app)
+	routes.RegisterApp(app)
 
 	appURL, err := url.Parse(os.Getenv("APP_URL"))
 	if err != nil {

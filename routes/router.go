@@ -4,8 +4,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// InjectRoutes will inject routes into application instance
-func InjectRoutes(app *fiber.App) {
+// RegisterApp will inject routes into application instance
+func RegisterApp(app *fiber.App) {
 
 	router := app.Group("")
 	registerMainMiddlewares(router)

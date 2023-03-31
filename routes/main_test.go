@@ -40,7 +40,7 @@ func TestMain(m *testing.M) {
 		logrus.Fatal(err)
 	}
 
-	InjectRoutes(testApp)
+	RegisterApp(testApp)
 
 	// Migrate up required tables
 	err = migrations.MigrateUp()
