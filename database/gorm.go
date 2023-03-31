@@ -12,8 +12,8 @@ var (
 	gormDB *gorm.DB
 )
 
-// InitGORM initializes database with configuration
-func InitGORM() (*gorm.DB, error) {
+// InitGORMDB initializes database with configuration
+func InitGORMDB() (*gorm.DB, error) {
 	database := os.Getenv("DB_DATABASE")
 	username := os.Getenv("DB_USERNAME")
 	password := os.Getenv("DB_PASSWORD")
@@ -37,7 +37,7 @@ func GetGORMDB() (*gorm.DB, error) {
 		return gormDB, nil
 	}
 	var err error
-	gormDB, err = InitGORM()
+	gormDB, err = InitGORMDB()
 	return gormDB, err
 }
 
