@@ -12,7 +12,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/numh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/synch"
-	validator_provider "github.com/arfanxn/coursefan-gofiber/app/providers/validators"
+	"github.com/arfanxn/coursefan-gofiber/app/providers/validatorp"
 	"github.com/gabriel-vasile/mimetype"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -26,7 +26,7 @@ func ValidateStruct[T any](structure T, lang string) []*exceptions.ValidationErr
 	lang = strings.ToLower(lang)
 
 	translators := map[string]func(*validator.Validate) ut.Translator{
-		"en": validator_provider.EnglishTranslator,
+		"en": validatorp.InitEnglishTranslator,
 	}
 	translator := translators[lang]
 	utTrans := translator(validate)
