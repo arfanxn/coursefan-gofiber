@@ -13,3 +13,7 @@ type PermissionRole struct {
 	Role         Role       `json:"role" gorm:"foreignKey:RoleId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt    time.Time  `json:"created_at"`
 }
+
+func (PermissionRole) TableName() string {
+	return "permission_role"
+}

@@ -16,3 +16,7 @@ type UserSetting struct {
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	UpdatedAt null.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
+
+func (UserSetting) TableName() string {
+	return "user_setting"
+}
