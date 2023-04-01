@@ -18,3 +18,7 @@ type CourseUserRole struct {
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	UpdatedAt null.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
+
+func (CourseUserRole) TableName() string {
+	return "course_user_role"
+}
