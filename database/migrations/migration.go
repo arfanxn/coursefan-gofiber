@@ -22,6 +22,7 @@ var tables []any = []any{
 	&models.CourseUserRole{},
 	&models.Lecture{},
 	&models.Part{},
+	&models.Message{},
 }
 
 func MigrateUp() error {
