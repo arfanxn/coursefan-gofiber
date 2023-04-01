@@ -9,8 +9,8 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
-// User returns fake data of models.User
-func User() models.User {
+// FakeUser returns fake data of models.User
+func FakeUser() models.User {
 	hashedPassword := "$2a$10$1sGm.uAbtb6h9HkZv1/5S.IFesDq7GOJx0gjXAhGltA3hFssCs/kO" // unhashedPassword = 111222
 	return models.User{
 		Name:      faker.Name(),

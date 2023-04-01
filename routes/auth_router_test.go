@@ -59,7 +59,7 @@ func TestAuthRouter(t *testing.T) {
 	t.Run("Login", func(t *testing.T) {
 		password := "111222"
 		hashedPassword := "$2a$10$1sGm.uAbtb6h9HkZv1/5S.IFesDq7GOJx0gjXAhGltA3hFssCs/kO"
-		user := factories.User()
+		user := factories.FakeUser()
 		user.Password = hashedPassword
 		affected, err := userRepository.Insert(c, &user)
 		require.Nil(err)
