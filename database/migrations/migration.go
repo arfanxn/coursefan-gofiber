@@ -7,6 +7,7 @@ import (
 
 var tables []any = []any{
 	&models.Media{},
+	&models.Review{},
 	&models.Token{},
 	&models.User{},
 	&models.UserSetting{},
