@@ -10,8 +10,8 @@ import (
 
 type Discussion struct {
 	Id                  uuid.UUID     `json:"id" gorm:"primaryKey;type:char(36)"`
-	DiscussableType     string        `json:"model_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
-	DiscussableId       uuid.UUID     `json:"model_id" gorm:"type:VARCHAR(36) NOT NULL"`
+	DiscussableType     string        `json:"discussable_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
+	DiscussableId       uuid.UUID     `json:"discussable_id" gorm:"type:VARCHAR(36) NOT NULL"`
 	DiscusserId         uuid.UUID     `json:"discusser_id" gorm:"type:CHAR(36);NOT NULL"`
 	Discusser           User          `json:"discusser" gorm:"foreignKey:DiscusserId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	DiscussionRepliedId uuid.NullUUID `json:"discussion_replied_id" gorm:"type:CHAR(36);comment:this column used for store the parent discussion id (replied discussion id), this can be null, if null it means the discussion is the parent (main discussion)"`
