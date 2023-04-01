@@ -2,7 +2,6 @@ package enums
 
 // models.Role.Name enums
 const (
-	// Course module
 	RoleNameCourseLecturer    string = "course_lecturer"
 	RoleNameCourseParticipant string = "course_participant"
 )
