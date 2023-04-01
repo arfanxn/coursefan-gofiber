@@ -8,6 +8,7 @@ import (
 )
 
 type CourseUserRole struct {
+	Id        uuid.UUID `json:"id" gorm:"primaryKey;type:CHAR(36);NOT NULL"`
 	CourseId  uuid.UUID `json:"permission_id" gorm:"type:CHAR(36);NOT NULL"`
 	Course    Course    `json:"permission" gorm:"foreignKey:CourseId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	UserId    uuid.UUID `json:"user_id" gorm:"type:CHAR(36);NOT NULL"`
