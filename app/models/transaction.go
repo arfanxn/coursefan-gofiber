@@ -11,10 +11,6 @@ type Transaction struct {
 	Id                  uuid.UUID `json:"id" gorm:"primaryKey;type:char(36)"`
 	TransactionableType string    `json:"transactionable_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
 	TransactionableId   uuid.UUID `json:"transactionable_id" gorm:"type:CHAR(36) NOT NULL"`
-	TransactorId        uuid.UUID `json:"transactor_id" gorm:"type:CHAR(36);NOT NULL"`
-	Transactor          User      `json:"transactor" gorm:"foreignKey:TransactorId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	TransactedId        uuid.UUID `json:"transacted_id" gorm:"type:CHAR(36);NOT NULL"`
-	Transacted          User      `json:"transacted" gorm:"foreignKey:TransactedId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Amount              int64     `json:"amount"  gorm:"type:BIGINT UNSIGNED NOT NULL"`
 	Rate                int64     `json:"rate"  gorm:"type:BIGINT UNSIGNED NOT NULL"`
 	Discount            int64     `json:"discount"  gorm:"type:BIGINT UNSIGNED NOT NULL"`
