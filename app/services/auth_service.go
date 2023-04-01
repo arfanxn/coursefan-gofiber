@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"os"
@@ -166,8 +165,8 @@ func (service *AuthService) ForgotPassword(c *fiber.Ctx, input requests.AuthForg
 		tokenMdl.TokenableType = reflecth.GetTypeName(userMdl)
 		tokenMdl.TokenableId = userMdl.Id
 		tokenMdl.Type = enums.TokenTypeResetPassword
-		tokenMdl.UsedAt = sql.NullTime{Time: time.Time{}, Valid: false}
-		tokenMdl.ExpiredAt = sql.NullTime{Time: time.Now().Add(time.Hour / 2), Valid: true} // give 30 mins expiration
+		tokenMdl.UsedAt = null.NewTime(time.Time{}, false)
+		tokenMdl.ExpiredAt = null.NewTime(time.Now().Add(time.Hour/2), true) // give 30 mins expiration
 		tokenMdl.BodyGenerate(models.TokenBodyNumeric, 6)
 		affected, err := service.tokenRepository.Save(c, &tokenMdl)
 		logrus.Info(fmt.Sprintf("Affected %v", affected))
@@ -226,7 +225,7 @@ func (service *AuthService) ResetPassword(c *fiber.Ctx, input requests.AuthReset
 			return
 		}
 		syncronizer.M().Lock()
-		tokenMdl.UsedAt = sql.NullTime{Time: time.Now(), Valid: true}
+		tokenMdl.UsedAt = null.NewTime(time.Now(), true)
 		_, err := service.tokenRepository.UpdateById(c, &tokenMdl)
 		syncronizer.M().Unlock()
 		if err != nil {

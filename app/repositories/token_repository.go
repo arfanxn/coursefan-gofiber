@@ -1,12 +1,12 @@
 package repositories
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"gopkg.in/guregu/null.v4"
 	"gorm.io/gorm"
 )
 
@@ -56,7 +56,7 @@ func (repository *TokenRepository) Save(c *fiber.Ctx, token *models.Token) (int6
 	}
 	// if model is already created then update the model updated_at
 	if token.CreatedAt != (time.Time{}) {
-		token.UpdatedAt = sql.NullTime{Time: time.Now(), Valid: true}
+		token.UpdatedAt = null.NewTime(time.Now(), true)
 	} else { // otherwise
 		token.CreatedAt = time.Now()
 	}

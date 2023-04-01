@@ -1,11 +1,11 @@
 package models
 
 import (
-	"database/sql"
 	"math/rand"
 	"time"
 
 	"github.com/google/uuid"
+	"gopkg.in/guregu/null.v4"
 )
 
 var (
@@ -14,15 +14,15 @@ var (
 )
 
 type Token struct {
-	Id            uuid.UUID    `json:"id" gorm:"primaryKey;type:char(36)"`
-	TokenableType string       `json:"tokenable_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
-	TokenableId   uuid.UUID    `json:"tokenable_id" gorm:"uniqueIndex;type:VARCHAR(36) NOT NULL"`
-	Type          string       `json:"type" gorm:"index;type:VARCHAR(25) NOT NULL"`
-	Body          string       `json:"body" gorm:"type:VARCHAR(256) NOT NULL"` // the token content/body/string
-	UsedAt        sql.NullTime `json:"used_at"`
-	ExpiredAt     sql.NullTime `json:"expired_at" gorm:"NOT NULL"`
-	CreatedAt     time.Time    `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
-	UpdatedAt     sql.NullTime `json:"updated_at" gorm:"autoUpdateTime"`
+	Id            uuid.UUID `json:"id" gorm:"primaryKey;type:char(36)"`
+	TokenableType string    `json:"tokenable_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
+	TokenableId   uuid.UUID `json:"tokenable_id" gorm:"uniqueIndex;type:VARCHAR(36) NOT NULL"`
+	Type          string    `json:"type" gorm:"index;type:VARCHAR(25) NOT NULL"`
+	Body          string    `json:"body" gorm:"type:VARCHAR(256) NOT NULL"` // the token content/body/string
+	UsedAt        null.Time `json:"used_at"`
+	ExpiredAt     null.Time `json:"expired_at" gorm:"NOT NULL"`
+	CreatedAt     time.Time `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
+	UpdatedAt     null.Time `json:"updated_at" gorm:"autoUpdateTime"`
 
 	// Relations
 

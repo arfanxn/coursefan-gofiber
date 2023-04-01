@@ -1,7 +1,6 @@
 package models
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,5 +19,5 @@ type Discussion struct {
 	Body                null.String   `json:"body" gorm:"type:TEXT"`
 	Upvote              int           `json:"upvote"  gorm:"index;type:INTEGER UNSIGNED NOT NULL;default:0"`
 	CreatedAt           time.Time     `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
-	UpdatedAt           sql.NullTime  `json:"updated_at" gorm:"autoUpdateTime"`
+	UpdatedAt           null.Time     `json:"updated_at" gorm:"autoUpdateTime"`
 }

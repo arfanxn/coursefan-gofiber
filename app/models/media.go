@@ -1,7 +1,6 @@
 package models
 
 import (
-	"database/sql"
 	"fmt"
 	"mime/multipart"
 	"os"
@@ -13,6 +12,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/config"
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/google/uuid"
+	"gopkg.in/guregu/null.v4"
 )
 
 type Media struct {
@@ -23,9 +23,9 @@ type Media struct {
 	// ModelId must be specified
 	ModelId uuid.UUID `json:"model_id" gorm:"type:VARCHAR(36) NOT NULL"`
 	// CollectionName will be autofilled with default CollectionName if not specified
-	CollectionName sql.NullString `json:"collection_name"  gorm:"index;type:VARCHAR(50)"`
+	CollectionName null.String `json:"collection_name"  gorm:"index;type:VARCHAR(50)"`
 	// Name can be null if not specified
-	Name sql.NullString `json:"name" gorm:"type:VARCHAR(100)"`
+	Name null.String `json:"name" gorm:"type:VARCHAR(100)"`
 	// FileName will be autofilled by random alphanumeric characters if not specified
 	FileName string `json:"file_name" gorm:"type:VARCHAR(256)  NOT NULL"`
 	// MimeType will be autofilled by guessing the file bytes if not specified
@@ -33,13 +33,13 @@ type Media struct {
 	// Disk will be autofilled with default disk if not specified
 	Disk string `json:"disk" gorm:"type:VARCHAR(25) NOT NULL"`
 	// ConversionDisk can be null if not set
-	ConversionDisk sql.NullString `json:"conversion_disk" gorm:"type:VARCHAR(25)"`
+	ConversionDisk null.String `json:"conversion_disk" gorm:"type:VARCHAR(25)"`
 	// if not set will be autofilled with by guessing the file bytes size
 	Size int64 `json:"size" gorm:"type:INTEGER UNSIGNED NOT NULL"`
 	// CreatedAt will be autofilled on creation
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	// UpdatedAt will be autofilled after updation
-	UpdatedAt sql.NullTime `json:"updated_at" gorm:"autoUpdateTime"`
+	UpdatedAt null.Time `json:"updated_at" gorm:"autoUpdateTime"`
 
 	// File Metadata, not in table columns
 	FileHeader *multipart.FileHeader `json:"-" gorm:"-"`
