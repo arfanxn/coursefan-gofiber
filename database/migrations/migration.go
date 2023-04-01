@@ -18,6 +18,8 @@ var tables []any = []any{
 	&models.Permission{},
 	&models.Role{},
 	&models.PermissionRole{},
+	&models.Course{},
+	&models.CourseUserRole{},
 }
 
 func MigrateUp() error {
