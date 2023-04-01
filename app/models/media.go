@@ -21,7 +21,7 @@ type Media struct {
 	// ModelType must be specified
 	ModelType string `json:"model_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
 	// ModelId must be specified
-	ModelId uuid.UUID `json:"model_id" gorm:"uniqueIndex;type:VARCHAR(36) NOT NULL"`
+	ModelId uuid.UUID `json:"model_id" gorm:"type:VARCHAR(36) NOT NULL"`
 	// CollectionName will be autofilled with default CollectionName if not specified
 	CollectionName sql.NullString `json:"collection_name"  gorm:"index;type:VARCHAR(50)"`
 	// Name can be null if not specified
