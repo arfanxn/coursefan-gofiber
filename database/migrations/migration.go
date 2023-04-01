@@ -10,7 +10,6 @@ var tables []any = []any{
 	&models.Notification{},
 	&models.Transaction{},
 	&models.Wallet{},
-	&models.TransactionWallet{},
 	&models.Media{},
 	&models.Review{},
 	&models.Token{},

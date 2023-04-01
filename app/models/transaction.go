@@ -11,6 +11,10 @@ type Transaction struct {
 	Id                  uuid.UUID `json:"id" gorm:"primaryKey;type:char(36)"`
 	TransactionableType string    `json:"transactionable_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
 	TransactionableId   uuid.UUID `json:"transactionable_id" gorm:"type:CHAR(36) NOT NULL"`
+	SenderId            uuid.UUID `json:"sender_id" gorm:"type:CHAR(36);NOT NULL"`
+	Sender              Wallet    `json:"sender" gorm:"foreignKey:SenderId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	ReceiverId          uuid.UUID `json:"receiver_id" gorm:"type:CHAR(36);NOT NULL"`
+	Receiver            Wallet    `json:"receiver" gorm:"foreignKey:ReceiverId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Amount              int64     `json:"amount"  gorm:"type:BIGINT UNSIGNED NOT NULL"`
 	Rate                int64     `json:"rate"  gorm:"type:BIGINT UNSIGNED NOT NULL"`
 	Discount            int64     `json:"discount"  gorm:"type:BIGINT UNSIGNED NOT NULL"`
