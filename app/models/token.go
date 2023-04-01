@@ -16,7 +16,7 @@ var (
 type Token struct {
 	Id            uuid.UUID `json:"id" gorm:"primaryKey;type:char(36)"`
 	TokenableType string    `json:"tokenable_type" gorm:"index;type:VARCHAR(25) NOT NULL"`
-	TokenableId   uuid.UUID `json:"tokenable_id" gorm:"uniqueIndex;type:VARCHAR(36) NOT NULL"`
+	TokenableId   uuid.UUID `json:"tokenable_id" gorm:"type:VARCHAR(36) NOT NULL"`
 	Type          string    `json:"type" gorm:"index;type:VARCHAR(25) NOT NULL"`
 	Body          string    `json:"body" gorm:"type:VARCHAR(256) NOT NULL"` // the token content/body/string
 	UsedAt        null.Time `json:"used_at"`
