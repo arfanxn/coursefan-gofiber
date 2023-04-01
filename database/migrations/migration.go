@@ -6,10 +6,13 @@ import (
 )
 
 var tables []any = []any{
-	&models.User{},
-	&models.UserSetting{},
 	&models.Media{},
 	&models.Token{},
+	&models.User{},
+	&models.UserSetting{},
+	&models.Permission{},
+	&models.Role{},
+	&models.PermissionRole{},
 }
 
 func MigrateUp() error {
@@ -18,7 +21,7 @@ func MigrateUp() error {
 		return err
 	}
 
-	err = db.AutoMigrate(tables...)
+	err = db.Migrator().AutoMigrate(tables...)
 	if err != nil {
 		return err
 	}
