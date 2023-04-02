@@ -20,19 +20,19 @@ func NewCourseRepository(db *gorm.DB) *CourseRepository {
 }
 
 // All returns all courses in the database
-func (repository *CourseRepository) All(c *fiber.Ctx) (courses []models.Transaction, err error) {
+func (repository *CourseRepository) All(c *fiber.Ctx) (courses []models.Course, err error) {
 	err = repository.db.Find(&courses).Error
 	return
 }
 
 // Find finds model by id
-func (repository *CourseRepository) Find(c *fiber.Ctx, id string) (course models.Transaction, err error) {
+func (repository *CourseRepository) Find(c *fiber.Ctx, id string) (course models.Course, err error) {
 	err = repository.db.Where("id = ?", id).First(&course).Error
 	return
 }
 
 // Insert inserts models into the database
-func (repository *CourseRepository) Insert(c *fiber.Ctx, courses ...*models.Transaction) (int64, error) {
+func (repository *CourseRepository) Insert(c *fiber.Ctx, courses ...*models.Course) (int64, error) {
 	for _, course := range courses {
 		if course.Id == uuid.Nil {
 			course.Id = uuid.New()
@@ -44,7 +44,7 @@ func (repository *CourseRepository) Insert(c *fiber.Ctx, courses ...*models.Tran
 }
 
 // UpdateById updates model in the database by given id
-func (repository *CourseRepository) UpdateById(c *fiber.Ctx, course *models.Transaction) (int64, error) {
+func (repository *CourseRepository) UpdateById(c *fiber.Ctx, course *models.Course) (int64, error) {
 	// refresh model updated at
 	course.UpdatedAt = null.NewTime(time.Now(), true)
 	// update
@@ -53,7 +53,7 @@ func (repository *CourseRepository) UpdateById(c *fiber.Ctx, course *models.Tran
 }
 
 // DeleteByIds deletes the entities associated with the given ids
-func (repository *CourseRepository) DeleteByIds(c *fiber.Ctx, courses ...*models.Transaction) (int64, error) {
+func (repository *CourseRepository) DeleteByIds(c *fiber.Ctx, courses ...*models.Course) (int64, error) {
 	result := repository.db.Delete(courses)
 	return result.RowsAffected, result.Error
 }
