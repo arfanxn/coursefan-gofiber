@@ -143,3 +143,19 @@ func (media *Media) SetFileHeader(fh *multipart.FileHeader) {
 	media.Size = fh.Size
 	media.MimeType = media.GetMimeType()
 }
+
+// SetFromFile sets media file related fields from the given file
+func (media *Media) SetFromFile(file *os.File) (err error) {
+	fileStat, err := file.Stat()
+	if err != nil {
+		return
+	}
+	mime, err := mimetype.DetectReader(file)
+	if err != nil {
+		return
+	}
+	media.FileName = path.Base(file.Name())
+	media.Size = fileStat.Size()
+	media.MimeType = mime.String()
+	return nil
+}
