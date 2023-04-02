@@ -10,6 +10,16 @@ func Chunk[T any](items []T, size int) (chunks [][]T) {
 	return append(chunks, items)
 }
 
+// Shuffle shuffles an array or slice and returns the shuffled slice or array
+func Shuffle[T any](src []T) []T {
+	dest := make([]T, len(src))
+	perm := rand.Perm(len(src))
+	for i, v := range perm {
+		dest[v] = src[i]
+	}
+	return dest
+}
+
 // Filter returns only items that satisfy the given predicate (return the true predicate condition only)
 func Filter[T any](items []T, callback func(T) bool) []T {
 	matchItems := []T{}
