@@ -51,3 +51,9 @@ func (repository *UserSettingRepository) UpdateById(c *fiber.Ctx, userSetting *m
 	result := repository.db.Model(userSetting).Updates(userSetting)
 	return result.RowsAffected, result.Error
 }
+
+// DeleteByIds deletes the entities associated with the given ids
+func (repository *UserSettingRepository) DeleteByIds(c *fiber.Ctx, userSettings ...*models.UserSetting) (int64, error) {
+	result := repository.db.Delete(userSettings)
+	return result.RowsAffected, result.Error
+}

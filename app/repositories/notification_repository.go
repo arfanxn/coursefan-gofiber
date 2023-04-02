@@ -51,3 +51,9 @@ func (repository *NotificationRepository) UpdateById(c *fiber.Ctx, notification 
 	result := repository.db.Model(notification).Updates(notification)
 	return result.RowsAffected, result.Error
 }
+
+// DeleteByIds deletes the entities associated with the given ids
+func (repository *NotificationRepository) DeleteByIds(c *fiber.Ctx, notifications ...*models.Notification) (int64, error) {
+	result := repository.db.Delete(notifications)
+	return result.RowsAffected, result.Error
+}
