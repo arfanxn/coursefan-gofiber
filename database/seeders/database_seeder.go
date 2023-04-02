@@ -49,6 +49,8 @@ func (dbs *DatabaseSeeder) DefaultSeeders() []SeederContract {
 		notificationRepository = repositories.NewNotificationRepository(dbs.db)
 		messageRepository      = repositories.NewMessageRepository(dbs.db)
 		walletRepository       = repositories.NewWalletRepository(dbs.db)
+		transactionRepository  = repositories.NewTransactionRepository(dbs.db)
+		courseRepository       = repositories.NewCourseRepository(dbs.db)
 	)
 
 	// return seeders
@@ -60,5 +62,6 @@ func (dbs *DatabaseSeeder) DefaultSeeders() []SeederContract {
 		NewNotificationSeeder(notificationRepository, userRepositoy),
 		NewMessageSeeder(messageRepository, userRepositoy),
 		NewWalletSeeder(walletRepository, userRepositoy),
+		NewTransactionSeeder(transactionRepository, courseRepository, walletRepository),
 	}
 }
