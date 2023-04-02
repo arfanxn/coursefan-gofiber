@@ -42,26 +42,36 @@ func (dbs *DatabaseSeeder) Run(c *fiber.Ctx) (err error) {
 func (dbs *DatabaseSeeder) DefaultSeeders() []SeederContract {
 	// Prepare seeder repositories dependencies
 	var (
-		userRepositoy          = repositories.NewUserRepository(dbs.db)
-		userProfileRepository  = repositories.NewUserProfileRepository(dbs.db)
-		userSettingRepository  = repositories.NewUserSettingRepository(dbs.db)
-		tokenRepository        = repositories.NewTokenRepository(dbs.db)
-		notificationRepository = repositories.NewNotificationRepository(dbs.db)
-		messageRepository      = repositories.NewMessageRepository(dbs.db)
-		walletRepository       = repositories.NewWalletRepository(dbs.db)
-		transactionRepository  = repositories.NewTransactionRepository(dbs.db)
-		courseRepository       = repositories.NewCourseRepository(dbs.db)
+		db                       = dbs.db
+		permissionRepository     = repositories.NewPermissionRepository(db)
+		roleRepository           = repositories.NewRoleRepository(db)
+		permissionRoleRepository = repositories.NewPermissionRoleRepository(db)
+		userRepository           = repositories.NewUserRepository(db)
+		userProfileRepository    = repositories.NewUserProfileRepository(db)
+		userSettingRepository    = repositories.NewUserSettingRepository(db)
+		tokenRepository          = repositories.NewTokenRepository(db)
+		notificationRepository   = repositories.NewNotificationRepository(db)
+		messageRepository        = repositories.NewMessageRepository(db)
+		walletRepository         = repositories.NewWalletRepository(db)
+		transactionRepository    = repositories.NewTransactionRepository(db)
+		courseRepository         = repositories.NewCourseRepository(db)
+		cusRepository            = repositories.NewCourseUserRoleRepository(db)
 	)
 
 	// return seeders
 	return []SeederContract{
-		NewUserSeeder(userRepositoy),
-		NewUserProfileSeeder(userProfileRepository, userRepositoy),
-		NewUserSettingSeeder(userSettingRepository, userRepositoy),
-		NewTokenSeeder(tokenRepository, userRepositoy),
-		NewNotificationSeeder(notificationRepository, userRepositoy),
-		NewMessageSeeder(messageRepository, userRepositoy),
-		NewWalletSeeder(walletRepository, userRepositoy),
+		NewPermissionSeeder(permissionRepository),
+		NewRoleSeeder(roleRepository),
+		NewPermissionRoleSeeder(permissionRoleRepository, permissionRepository, roleRepository),
+		NewUserSeeder(userRepository),
+		NewUserProfileSeeder(userProfileRepository, userRepository),
+		NewUserSettingSeeder(userSettingRepository, userRepository),
+		NewTokenSeeder(tokenRepository, userRepository),
+		NewNotificationSeeder(notificationRepository, userRepository),
+		NewMessageSeeder(messageRepository, userRepository),
+		NewCourseSeeder(courseRepository, userRepository),
+		NewCourseUserRoleSeeder(cusRepository, courseRepository, userRepository, roleRepository),
+		NewWalletSeeder(walletRepository, userRepository),
 		NewTransactionSeeder(transactionRepository, courseRepository, walletRepository),
 	}
 }
