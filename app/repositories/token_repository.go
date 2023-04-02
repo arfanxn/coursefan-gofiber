@@ -19,6 +19,12 @@ func NewTokenRepository(db *gorm.DB) *TokenRepository {
 	return &TokenRepository{db: db}
 }
 
+// All returns all tokens in the database
+func (repository *TokenRepository) All(c *fiber.Ctx) (tokens []models.Token, err error) {
+	err = repository.db.Find(&tokens).Error
+	return
+}
+
 // Find finds a token by id
 func (repository *TokenRepository) Find(c *fiber.Ctx, id string) (token models.Token, err error) {
 	err = repository.db.Where("id = ?", id).First(&token).Error
