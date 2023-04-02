@@ -24,7 +24,7 @@ func NewDatabaseSeeder(db *gorm.DB, seeders ...SeederContract) *DatabaseSeeder {
 func (dbs *DatabaseSeeder) Run(c *fiber.Ctx) (err error) {
 	// If no seeders provided, get default seeders and assign default seeders to dbs.seeders
 	if len(dbs.seeders) == 0 {
-		dbs.seeders = dbs.GetDefaultSeeders()
+		dbs.seeders = dbs.DefaultSeeders()
 	}
 
 	// Loop each dbs.seeder and run go routine function
@@ -38,8 +38,8 @@ func (dbs *DatabaseSeeder) Run(c *fiber.Ctx) (err error) {
 	return
 }
 
-// GetDefaultSeeders returns the default seeders
-func (dbs *DatabaseSeeder) GetDefaultSeeders() []SeederContract {
+// DefaultSeeders returns the default seeders
+func (dbs *DatabaseSeeder) DefaultSeeders() []SeederContract {
 	// Prepare seeder repositories dependencies
 	var (
 		userRepositoy          = repositories.NewUserRepository(dbs.db)
@@ -47,6 +47,7 @@ func (dbs *DatabaseSeeder) GetDefaultSeeders() []SeederContract {
 		userSettingRepository  = repositories.NewUserSettingRepository(dbs.db)
 		tokenRepository        = repositories.NewTokenRepository(dbs.db)
 		notificationRepository = repositories.NewNotificationRepository(dbs.db)
+		messageRepository = repositories.NewMessageRepository(dbs.db)
 	)
 
 	// return seeders
@@ -56,5 +57,6 @@ func (dbs *DatabaseSeeder) GetDefaultSeeders() []SeederContract {
 		NewUserSettingSeeder(userSettingRepository, userRepositoy),
 		NewTokenSeeder(tokenRepository, userRepositoy),
 		NewNotificationSeeder(notificationRepository, userRepositoy),
+		NewMessageSeeder(messageRepository, userRepositoy),
 	}
 }
