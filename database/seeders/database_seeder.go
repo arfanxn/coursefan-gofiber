@@ -44,11 +44,13 @@ func (dbs *DatabaseSeeder) GetDefaultSeeders() []SeederContract {
 	var (
 		userRepositoy         = repositories.NewUserRepository(dbs.db)
 		userSettingRepository = repositories.NewUserSettingRepository(dbs.db)
+		tokenRepository       = repositories.NewTokenRepository(dbs.db)
 	)
 
 	// return seeders
 	return []SeederContract{
 		NewUserSeeder(userRepositoy),
 		NewUserSettingSeeder(userSettingRepository, userRepositoy),
+		NewTokenSeeder(tokenRepository, userRepositoy),
 	}
 }
