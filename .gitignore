@@ -26,10 +26,11 @@ vendor/
 !env.example
 
 # Ignore Public inner directory 
-public/medias/
+./public/medias/
+./public/placeholders/
 
 # Ignore Storage directory 
-storage/
+./storage/
 
 # Ignore Log Files
 logs/
