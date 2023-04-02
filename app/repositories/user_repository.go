@@ -6,6 +6,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"gopkg.in/guregu/null.v4"
 	"gorm.io/gorm"
 )
 
@@ -38,6 +39,9 @@ func (repository *UserRepository) Insert(c *fiber.Ctx, users ...*models.User) (i
 
 // UpdateById updates model in the database by given id
 func (repository *UserRepository) UpdateById(c *fiber.Ctx, user *models.User) (int64, error) {
+	// refresh model updated at
+	user.UpdatedAt = null.NewTime(time.Now(), true)
+	// update
 	result := repository.db.Model(user).Updates(user)
 	return result.RowsAffected, result.Error
 }
