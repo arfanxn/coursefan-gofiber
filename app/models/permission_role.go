@@ -8,6 +8,7 @@ import (
 )
 
 type PermissionRole struct {
+	Id           uuid.UUID  `json:"id" gorm:"primaryKey;type:CHAR(36)"`
 	PermissionId uuid.UUID  `json:"permission_id" gorm:"type:CHAR(36);NOT NULL"`
 	Permission   Permission `json:"permission" gorm:"foreignKey:PermissionId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	RoleId       uuid.UUID  `json:"role_id" gorm:"type:CHAR(36);NOT NULL"`
