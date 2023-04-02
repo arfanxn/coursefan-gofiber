@@ -33,7 +33,6 @@ func NewPermissionRoleSeeder(
 func (seeder *PermissionRoleSeeder) Run(c *fiber.Ctx) (err error) {
 	// TODO: fix duplicates entry on permission_role.id
 	// Skip this seeder because there an error
-	return nil
 
 	// Get all permissions
 	permissions, err := seeder.permissionRepository.All(c)
@@ -69,9 +68,6 @@ func (seeder *PermissionRoleSeeder) Run(c *fiber.Ctx) (err error) {
 		go func(role models.Role) {
 			defer syncronizer.WG().Done()
 			var permissionRole_permissions []models.Permission
-			var permissionRole models.PermissionRole
-			permissionRole.Id = uuid.New()
-			permissionRole.RoleId = role.Id
 			switch role.Name {
 			case enums.RoleNameCourseLecturer:
 				permissionRole_permissions = courseLecturerPermissions
@@ -82,10 +78,13 @@ func (seeder *PermissionRoleSeeder) Run(c *fiber.Ctx) (err error) {
 			}
 			var prs []*models.PermissionRole
 			for _, permission := range permissionRole_permissions {
-				permissionRole.PermissionId = permission.Id
-				prs = append(permissionRoles, &permissionRole)
+				permissionRole := models.PermissionRole{
+					Id:           uuid.New(),
+					RoleId:       role.Id,
+					PermissionId: permission.Id,
+				}
+				prs = append(prs, &permissionRole)
 			}
-
 			syncronizer.M().Lock()
 			permissionRoles = append(permissionRoles, prs...)
 			syncronizer.M().Unlock()
