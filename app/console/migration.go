@@ -14,14 +14,20 @@ var (
 func migrateFlag() (err error) {
 	if *migrateDown == true {
 		err = migrations.MigrateDown()
-		fmt.Println("Successfully migrate down database")
 		exitAfterFinish = true
+		if err != nil {
+			return
+		}
+		fmt.Println("Successfully migrate down database")
 	}
 
 	if *migrateUp == true {
 		err = migrations.MigrateUp()
-		fmt.Println("Successfully migrate up database")
 		exitAfterFinish = true
+		if err != nil {
+			return
+		}
+		fmt.Println("Successfully migrate up database")
 	}
 
 	return
