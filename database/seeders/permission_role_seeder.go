@@ -7,6 +7,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/arfanxn/coursefan-gofiber/app/repositories"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type PermissionRoleSeeder struct {
@@ -30,6 +31,10 @@ func NewPermissionRoleSeeder(
 
 // Run runs the seeder
 func (seeder *PermissionRoleSeeder) Run(c *fiber.Ctx) (err error) {
+	// TODO: fix duplicates entry on permission_role.id
+	// Skip this seeder because there an error
+	return nil
+
 	// Get all permissions
 	permissions, err := seeder.permissionRepository.All(c)
 	if err != nil {
@@ -65,6 +70,7 @@ func (seeder *PermissionRoleSeeder) Run(c *fiber.Ctx) (err error) {
 			defer syncronizer.WG().Done()
 			var permissionRole_permissions []models.Permission
 			var permissionRole models.PermissionRole
+			permissionRole.Id = uuid.New()
 			permissionRole.RoleId = role.Id
 			switch role.Name {
 			case enums.RoleNameCourseLecturer:
@@ -74,12 +80,15 @@ func (seeder *PermissionRoleSeeder) Run(c *fiber.Ctx) (err error) {
 				permissionRole_permissions = courseParticipantPermissions
 				break
 			}
+			var prs []*models.PermissionRole
 			for _, permission := range permissionRole_permissions {
 				permissionRole.PermissionId = permission.Id
-				syncronizer.M().Lock()
-				permissionRoles = append(permissionRoles, &permissionRole)
-				syncronizer.M().Unlock()
+				prs = append(permissionRoles, &permissionRole)
 			}
+
+			syncronizer.M().Lock()
+			permissionRoles = append(permissionRoles, prs...)
+			syncronizer.M().Unlock()
 		}(role)
 	}
 	syncronizer.WG().Wait()
