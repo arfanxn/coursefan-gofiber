@@ -66,9 +66,12 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 
 			shuffledUsers := sliceh.Shuffle(users)
 			courseLecturerUser := shuffledUsers[0]
-			courseParticipantUsers := shuffledUsers[1:totalEachRelationKind]
-			courseWishlisterUsers := shuffledUsers[(len(courseParticipantUsers) + 1):totalEachRelationKind]
-			courseCarterUsers := shuffledUsers[(len(courseParticipantUsers) + len(courseWishlisterUsers) + 1):totalEachRelationKind]
+			courseParticipantUsersStartIdx := 1
+			courseParticipantUsers := shuffledUsers[courseParticipantUsersStartIdx:(courseParticipantUsersStartIdx + totalEachRelationKind)]
+			courseWishlisterUsersStartIdx := (len(courseParticipantUsers) + 1)
+			courseWishlisterUsers := shuffledUsers[courseWishlisterUsersStartIdx:(courseWishlisterUsersStartIdx + totalEachRelationKind)]
+			courseCarterUsersStartIdx := (len(courseParticipantUsers) + len(courseWishlisterUsers) + 1)
+			courseCarterUsers := shuffledUsers[courseCarterUsersStartIdx:(courseCarterUsersStartIdx + totalEachRelationKind)]
 
 			cus := factories.FakeCourseUserRole()
 			cus.CourseId = course.Id
@@ -109,7 +112,9 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 	if err = syncronizer.Err(); err != nil {
 		return
 	}
-	_, err = seeder.repository.Insert(c, courseUserRoleModels...)
+	for _, chunk := range sliceh.Chunk(courseUserRoleModels, 1000) {
+		_, err = seeder.repository.Insert(c, chunk...)
+	}
 
 	return
 }
