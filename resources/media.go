@@ -25,6 +25,11 @@ type Media struct {
 
 // NewMediaFromModel instantiates resources.Media with values from the given models.Media
 func NewMediaFromModel(mediaMdl models.Media) *Media {
+	mediaMimeType, err := mediaMdl.GetMimeType()
+	if err != nil {
+		panic(err)
+	}
+
 	mediaRes := new(Media)
 	mediaRes.Id = mediaMdl.Id.String()
 	mediaRes.ModelType = mediaMdl.ModelType
@@ -33,7 +38,7 @@ func NewMediaFromModel(mediaMdl models.Media) *Media {
 	mediaRes.Name = null.NewString(mediaMdl.Name.String, mediaMdl.Name.Valid)
 	mediaRes.FileName = mediaMdl.GetFileName()
 	mediaRes.FileUrl = mediaMdl.GetFileUrl()
-	mediaRes.MimeType = mediaMdl.GetMimeType()
+	mediaRes.MimeType = mediaMimeType
 	mediaRes.Disk = mediaMdl.GetDisk()
 	mediaRes.ConversionDisk = null.NewString(mediaMdl.ConversionDisk.String, mediaMdl.ConversionDisk.Valid)
 	mediaRes.Size = mediaMdl.Size
