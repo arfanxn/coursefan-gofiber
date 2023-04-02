@@ -36,7 +36,7 @@ func (repository *UserRepository) Insert(c *fiber.Ctx, users ...*models.User) (i
 	return result.RowsAffected, result.Error
 }
 
-// UpdateById
+// UpdateById updates model in the database by given id
 func (repository *UserRepository) UpdateById(c *fiber.Ctx, user *models.User) (int64, error) {
 	result := repository.db.Model(user).Updates(user)
 	return result.RowsAffected, result.Error
