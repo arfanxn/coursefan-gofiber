@@ -1,6 +1,8 @@
 package factories
 
 import (
+	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
@@ -11,7 +13,7 @@ import (
 )
 
 func FakeCourse() models.Course {
-	courseName := faker.Word() + " " + faker.Word()
+	courseName := faker.Word() + " " + faker.Word() + strconv.FormatInt(rand.Int63n(9999)+int64(1000), 10)
 	return models.Course{
 		// Id:, // will be filled in later
 		Name:        courseName,
