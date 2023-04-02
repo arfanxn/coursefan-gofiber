@@ -13,8 +13,8 @@ import (
 func FakeLecture() models.Lecture {
 	return models.Lecture{
 		// Id:, // will be filled in later
-		// CourseId:, // will be filled in later
-		// Course:, // will be filled in later
+		// LecturePartId:, // will be filled in later
+		// LecturePart:, // will be filled in later
 		Name:      faker.Word(),
 		Order:     rand.Intn(10),
 		CreatedAt: time.Now(),
