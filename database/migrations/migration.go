@@ -9,6 +9,7 @@ var tables []any = []any{
 	&models.Media{},
 	&models.Token{},
 	&models.User{},
+	&models.UserProfile{},
 	&models.UserSetting{},
 	&models.Notification{},
 	&models.Message{},
