@@ -43,29 +43,48 @@ func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media)
 				media.Id = uuid.New()
 			}
 
+			mediaMimeType, err := media.GetMimeType()
+			if err != nil {
+				syncronizer.Err(err)
+				return
+			}
+			mediaSize, err := media.GetSize()
+			if err != nil {
+				syncronizer.Err(err)
+				return
+			}
+
 			media.FileName = media.GetFileName()
 			media.Disk = media.GetDisk()
-			media.Size = media.GetSize()
-			media.MimeType = media.GetMimeType()
+			media.Size = mediaSize
+			media.MimeType = mediaMimeType
 
 			media.CreatedAt = time.Now()
 
-			file, err := media.FileHeader.Open()
-			if err != nil {
-				syncronizer.Err(err)
-				return
+			mediaFilePath := media.GetFilePath()
+			if media.FileHeader != nil {
+				file, err := media.FileHeader.Open()
+				if err != nil {
+					syncronizer.Err(err)
+					return
+				}
+				defer file.Close()
+				err = fileh.Save(mediaFilePath, file)
+				if err != nil {
+					syncronizer.Err(err)
+					return
+				}
+			} else if media.File != nil {
+				err = fileh.Save(mediaFilePath, media.File)
+				if err != nil {
+					syncronizer.Err(err)
+					return
+				}
 			}
-			defer file.Close()
 
-			filePath := media.GetFilePath()
-			err = fileh.Save(filePath, file)
-			if err != nil {
-				syncronizer.Err(err)
-				return
-			}
 			syncronizer.M().Lock()
 			defer syncronizer.M().Unlock()
-			savedFilePaths = append(savedFilePaths, filePath)
+			savedFilePaths = append(savedFilePaths, mediaFilePath)
 		}(media)
 	}
 	syncronizer.WG().Wait()
