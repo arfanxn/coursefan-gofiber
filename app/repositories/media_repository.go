@@ -20,6 +20,12 @@ func NewMediaRepository(db *gorm.DB) *MediaRepository {
 	return &MediaRepository{db: db}
 }
 
+// All returns all medias in the database
+func (repository *MediaRepository) All(c *fiber.Ctx) (medias []models.Media, err error) {
+	err = repository.db.Find(&medias).Error
+	return
+}
+
 // Insert inserts medias into the database
 func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media) (int64, error) {
 	var savedFilePaths []string
