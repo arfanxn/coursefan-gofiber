@@ -42,10 +42,11 @@ func (dbs *DatabaseSeeder) Run(c *fiber.Ctx) (err error) {
 func (dbs *DatabaseSeeder) GetDefaultSeeders() []SeederContract {
 	// Prepare seeder repositories dependencies
 	var (
-		userRepositoy         = repositories.NewUserRepository(dbs.db)
-		userProfileRepository = repositories.NewUserProfileRepository(dbs.db)
-		userSettingRepository = repositories.NewUserSettingRepository(dbs.db)
-		tokenRepository       = repositories.NewTokenRepository(dbs.db)
+		userRepositoy          = repositories.NewUserRepository(dbs.db)
+		userProfileRepository  = repositories.NewUserProfileRepository(dbs.db)
+		userSettingRepository  = repositories.NewUserSettingRepository(dbs.db)
+		tokenRepository        = repositories.NewTokenRepository(dbs.db)
+		notificationRepository = repositories.NewNotificationRepository(dbs.db)
 	)
 
 	// return seeders
@@ -54,5 +55,6 @@ func (dbs *DatabaseSeeder) GetDefaultSeeders() []SeederContract {
 		NewUserProfileSeeder(userProfileRepository, userRepositoy),
 		NewUserSettingSeeder(userSettingRepository, userRepositoy),
 		NewTokenSeeder(tokenRepository, userRepositoy),
+		NewNotificationSeeder(notificationRepository, userRepositoy),
 	}
 }
