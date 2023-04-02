@@ -11,18 +11,18 @@ import (
 )
 
 type LectureSeeder struct {
-	repository       *repositories.LectureRepository
-	courseRepository *repositories.CourseRepository
+	repository            *repositories.LectureRepository
+	lecturePartRepository *repositories.LecturePartRepository
 }
 
 // NewLectureSeeder instantiates a new LectureSeeder
 func NewLectureSeeder(
 	repository *repositories.LectureRepository,
-	courseRepository *repositories.CourseRepository,
+	lecturePartRepository *repositories.LecturePartRepository,
 ) *LectureSeeder {
 	return &LectureSeeder{
-		repository:       repository,
-		courseRepository: courseRepository,
+		repository:            repository,
+		lecturePartRepository: lecturePartRepository,
 	}
 }
 
@@ -30,26 +30,26 @@ func NewLectureSeeder(
 func (seeder *LectureSeeder) Run(c *fiber.Ctx) (err error) {
 	syncronizer := synch.NewSyncronizer()
 	defer syncronizer.Close()
-	// Get all courses
-	courses, err := seeder.courseRepository.All(c)
+	// Get all lecture parts
+	lectureParts, err := seeder.lecturePartRepository.All(c)
 	if err != nil {
 		return
 	}
 	// Seed
 	var lectures []*models.Lecture
-	for _, course := range courses {
+	for _, lecturePart := range lectureParts {
 		syncronizer.WG().Add(1)
-		go func(course models.Course) {
+		go func(lecturePart models.LecturePart) {
 			defer syncronizer.WG().Done()
-			for i := 0; i < rand.Intn(50); i++ {
+			for i := 0; i < rand.Intn(20); i++ {
 				lecture := factories.FakeLecture()
-				lecture.CourseId = course.Id
+				lecture.LecturePartId = lecturePart.Id
 				lecture.Order = (i + 1)
 				syncronizer.M().Lock()
 				lectures = append(lectures, &lecture)
 				syncronizer.M().Unlock()
 			}
-		}(course)
+		}(lecturePart)
 	}
 	syncronizer.WG().Wait()
 	_, err = seeder.repository.Insert(c, lectures...)

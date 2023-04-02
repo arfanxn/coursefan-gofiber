@@ -21,7 +21,7 @@ var tables []any = []any{
 	&models.Course{},
 	&models.CourseUserRole{},
 	&models.Review{},
-	&models.Part{},
+	&models.LecturePart{},
 	&models.Lecture{},
 	&models.Discussion{},
 	&models.Progress{},
