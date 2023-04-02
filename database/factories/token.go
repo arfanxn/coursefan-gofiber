@@ -15,7 +15,7 @@ func FakeToken() models.Token {
 		// TokenableType:, // will be filled in later
 		// TokenableId:, // will be filled in later
 		Type: enums.TokenTypeResetPassword,
-		Body: "11122",
+		Body: "111222",
 		UsedAt: sliceh.Random(
 			null.NewTime(time.Now().Add(-(time.Hour/2)), true),
 			null.NewTime(time.Time{}, false),
