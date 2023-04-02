@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
-)``
+)
 
 type Notification struct {
 	Id         uuid.UUID     `json:"id" gorm:"primaryKey;type:char(36)"`
