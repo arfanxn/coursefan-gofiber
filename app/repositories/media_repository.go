@@ -71,3 +71,29 @@ func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media)
 	result := repository.db.Create(medias)
 	return result.RowsAffected, result.Error
 }
+
+// DeleteByIds deletes the entities associated with the given ids
+func (repository *MediaRepository) DeleteByIds(c *fiber.Ctx, medias ...*models.Media) (int64, error) {
+	syncronizer := synch.NewSyncronizer()
+	defer syncronizer.Close()
+
+	for _, media := range medias {
+		syncronizer.WG().Add(1)
+		go func(media *models.Media) {
+			defer syncronizer.WG().Done()
+			if syncronizer.Err() != nil {
+				return
+			}
+			syncronizer.Err(
+				fileh.BatchRemove(media.GetFilePath()),
+			)
+		}(media)
+	}
+	syncronizer.WG().Wait()
+	if err := syncronizer.Err(); err != nil {
+		return 0, err
+	}
+
+	result := repository.db.Delete(medias)
+	return result.RowsAffected, result.Error
+}
