@@ -5,6 +5,7 @@ import (
 
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
 	"gorm.io/gorm"
 )
@@ -33,6 +34,9 @@ func (repository *PermissionRoleRepository) Find(c *fiber.Ctx, id string) (permi
 // Insert inserts models into the database
 func (repository *PermissionRoleRepository) Insert(c *fiber.Ctx, permissionRoles ...*models.PermissionRole) (int64, error) {
 	for _, permissionRole := range permissionRoles {
+		if permissionRole.Id == uuid.Nil {
+			permissionRole.Id = uuid.New()
+		}
 		permissionRole.CreatedAt = time.Now()
 	}
 	result := repository.db.Create(permissionRoles)
