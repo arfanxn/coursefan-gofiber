@@ -43,6 +43,7 @@ func (dbs *DatabaseSeeder) GetDefaultSeeders() []SeederContract {
 	// Prepare seeder repositories dependencies
 	var (
 		userRepositoy         = repositories.NewUserRepository(dbs.db)
+		userProfileRepository = repositories.NewUserProfileRepository(dbs.db)
 		userSettingRepository = repositories.NewUserSettingRepository(dbs.db)
 		tokenRepository       = repositories.NewTokenRepository(dbs.db)
 	)
@@ -50,6 +51,7 @@ func (dbs *DatabaseSeeder) GetDefaultSeeders() []SeederContract {
 	// return seeders
 	return []SeederContract{
 		NewUserSeeder(userRepositoy),
+		NewUserProfileSeeder(userProfileRepository, userRepositoy),
 		NewUserSettingSeeder(userSettingRepository, userRepositoy),
 		NewTokenSeeder(tokenRepository, userRepositoy),
 	}
