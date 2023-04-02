@@ -61,6 +61,7 @@ func (dbs *DatabaseSeeder) DefaultSeeders() []SeederContract {
 		lectureRepository        = repositories.NewLectureRepository(db)
 		progressRepository       = repositories.NewProgressRepository(db)
 		progressUserRepository   = repositories.NewProgressUserRepository(db)
+		discussionRepository     = repositories.NewDiscussionRepository(db)
 	)
 
 	// return seeders
@@ -83,5 +84,6 @@ func (dbs *DatabaseSeeder) DefaultSeeders() []SeederContract {
 		NewLectureSeeder(lectureRepository, lecturePartRepository),
 		NewProgressSeeder(progressRepository, lectureRepository),
 		NewProgressUserSeeder(progressUserRepository, progressRepository, userRepository),
+		NewDiscussionSeeder(discussionRepository, lectureRepository, userRepository),
 	}
 }
