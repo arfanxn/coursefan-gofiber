@@ -9,3 +9,12 @@ const (
 	// UserSettingKeyNotificationAcceptPromotion represents whether the user notification is acceptiong promotion(s)
 	UserSettingKeyNotificationAcceptPromotion string = "notification_accept_promotion"
 )
+
+// UserSettingKeys returns slice of models.UserSetting.Key enums
+func UserSettingKeys() []string {
+	return []string{
+		UserSettingKeyUserPublicProfile,
+		UserSettingKeyUserPublicCourse,
+		UserSettingKeyNotificationAcceptPromotion,
+	}
+}

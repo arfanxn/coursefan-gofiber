@@ -16,7 +16,7 @@ func FakeUserSetting() models.UserSetting {
 		// Id: will be filled in later
 		// UserId: will be filled in later
 		// User: will be filled in later
-		Key:       enums.UserSettingKeyUserPublicProfile,
+		Key:       sliceh.Random(enums.UserSettingKeys()...),
 		Value:     strconv.FormatBool(sliceh.Random(true, false)),
 		CreatedAt: time.Now(),
 		UpdatedAt: sliceh.Random(
