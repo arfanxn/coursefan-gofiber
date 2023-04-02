@@ -28,6 +28,12 @@ func (repository *RoleRepository) Find(c *fiber.Ctx, id string) (role models.Rol
 	return
 }
 
+// FindByName finds model by name
+func (repository *RoleRepository) FindByName(c *fiber.Ctx, name string) (role models.Role, err error) {
+	err = repository.db.Where("name = ?", name).First(&role).Error
+	return
+}
+
 // Insert inserts models into the database
 func (repository *RoleRepository) Insert(c *fiber.Ctx, roles ...*models.Role) (int64, error) {
 	for _, role := range roles {
