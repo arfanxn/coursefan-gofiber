@@ -19,6 +19,12 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
+// All returns all users in the database
+func (repository *UserRepository) All(c *fiber.Ctx) (users []models.User, err error) {
+	err = repository.db.Find(&users).Error
+	return
+}
+
 // FindByEmail finds a user by email
 func (repository *UserRepository) FindByEmail(c *fiber.Ctx, email string) (user models.User, err error) {
 	err = repository.db.Where("email = ?", email).First(&user).Error
