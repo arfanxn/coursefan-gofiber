@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	testApp *fiber.App = nil
-	testErr error      = nil
+	testApp                *fiber.App = nil
+	testErr                error      = nil
+	testHTTPRequestTimeout int        = -1
 )
 
 func TestMain(m *testing.M) {
