@@ -13,3 +13,11 @@ func IsGormErrRecordNotFound(errAny any) bool {
 	}
 	return false
 }
+
+// Must returns value of first argument and if second argument is not nil then it will panic
+func Must[T any](myvar T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return myvar
+}
