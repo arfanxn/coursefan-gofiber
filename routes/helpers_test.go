@@ -68,7 +68,7 @@ func ActingAs(
 	require.Nil(err)
 	httpRequest.URL = urlParsed
 	httpRequest.Method = httpMethod
-	bodyReadCloser, err := rwh.StructToReadCloser(input)
+	bodyReadCloser, err := rwh.AnyToReadCloser(input)
 	require.Nil(err)
 	httpRequest.Body = bodyReadCloser
 
