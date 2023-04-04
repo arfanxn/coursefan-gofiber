@@ -50,6 +50,9 @@ func (seeder *ProgressUserSeeder) Run(c *fiber.Ctx) (err error) {
 		progressUsers = append(progressUsers, &progressUser)
 	}
 
-	_, err = seeder.repository.Insert(c, progressUsers...)
+	for _, chunk := range sliceh.Chunk(progressUsers, 500) {
+		_, err = seeder.repository.Insert(c, chunk...)
+	}
+
 	return
 }
