@@ -13,8 +13,8 @@ import (
 func main() {
 	console.Execute() // CMD Execution
 
-	// Boot Logger
-	err := bootstrap.Logger()
+	// Boot everything
+	err := bootstrap.Boot()
 	if err != nil {
 		logrus.Fatal(err)
 	}
