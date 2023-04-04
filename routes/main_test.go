@@ -33,11 +33,8 @@ func TestMain(m *testing.M) {
 	if testErr != nil {
 		logrus.Fatal(testErr)
 	}
-	// Boot Logger
-	testErr = bootstrap.Logger()
-	if testErr != nil {
-		logrus.Fatal(testErr)
-	}
+	// Boot everything
+	bootstrap.Boot()
 	// Boot new Application and assign it to testApp variable
 	testApp, testErr = bootstrap.NewApp()
 	if testErr != nil {
