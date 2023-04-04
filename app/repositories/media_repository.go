@@ -74,8 +74,9 @@ func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media)
 					syncronizer.Err(err)
 					return
 				}
-			} else if media.File != nil {
-				err = fileh.Save(mediaFilePath, media.File)
+			}
+			if media.FileBuffer != nil {
+				err = fileh.Save(mediaFilePath, media.FileBuffer)
 				if err != nil {
 					syncronizer.Err(err)
 					return

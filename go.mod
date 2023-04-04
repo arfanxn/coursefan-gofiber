@@ -15,6 +15,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/joho/godotenv v1.5.1
+	github.com/ramadani/go-filestorage v0.0.0-20181209121202-7256972fe37b
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.2

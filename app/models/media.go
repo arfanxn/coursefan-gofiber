@@ -1,8 +1,8 @@
 package models
 
 import (
+	"bytes"
 	"fmt"
-	"io"
 	"mime/multipart"
 	"os"
 	"path"
@@ -42,10 +42,10 @@ type Media struct {
 	// UpdatedAt will be autofilled after updation
 	UpdatedAt null.Time `json:"updated_at" gorm:"autoUpdateTime"`
 
-	// FileHeader Metadata, not in table columns
+	// FileHeader is a metadata, not in table columns
 	FileHeader *multipart.FileHeader `json:"-" gorm:"-"`
-	// File Metadata, not in table columns
-	File *os.File `json:"-" gorm:"-"`
+	// FileBuffer is a metadata, not in table columns
+	FileBuffer *bytes.Buffer `json:"-" gorm:"-"`
 }
 
 // GetFilePath returns media file path based on media disk
@@ -76,16 +76,24 @@ func (media *Media) GetFileName() string {
 		media.FileName = path.Base(media.FileHeader.Filename)
 		return media.FileName
 	}
-	if media.File != nil {
-		media.FileName = path.Base(media.File.Name())
-		return media.FileName
-	}
 	return ""
 }
 
-// SetFileName sets media.FileName
+// SetFileName sets media.FileName without extension
 func (media *Media) SetFileName(fileName string) {
-	media.FileName = path.Base(fileName) + path.Ext(media.GetFileName())
+	fileExt := path.Ext(media.GetFileName())
+	switch true {
+	case fileExt != "":
+		break
+	case media.FileHeader != nil:
+		fileExt = path.Ext(media.FileHeader.Filename)
+		break
+	case media.FileBuffer != nil:
+		mime := mimetype.Detect(media.FileBuffer.Bytes())
+		fileExt = path.Ext(mime.Extension())
+		break
+	}
+	media.FileName = path.Base(fileName) + fileExt
 }
 
 // GetMimeType returns media.MimeType
@@ -105,11 +113,8 @@ func (media *Media) GetMimeType() (string, error) {
 		}
 		media.MimeType = mime.String()
 	}
-	if media.File != nil {
-		mime, err := mimetype.DetectReader(media.File)
-		if err != nil {
-			return "", err
-		}
+	if media.FileBuffer != nil {
+		mime := mimetype.Detect(media.FileBuffer.Bytes())
 		media.MimeType = mime.String()
 	}
 	return media.MimeType, nil
@@ -144,12 +149,8 @@ func (media *Media) GetSize() (int64, error) {
 	if media.FileHeader != nil {
 		media.Size = media.FileHeader.Size
 	}
-	if media.File != nil {
-		fileStat, err := media.File.Stat()
-		if err != nil {
-			return 0, nil
-		}
-		media.Size = fileStat.Size()
+	if media.FileBuffer != nil {
+		media.Size = int64(len(media.FileBuffer.Bytes()))
 	}
 	return media.Size, nil
 }
@@ -167,22 +168,11 @@ func (media *Media) SetFileHeader(fh *multipart.FileHeader) error {
 	return nil
 }
 
-// SetFile sets media.File
-func (media *Media) SetFile(file *os.File) (err error) {
-	media.File = file
-	fileStat, err := file.Stat()
-	if err != nil {
-		return
-	}
-	mime, err := mimetype.DetectReader(file)
-	if err != nil {
-		return
-	}
-	media.FileName = path.Base(file.Name())
-	media.Size = fileStat.Size()
+// SetFileBuffer sets media.FileBuffer
+func (media *Media) SetFileBuffer(fb *bytes.Buffer) (err error) {
+	media.FileBuffer = fb
+	mime := mimetype.Detect(media.FileBuffer.Bytes())
+	media.Size = int64(len(media.FileBuffer.Bytes()))
 	media.MimeType = mime.String()
-
-	// Reset file pointer
-	_, err = file.Seek(0, io.SeekStart)
 	return nil
 }
