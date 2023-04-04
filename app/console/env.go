@@ -2,6 +2,7 @@ package console
 
 import (
 	"github.com/arfanxn/coursefan-gofiber/config"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -9,8 +10,8 @@ var (
 )
 
 func envFlag() (err error) {
-	// Change the environment variable configuration
-	config.EnvironmentFileName = *envFilename
+	// Load env variables based on specified env filename
+	err = godotenv.Load(*envFilename)
 	if err != nil {
 		return
 	}
