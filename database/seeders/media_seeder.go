@@ -33,6 +33,7 @@ func NewMediaSeeder(
 
 // Run runs the seeder
 func (seeder *MediaSeeder) Run(c *fiber.Ctx) (err error) {
+	// Refresh media directory
 	err = fileh.BatchRemove(path.Join(config.FileSystemDisks[os.Getenv("MEDIA_DISK")].Root, "medias"))
 	if err != nil {
 		return
@@ -71,6 +72,7 @@ func (seeder *MediaSeeder) SeedLecturesVideos(c *fiber.Ctx) (err error) {
 		if err != nil {
 			return err
 		}
+		medias = append(medias, &media)
 	}
 	_, err = seeder.repository.Insert(c, medias...)
 	return
