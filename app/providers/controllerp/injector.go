@@ -22,3 +22,13 @@ func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	)
 	return nil
 }
+
+func InitCourseController(db *gorm.DB) *controllers.CourseController {
+	wire.Build(
+		// repositories.NewUserRepository,
+		repositories.NewCourseRepository,
+		services.NewCourseService,
+		controllers.NewCourseController,
+	)
+	return nil
+}

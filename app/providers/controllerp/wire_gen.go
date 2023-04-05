@@ -23,3 +23,10 @@ func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	authController := controllers.NewAuthController(authService)
 	return authController
 }
+
+func InitCourseController(db *gorm.DB) *controllers.CourseController {
+	courseRepository := repositories.NewCourseRepository(db)
+	authService := services.NewCourseService(courseRepository)
+	courseController := controllers.NewCourseController(authService)
+	return courseController
+}
