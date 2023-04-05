@@ -5,7 +5,7 @@ func Ternary[T any](
 	condition bool,
 	onTrue T,
 	onFalse T,
-) any {
+) T {
 	if condition {
 		return onTrue
 	} else {
