@@ -32,7 +32,7 @@ func ValidateStruct[T any](structure T, lang string) (validationErrs *exceptions
 	}
 	translator := translators[lang]
 	utTrans := translator(validate)
-	if translatedErrs := TranslateErrors(err, utTrans); (translatedErrs != nil) && (len(translatedErrs.Errors) > 0) {
+	if translatedErrs := TranslateError(err, utTrans); (translatedErrs != nil) && (len(translatedErrs.Errors) > 0) {
 		validationErrs.Errors = append(validationErrs.Errors, translatedErrs.Errors...)
 	}
 
@@ -184,13 +184,13 @@ func ValidateStructFileHeader[T any](structure T, lang string) (
 	return validationErrs
 }
 
-// TranslateErrors translates errors from validation errors
-func TranslateErrors(errs error, trans ut.Translator) (translatedErrs *exceptions.ValidationErrors) {
+// TranslateError translates error returned by calling validator.New().Struct(yourStruct)
+func TranslateError(err error, trans ut.Translator) (translatedErrs *exceptions.ValidationErrors) {
 	translatedErrs = exceptions.NewValidationErrors([]*exceptions.ValidationError{})
-	if errs == nil {
+	if err == nil {
 		return nil
 	}
-	validatorErrs := errs.(validator.ValidationErrors)
+	validatorErrs := err.(validator.ValidationErrors)
 	for _, validatorErr := range validatorErrs {
 		fieldNamespace := validatorErr.StructNamespace()
 		fieldName := strings.Join(strings.SplitAfter(fieldNamespace, ".")[1:], ".")
