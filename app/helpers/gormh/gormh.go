@@ -10,6 +10,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/synch"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -19,6 +20,7 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 	defer syncronizer.Close()
 	scopes := [](func(*gorm.DB) *gorm.DB){}
 	for _, filter := range query.Filters {
+		logrus.Info("filter: ", filter)
 		syncronizer.WG().Add(1)
 		go func(filter requests.QueryFilter) {
 			defer syncronizer.WG().Done()
@@ -75,24 +77,24 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 			case ".%", "LIKE%":
 				scope = func(*gorm.DB) *gorm.DB {
 					return db.Where(
-						filter.Column+" "+filter.Operator+" ?",
-						fmt.Sprintf("%v", filter.Values[0])+"%",
+						filter.Column+" LIKE ?",
+						fmt.Sprintf("%v%s", filter.Values[0], "%"),
 					)
 				}
 				break
 			case "%.", "%LIKE":
 				scope = func(*gorm.DB) *gorm.DB {
 					return db.Where(
-						filter.Column+" "+filter.Operator+" ?",
-						"%"+fmt.Sprintf("%v", filter.Values[0]),
+						filter.Column+" LIKE  ?",
+						fmt.Sprintf("%s%v", "%", filter.Values[0]),
 					)
 				}
 				break
 			case "%%", "%.%", "%LIKE%":
 				scope = func(*gorm.DB) *gorm.DB {
 					return db.Where(
-						filter.Column+" "+filter.Operator+" ?",
-						"%"+fmt.Sprintf("%v", filter.Values[0])+"%",
+						filter.Column+" LIKE ?",
+						fmt.Sprintf("%s%v%s", "%", filter.Values[0], "%"),
 					)
 				}
 				break
@@ -107,7 +109,7 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 		go func(column, orderingType string) {
 			defer syncronizer.WG().Done()
 			syncronizer.M().Lock()
-			db.Order(column + " " + strings.ToLower(orderingType))
+			db = db.Order(column + " " + strings.ToLower(orderingType))
 			syncronizer.M().Unlock()
 		}(column, orderingType)
 	}
