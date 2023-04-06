@@ -7,6 +7,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/boolh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/gofiber/fiber/v2"
+	"github.com/iancoleman/strcase"
 )
 
 type QueryFilter struct {
@@ -35,12 +36,13 @@ type Query struct {
 	Offset int `json:"offset"`
 }
 
-// DecodeFromContext decodes from a context
-func (query *Query) DecodeFromContext(c *fiber.Ctx) error {
+// FromContext fills query from the given context
+func (query *Query) FromContext(c *fiber.Ctx) error {
 	errs := []error{
-		query.decodeFiltersFromQueryString(c.Query("filters")),
-		query.decodeOrderBysFromQueryString(c.Query("order_bys")),
-		query.decodeWithsFromQueryString(c.Query("withs")),
+		query.setFiltersFromContext(c),
+		query.setOrderBysFromContext(c),
+		query.setWithsFromContext(c),
+		query.setLimitOffsetFromContext(c),
 	}
 	for _, err := range errs {
 		if err != nil {
@@ -50,8 +52,10 @@ func (query *Query) DecodeFromContext(c *fiber.Ctx) error {
 	return nil
 }
 
-// decodeFiltersFromQueryString will decode the the given query string into Query.Filters
-func (query *Query) decodeFiltersFromQueryString(queryStr string) (err error) {
+// setFiltersFromContext will set Query.Filters from the the given context
+func (query *Query) setFiltersFromContext(c *fiber.Ctx) (err error) {
+	queryStr := c.Query("filters")
+
 	var filters []QueryFilter
 	filterStrings := strings.Split(queryStr, ";")
 	for _, filterString := range filterStrings {
@@ -79,11 +83,11 @@ func (query *Query) decodeFiltersFromQueryString(queryStr string) (err error) {
 			operator := boolh.Ternary(filter.Operator == "%", "%", ".")
 			operator += boolh.Ternary(secondOperator == "%", "%", ".")
 			filter.Operator = operator
-			// filter.Values = filter.Values[0:0]
+			filter.Values = filter.Values[0:0]
 		} else if strings.Contains(secondOperator, "-") {
 			// if contains,then set as "between" operator
 			filter.Operator = "--"
-			// filter.Values = filter.Values[0:1]
+			filter.Values = filter.Values[0:1]
 		} else {
 			// Default is "equal" operator
 			filter.Operator = "=="
@@ -94,8 +98,10 @@ func (query *Query) decodeFiltersFromQueryString(queryStr string) (err error) {
 	return
 }
 
-// decodeOrderBysFromQueryString will decode the the given query string into Query.OrderBys
-func (query *Query) decodeOrderBysFromQueryString(queryStr string) (err error) {
+// setOrderBysFromContentex sets Query.OrderBy from the given contenxt
+func (query *Query) setOrderBysFromContext(c *fiber.Ctx) (err error) {
+	queryStr := c.Query("order_bys")
+
 	orderBys := map[string]string{}
 	orderByStrings := strings.Split(queryStr, ";")
 	for _, orderByString := range orderByStrings {
@@ -111,9 +117,32 @@ func (query *Query) decodeOrderBysFromQueryString(queryStr string) (err error) {
 	return
 }
 
-// decodeWithsFromQueryString will decode the the given query string into Query.Withs
-func (query *Query) decodeWithsFromQueryString(queryStr string) (err error) {
-	withs := strings.Split(queryStr, ";")
+// setWithsFromContext will set Query.Withs from the the context
+func (query *Query) setWithsFromContext(c *fiber.Ctx) (err error) {
+	queryStr := c.Query("withs")
+
+	var withs []string
+	for _, with := range strings.Split(queryStr, ";") {
+		with = strings.Join(
+			sliceh.Map(
+				strings.Split(with, "."), func(s string) string {
+					return strcase.ToCamel(s)
+				},
+			),
+			".",
+		)
+		withs = append(withs, with)
+	}
 	query.Withs = withs
+	return
+}
+
+// setLimitOffsetFromContext
+func (query *Query) setLimitOffsetFromContext(c *fiber.Ctx) (err error) {
+	query.Limit = c.QueryInt("limit", c.QueryInt("per_page", 10))
+	query.Offset = c.QueryInt(
+		"offset",
+		((c.QueryInt("page", 1) - 1) * query.Limit),
+	)
 	return
 }
