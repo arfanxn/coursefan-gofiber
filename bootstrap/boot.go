@@ -6,7 +6,6 @@ func Boot() error {
 		ENV(),
 		Logger(),
 		FileSystem(),
-		Request(),
 	}
 	for _, err := range errs {
 		if err != nil {
