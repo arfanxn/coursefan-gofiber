@@ -30,11 +30,6 @@ type Pagination[T any] struct {
 	Items []T `json:"items"`
 }
 
-// Make makes a pagination response/resource
-func Make[T any]() Pagination[T] {
-	return Pagination[T]{}
-}
-
 // SetPage set the pagination page related fields,
 // Just give null on lastPage parameter if the pagination does not have last page information
 func (pagination *Pagination[T]) SetPage(perPage int, currentPage int64, lastPage null.Int) {
