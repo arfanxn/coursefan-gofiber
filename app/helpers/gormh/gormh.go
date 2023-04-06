@@ -10,7 +10,6 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/synch"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
-	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -20,7 +19,6 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 	defer syncronizer.Close()
 	scopes := [](func(*gorm.DB) *gorm.DB){}
 	for _, filter := range query.Filters {
-		logrus.Info("filter: ", filter)
 		syncronizer.WG().Add(1)
 		go func(filter requests.QueryFilter) {
 			defer syncronizer.WG().Done()
@@ -114,11 +112,14 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 		}(column, orderingType)
 	}
 	for _, with := range query.Withs {
+		if with == "" {
+			continue
+		}
 		syncronizer.WG().Add(1)
 		go func(with string) {
 			defer syncronizer.WG().Done()
 			syncronizer.M().Lock()
-			db.Preload(with)
+			db = db.Preload(with)
 			syncronizer.M().Unlock()
 		}(with)
 	}
