@@ -59,6 +59,11 @@ func (pagination *Pagination[T]) SetPage(perPage int, currentPage int64, lastPag
 	}
 }
 
+// SetPageFromOffsetLimit set the pagination page related fields from the given offset and limit,
+func (pagination *Pagination[T]) SetPageFromOffsetLimit(offset int64, limit int) {
+	pagination.SetPage(limit, (offset/int64(limit))+1, null.NewInt(0, false))
+}
+
 // SetItems sets the pagination.Items and pagination.Total
 func (pagination *Pagination[T]) SetItems(items []T) {
 	pagination.Total = len(items)
