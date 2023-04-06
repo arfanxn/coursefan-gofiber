@@ -3,6 +3,7 @@ package resources
 import (
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -13,4 +14,14 @@ type Course struct {
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   null.Time `json:"updated_at"`
+}
+
+// FromModel fills the resource from the given model
+func (resource *Course) FromModel(model models.Course) {
+	resource.Id = model.Id.String()
+	resource.Name = model.Name
+	resource.Slug = model.Slug
+	resource.Description = model.Description
+	resource.CreatedAt = model.CreatedAt
+	resource.UpdatedAt = model.UpdatedAt
 }
