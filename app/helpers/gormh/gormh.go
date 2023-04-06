@@ -67,8 +67,8 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 			case "--", "-":
 				scope = func(*gorm.DB) *gorm.DB {
 					return db.Where(filter.Column+" BETWEEN ? AND ?",
-						filter.Values[0].(time.Time),
-						filter.Values[1].(time.Time),
+						filter.Values[0],
+						filter.Values[1],
 					)
 				}
 				break
