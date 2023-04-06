@@ -26,7 +26,7 @@ func (repository *CourseRepository) All(c *fiber.Ctx, queries ...requests.Query)
 	courses []models.Course, err error) {
 	db := repository.db
 	if len(queries) != 0 {
-		err = gormh.BuildFromRequestQuery(repository.db, queries[0]).Find(&courses).Error
+		db = gormh.BuildFromRequestQuery(repository.db, queries[0])
 	}
 	err = db.Find(&courses).Error
 	return
