@@ -13,15 +13,15 @@ func After() fiber.Handler {
 		err = c.Next()
 
 		if err != nil {
-			var response *resources.Response
+			var response resources.Response
 			logrus.Error(err)
 			switch err.(type) {
 			default: // sends internal server error if error is default error
-				response = resources.NewResponseError(fiber.ErrInternalServerError)
+				response.FromError(fiber.ErrInternalServerError)
 			case *fiber.Error:
-				response = resources.NewResponseError(err.(*fiber.Error))
+				response.FromError(err.(*fiber.Error))
 			case *exceptions.ValidationError:
-				response = resources.NewResponseValidationErrs([]*exceptions.ValidationError{
+				response.FromValidationErrs([]*exceptions.ValidationError{
 					err.(*exceptions.ValidationError),
 				})
 			}

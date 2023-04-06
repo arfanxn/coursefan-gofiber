@@ -7,10 +7,11 @@ import (
 )
 
 type Response struct {
-	Code    int               `json:"code"`
-	Message string            `json:"message"`
-	Errors  map[string]string `json:"errors,omitempty"`
-	Data    any               `json:"data,omitempty"`
+	Code       int               `json:"code"`
+	Message    string            `json:"message"`
+	Errors     map[string]string `json:"errors,omitempty"`
+	Data       any               `json:"data,omitempty"`
+	Pagination any               `json:"pagination,omitempty"`
 }
 
 // Bytes returns Response as bytes
@@ -23,17 +24,14 @@ func (response Response) Bytes() []byte {
 
 }
 
-// NewResponseError instantiates Response with the given error
-func NewResponseError(err *fiber.Error) *Response {
-	return &Response{
-		Code:    err.Code,
-		Message: err.Message,
-	}
+// FromError fills response from the given error
+func (response *Response) FromError(err *fiber.Error) {
+	response.Code = err.Code
+	response.Message = err.Message
 }
 
-// NewResponseValidationErrs instantiates Response with the given validation errors
-func NewResponseValidationErrs(errs []*exceptions.ValidationError) *Response {
-	response := new(Response)
+// FromValidationErrs fills response from the given validation errors
+func (response *Response) FromValidationErrs(errs []*exceptions.ValidationError) {
 	response.Code = fiber.StatusUnprocessableEntity
 	response.Errors = map[string]string{}
 	for index, err := range errs {
@@ -42,5 +40,4 @@ func NewResponseValidationErrs(errs []*exceptions.ValidationError) *Response {
 		}
 		response.Errors[err.Field] = err.Message
 	}
-	return response
 }

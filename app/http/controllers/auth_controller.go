@@ -28,7 +28,9 @@ func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 	var input requests.AuthLogin
 	c.BodyParser(&input)
 	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
+		response := resources.Response{}
+		response.FromValidationErrs(validationErrs)
+		return responseh.Write(c, response)
 	}
 
 	data, err := controller.service.Login(c, input)
@@ -51,7 +53,7 @@ func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 		Expires:  time.Now().Add(time.Duration(authExpSec) * time.Second),
 	})
 
-	return responseh.Write(c, &resources.Response{
+	return responseh.Write(c, resources.Response{
 		Code:    fiber.StatusOK,
 		Message: "Login successfully",
 		Data:    data,
@@ -69,7 +71,7 @@ func (controller *AuthController) Logout(c *fiber.Ctx) error {
 		MaxAge:   -1,
 		Expires:  time.Now().Add(time.Second),
 	})
-	return responseh.Write(c, &resources.Response{
+	return responseh.Write(c, resources.Response{
 		Code:    fiber.StatusOK,
 		Message: "Logout successfully",
 	})
@@ -81,7 +83,9 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 	c.BodyParser(&input)
 	input.Avatar = ctxh.GetFileHeader(c, "avatar")
 	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
+		response := resources.Response{}
+		response.FromValidationErrs(validationErrs)
+		return responseh.Write(c, response)
 	}
 
 	data, err := controller.service.Register(c, input)
@@ -89,7 +93,7 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	return responseh.Write(c, &resources.Response{
+	return responseh.Write(c, resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Register successfully",
 		Data:    data,
@@ -101,7 +105,9 @@ func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthForgotPassword
 	c.BodyParser(&input)
 	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
+		response := resources.Response{}
+		response.FromValidationErrs(validationErrs)
+		return responseh.Write(c, response)
 	}
 
 	err = controller.service.ForgotPassword(c, input)
@@ -109,7 +115,7 @@ func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	return responseh.Write(c, &resources.Response{
+	return responseh.Write(c, resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Successfully sent reset password token to " + input.Email,
 	})
@@ -120,7 +126,9 @@ func (controller *AuthController) ResetPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthResetPassword
 	c.BodyParser(&input)
 	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		return responseh.Write(c, resources.NewResponseValidationErrs(validationErrs))
+		response := resources.Response{}
+		response.FromValidationErrs(validationErrs)
+		return responseh.Write(c, response)
 	}
 
 	err = controller.service.ResetPassword(c, input)
@@ -128,7 +136,7 @@ func (controller *AuthController) ResetPassword(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	return responseh.Write(c, &resources.Response{
+	return responseh.Write(c, resources.Response{
 		Code:    fiber.StatusCreated,
 		Message: "Successfully reset password",
 	})

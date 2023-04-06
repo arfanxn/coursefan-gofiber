@@ -20,7 +20,8 @@ func Language() fiber.Handler {
 		}
 
 		if validationErrs := validatorh.ValidateStruct(input, os.Getenv("APP_LANGUAGE")); validationErrs != nil {
-			response := resources.NewResponseValidationErrs(validationErrs)
+			response := resources.Response{}
+			response.FromValidationErrs(validationErrs)
 			return c.Send(response.Bytes())
 		}
 
