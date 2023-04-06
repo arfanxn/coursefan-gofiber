@@ -33,3 +33,8 @@ func GetFileHeader(c *fiber.Ctx, key string) (fileHeader *multipart.FileHeader) 
 	}
 	return
 }
+
+// GetFullURIString get current URI string
+func GetFullURIString(c *fiber.Ctx) string {
+	return string(c.Request().URI().FullURI())
+}
