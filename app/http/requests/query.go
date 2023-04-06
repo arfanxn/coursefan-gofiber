@@ -1,0 +1,116 @@
+package requests
+
+import (
+	"regexp"
+	"strings"
+
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/boolh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
+	"github.com/gofiber/fiber/v2"
+)
+
+type QueryFilter struct {
+	// Column
+	Column string
+	// Operator, e.g. == or != or > or >= or < or <= or %% or --
+	Operator string
+	// Values
+	Values []any
+}
+
+// Query represents a request query
+type Query struct {
+	// Filters is a list of where conditions
+	// query = filters=name:%arfan%;gender:male|female;age:>=18;hobby:!=swimming;created_at:2020-2023 ,or via
+	Filters []QueryFilter `json:"filters"`
+	// OrderBys determines the order of the returned items
+	// query = order_bys=name:asc;age:desc;
+	OrderBys map[string]string `json:"order_bys"`
+	// Withs determines the relation that will be loaded along the items
+	// query = withs=users.user_profiles;users.users_settings
+	Withs []string `json:"withs"`
+	// Limit limits the returned items
+	Limit int `json:"limit"`
+	// Offset skip some items and then return the items after that offset/skip
+	Offset int `json:"offset"`
+}
+
+// DecodeFromContext decodes from a context
+func (query *Query) DecodeFromContext(c *fiber.Ctx) error {
+	errs := []error{
+		query.decodeFiltersFromQueryString(c.Query("filters")),
+		query.decodeOrderBysFromQueryString(c.Query("order_bys")),
+		query.decodeWithsFromQueryString(c.Query("withs")),
+	}
+	for _, err := range errs {
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// decodeFiltersFromQueryString will decode the the given query string into Query.Filters
+func (query *Query) decodeFiltersFromQueryString(queryStr string) (err error) {
+	var filters []QueryFilter
+	filterStrings := strings.Split(queryStr, ";")
+	for _, filterString := range filterStrings {
+		expression := regexp.MustCompile("^(\\w+):([=!<>%]{1,2})?([`]{1}[^`]+[`]{1})([|%-]{1,2})?(`{1}[^`]+`{1})?")
+		filterArgs := expression.FindStringSubmatch(filterString)
+
+		var filter QueryFilter
+		filter.Column = filterArgs[1]
+		filter.Operator = filterArgs[2]
+		filter.Values = sliceh.Map(
+			regexp.MustCompile("(`{1}[^`]+`{1})").FindAllString(filterString, -1),
+			func(value string) any {
+				return strings.Trim(value, "`")
+			})
+		secondOperator := filterArgs[4]
+
+		if strings.Contains(filter.Operator, "!") {
+			// if contains,then set as "not equal" operator
+			filter.Operator = "!="
+		} else if strings.Contains(filter.Operator, "%") || strings.Contains(secondOperator, "%") {
+			// if contains,then set as "like" operator
+			operator := boolh.Ternary(filter.Operator == "%", "%", ".")
+			operator += boolh.Ternary(secondOperator == "%", "%", ".")
+			filter.Operator = operator
+			// filter.Values = filter.Values[0:0]
+		} else if strings.Contains(secondOperator, "-") {
+			// if contains,then set as "between" operator
+			filter.Operator = "--"
+			// filter.Values = filter.Values[0:1]
+		} else {
+			// Default is "equal" operator
+			filter.Operator = "=="
+		}
+		filters = append(filters, filter)
+	}
+	query.Filters = filters
+	return
+}
+
+// decodeOrderBysFromQueryString will decode the the given query string into Query.OrderBys
+func (query *Query) decodeOrderBysFromQueryString(queryStr string) (err error) {
+	orderBys := map[string]string{}
+	orderByStrings := strings.Split(queryStr, ";")
+	for _, orderByString := range orderByStrings {
+		splitted := strings.Split(orderByString, ":")
+		if len(splitted) != 2 {
+			continue
+		}
+		column := splitted[0]
+		orderingType := splitted[1]
+		orderBys[column] = orderingType
+	}
+	query.OrderBys = orderBys
+	return
+}
+
+// decodeWithsFromQueryString will decode the the given query string into Query.Withs
+func (query *Query) decodeWithsFromQueryString(queryStr string) (err error) {
+	withs := strings.Split(queryStr, ";")
+	query.Withs = withs
+	return
+}
