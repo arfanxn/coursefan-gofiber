@@ -11,7 +11,7 @@ import (
 )
 
 // BuildFromRequestQuery builds a gorm query from the given requests.Query
-func BuildFromRequestQuery(db *gorm.DB, query requests.Query) {
+func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 	syncronizer := synch.NewSyncronizer()
 	defer syncronizer.Close()
 	scopes := [](func(*gorm.DB) *gorm.DB){}
@@ -105,4 +105,5 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) {
 		db = db.Scopes(scopes...)
 	}
 	db = db.Offset(query.Offset).Limit(query.Limit)
+	return db
 }
