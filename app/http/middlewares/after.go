@@ -18,8 +18,10 @@ func After() fiber.Handler {
 			switch err.(type) {
 			default: // sends internal server error if error is default error
 				response.FromError(fiber.ErrInternalServerError)
+				break
 			case *fiber.Error:
 				response.FromError(err.(*fiber.Error))
+				break
 			case *exceptions.ValidationError:
 				validationErrs := exceptions.NewValidationErrors(
 					[]*exceptions.ValidationError{
@@ -27,9 +29,11 @@ func After() fiber.Handler {
 					},
 				)
 				response.FromValidationErrs(validationErrs)
+				break
 			case *exceptions.ValidationErrors:
 				validationErrs := err.(*exceptions.ValidationErrors)
 				response.FromValidationErrs(validationErrs)
+				break
 			}
 			err = responseh.Write(c, response)
 		}
