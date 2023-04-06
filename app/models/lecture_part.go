@@ -15,4 +15,5 @@ type LecturePart struct {
 	Name      string    `json:"title" gorm:"type:VARCHAR(50) NOT NULL"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	UpdatedAt null.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	Lectures  []Lecture `json:"lectures" gorm:"foreignKey:LecturePartId;references:Id"`
 }

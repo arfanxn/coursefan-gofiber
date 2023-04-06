@@ -15,6 +15,7 @@ type LecturePart struct {
 	Name      string    `json:"title"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt null.Time `json:"updated_at"`
+	Lectures  []Lecture `json:"lectures,omitempty"`
 }
 
 func (resource *LecturePart) FromModel(model models.LecturePart) {
@@ -29,4 +30,9 @@ func (resource *LecturePart) FromModel(model models.LecturePart) {
 	resource.Name = model.Name
 	resource.CreatedAt = model.CreatedAt
 	resource.UpdatedAt = model.UpdatedAt
+	for _, lecturesMdl := range model.Lectures {
+		lectureRes := Lecture{}
+		lectureRes.FromModel(lecturesMdl)
+		resource.Lectures = append(resource.Lectures,lectureRes)
+	}
 }

@@ -3,6 +3,8 @@ package repositories
 import (
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -19,9 +21,14 @@ func NewCourseRepository(db *gorm.DB) *CourseRepository {
 	return &CourseRepository{db: db}
 }
 
-// All returns all courses in the database
-func (repository *CourseRepository) All(c *fiber.Ctx) (courses []models.Course, err error) {
-	err = repository.db.Find(&courses).Error
+// All returns all courses in the database, queries argument is optional
+func (repository *CourseRepository) All(c *fiber.Ctx, queries ...requests.Query) (
+	courses []models.Course, err error) {
+	db := repository.db
+	if len(queries) != 0 {
+		err = gormh.BuildFromRequestQuery(repository.db, queries[0]).Find(&courses).Error
+	}
+	err = db.Find(&courses).Error
 	return
 }
 
