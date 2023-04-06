@@ -1,13 +1,15 @@
 package exceptions
 
-import "github.com/gofiber/fiber/v2"
+/*
+ * ValidationErrors (wrapper for ValidationError)
+ */
 
 type ValidationErrors struct {
 	Errors []*ValidationError
 }
 
 func NewValidationErrors(errs []*ValidationError) *ValidationErrors {
-	validationErrs := &ValidationErrors{}
+	validationErrs := new(ValidationErrors)
 	validationErrs.Errors = errs
 	return validationErrs
 }
@@ -18,6 +20,10 @@ func (validationErrs *ValidationErrors) Error() string {
 	}
 	return validationErrs.Errors[0].Error()
 }
+
+/*
+ * ValidationError
+ */
 
 type ValidationError struct {
 	Field, Message string
@@ -33,8 +39,3 @@ func NewValidationError(field, message string) *ValidationError {
 		Message: message,
 	}
 }
-
-// Validator exceptions
-var (
-	ValidatorUnknownTranslator = fiber.NewError(fiber.StatusInternalServerError, "Validator unknown translator")
-)

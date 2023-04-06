@@ -27,10 +27,8 @@ func NewAuthController(service *services.AuthService) *AuthController {
 func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 	var input requests.AuthLogin
 	c.BodyParser(&input)
-	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		response := resources.Response{}
-		response.FromValidationErrs(validationErrs)
-		return responseh.Write(c, response)
+	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
+		return err
 	}
 
 	data, err := controller.service.Login(c, input)
@@ -82,10 +80,8 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 	var input requests.AuthRegister
 	c.BodyParser(&input)
 	input.Avatar = ctxh.GetFileHeader(c, "avatar")
-	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		response := resources.Response{}
-		response.FromValidationErrs(validationErrs)
-		return responseh.Write(c, response)
+	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
+		return err
 	}
 
 	data, err := controller.service.Register(c, input)
@@ -104,10 +100,8 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthForgotPassword
 	c.BodyParser(&input)
-	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		response := resources.Response{}
-		response.FromValidationErrs(validationErrs)
-		return responseh.Write(c, response)
+	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
+		return err
 	}
 
 	err = controller.service.ForgotPassword(c, input)
@@ -125,10 +119,8 @@ func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 func (controller *AuthController) ResetPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthResetPassword
 	c.BodyParser(&input)
-	if validationErrs := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); validationErrs != nil {
-		response := resources.Response{}
-		response.FromValidationErrs(validationErrs)
-		return responseh.Write(c, response)
+	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
+		return err
 	}
 
 	err = controller.service.ResetPassword(c, input)

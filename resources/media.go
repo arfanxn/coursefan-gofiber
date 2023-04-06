@@ -23,26 +23,26 @@ type Media struct {
 	UpdatedAt      null.Time   `json:"updated_at"`
 }
 
-// NewMediaFromModel instantiates resources.Media with values from the given models.Media
-func NewMediaFromModel(mediaMdl models.Media) *Media {
-	mediaMimeType, err := mediaMdl.GetMimeType()
+// FromModel instantiates resources.Media with values from the given models.Media
+func (resource *Media) FromModel(model models.Media) error {
+	mediaMimeType, err := model.GetMimeType()
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	mediaRes := new(Media)
-	mediaRes.Id = mediaMdl.Id.String()
-	mediaRes.ModelType = mediaMdl.ModelType
-	mediaRes.ModelId = mediaMdl.ModelId.String()
-	mediaRes.CollectionName = null.NewString(mediaMdl.CollectionName.String, mediaMdl.CollectionName.Valid)
-	mediaRes.Name = null.NewString(mediaMdl.Name.String, mediaMdl.Name.Valid)
-	mediaRes.FileName = mediaMdl.GetFileName()
-	mediaRes.FileUrl = mediaMdl.GetFileUrl()
-	mediaRes.MimeType = mediaMimeType
-	mediaRes.Disk = mediaMdl.GetDisk()
-	mediaRes.ConversionDisk = null.NewString(mediaMdl.ConversionDisk.String, mediaMdl.ConversionDisk.Valid)
-	mediaRes.Size = mediaMdl.Size
-	mediaRes.CreatedAt = mediaMdl.CreatedAt
-	mediaRes.UpdatedAt = null.NewTime(mediaMdl.UpdatedAt.Time, mediaMdl.UpdatedAt.Valid)
-	return mediaRes
+	resource.Id = model.Id.String()
+	resource.ModelType = model.ModelType
+	resource.ModelId = model.ModelId.String()
+	resource.CollectionName = null.NewString(model.CollectionName.String, model.CollectionName.Valid)
+	resource.Name = null.NewString(model.Name.String, model.Name.Valid)
+	resource.FileName = model.GetFileName()
+	resource.FileUrl = model.GetFileUrl()
+	resource.MimeType = mediaMimeType
+	resource.Disk = model.GetDisk()
+	resource.ConversionDisk = null.NewString(model.ConversionDisk.String, model.ConversionDisk.Valid)
+	resource.Size = model.Size
+	resource.CreatedAt = model.CreatedAt
+	resource.UpdatedAt = null.NewTime(model.UpdatedAt.Time, model.UpdatedAt.Valid)
+
+	return nil
 }

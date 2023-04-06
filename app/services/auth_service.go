@@ -130,7 +130,8 @@ func (service *AuthService) Register(c *fiber.Ctx, input requests.AuthRegister) 
 		if err != nil {
 			return data, err
 		}
-		data.Avatar = resources.NewMediaFromModel(avatarMediaMdl)
+		data.Avatar = &resources.Media{}
+		data.Avatar.FromModel(avatarMediaMdl)
 	}
 
 	return data, nil

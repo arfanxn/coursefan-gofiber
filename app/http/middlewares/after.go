@@ -21,9 +21,15 @@ func After() fiber.Handler {
 			case *fiber.Error:
 				response.FromError(err.(*fiber.Error))
 			case *exceptions.ValidationError:
-				response.FromValidationErrs([]*exceptions.ValidationError{
-					err.(*exceptions.ValidationError),
-				})
+				validationErrs := exceptions.NewValidationErrors(
+					[]*exceptions.ValidationError{
+						err.(*exceptions.ValidationError),
+					},
+				)
+				response.FromValidationErrs(validationErrs)
+			case *exceptions.ValidationErrors:
+				validationErrs := err.(*exceptions.ValidationErrors)
+				response.FromValidationErrs(validationErrs)
 			}
 			err = responseh.Write(c, response)
 		}

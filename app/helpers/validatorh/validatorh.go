@@ -20,7 +20,9 @@ import (
 )
 
 // ValidateStruct validates the given struct
-func ValidateStruct[T any](structure T, lang string) []*exceptions.ValidationError {
+func ValidateStruct[T any](structure T, lang string) (validationErrs *exceptions.ValidationErrors) {
+	validationErrs = exceptions.NewValidationErrors([]*exceptions.ValidationError{})
+
 	validate := validatorp.MustGetValidator()
 	err := validate.Struct(structure)
 	lang = strings.ToLower(lang)
@@ -30,17 +32,28 @@ func ValidateStruct[T any](structure T, lang string) []*exceptions.ValidationErr
 	}
 	translator := translators[lang]
 	utTrans := translator(validate)
-	translatedErrs := TranslateErrs(err, utTrans)
+	if translatedErrs := TranslateErrors(err, utTrans); (translatedErrs != nil) && (len(translatedErrs.Errors) > 0) {
+		validationErrs.Errors = append(validationErrs.Errors, translatedErrs.Errors...)
+	}
 
-	translatedErrs = append(translatedErrs, ValidateStructFileHeader(structure, lang)...)
+	if fileValidationErrs := ValidateStructFileHeader(structure, lang); (fileValidationErrs != nil) && (len(fileValidationErrs.Errors) > 0) {
+		validationErrs.Errors = append(validationErrs.Errors, fileValidationErrs.Errors...)
+	}
 
-	return translatedErrs
+	// if no errors then return nil
+	if len(validationErrs.Errors) == 0 {
+		return nil
+	}
+
+	return validationErrs
 }
 
 // ValidateStructFileHeader validates the struct fields on *multipart.FileHeader type
 func ValidateStructFileHeader[T any](structure T, lang string) (
-	validationErrs []*exceptions.ValidationError) {
+	validationErrs *exceptions.ValidationErrors) {
+	validationErrs = exceptions.NewValidationErrors([]*exceptions.ValidationError{})
 	syncronizer := synch.NewSyncronizer()
+	defer syncronizer.Close()
 	structValue := reflect.ValueOf(structure)
 	structType := structValue.Type()
 	for i := 0; i < structValue.NumField(); i++ {
@@ -106,16 +119,18 @@ func ValidateStructFileHeader[T any](structure T, lang string) (
 			// check if file is required but not provided
 			if (required) && ((fileHeader == nil) || (fileHeader.Size == 0)) {
 				syncronizer.M().Lock()
-				validationErrs = append(validationErrs,
-					exceptions.NewValidationError(jsonFieldName, jsonFieldName+" is required"))
+				validationErrs.Errors = append(
+					validationErrs.Errors,
+					exceptions.NewValidationError(jsonFieldName, jsonFieldName+" is required"),
+				)
 				syncronizer.M().Unlock()
 				return
 			}
 			// check if file size is not between the specified min and max size
 			if fileHeader.Size < min || fileHeader.Size > max {
 				syncronizer.M().Lock()
-				validationErrs = append(
-					validationErrs,
+				validationErrs.Errors = append(
+					validationErrs.Errors,
 					exceptions.NewValidationError(
 						jsonFieldName,
 						fmt.Sprintf("%s must be between %d and %d size", jsonFieldName, min, max),
@@ -140,8 +155,8 @@ func ValidateStructFileHeader[T any](structure T, lang string) (
 				// if no matching mime types found append an error
 				if len(matchedMimeTypes) == 0 {
 					syncronizer.M().Lock()
-					validationErrs = append(
-						validationErrs,
+					validationErrs.Errors = append(
+						validationErrs.Errors,
 						exceptions.NewValidationError(jsonFieldName,
 							fmt.Sprintf(
 								"%s must be a file of types %s",
@@ -162,27 +177,35 @@ func ValidateStructFileHeader[T any](structure T, lang string) (
 		panic(err)
 	}
 
-	syncronizer.Close()
+	if len(validationErrs.Errors) == 0 {
+		return nil
+	}
 
 	return validationErrs
 }
 
-// TranslateErrs translates errors from validation errors
-func TranslateErrs(errs error, trans ut.Translator) (translatedErrs []*exceptions.ValidationError) {
+// TranslateErrors translates errors from validation errors
+func TranslateErrors(errs error, trans ut.Translator) (translatedErrs *exceptions.ValidationErrors) {
+	translatedErrs = exceptions.NewValidationErrors([]*exceptions.ValidationError{})
 	if errs == nil {
 		return nil
 	}
-	validationErrs := errs.(validator.ValidationErrors)
-	for _, validationErr := range validationErrs {
-		fieldNamespace := validationErr.StructNamespace()
+	validatorErrs := errs.(validator.ValidationErrors)
+	for _, validatorErr := range validatorErrs {
+		fieldNamespace := validatorErr.StructNamespace()
 		fieldName := strings.Join(strings.SplitAfter(fieldNamespace, ".")[1:], ".")
 		jsonFieldName := strcase.ToSnake(fieldName)
-		if name := validationErr.Field(); name != "" {
+		if name := validatorErr.Field(); name != "" {
 			jsonFieldName = strcase.ToSnake(name)
 		}
-		message := validationErr.Translate(trans)
+		message := validatorErr.Translate(trans)
 		translatedErr := exceptions.NewValidationError(jsonFieldName, message)
-		translatedErrs = append(translatedErrs, translatedErr)
+		translatedErrs.Errors = append(translatedErrs.Errors, translatedErr)
 	}
+
+	if len(translatedErrs.Errors) == 0 {
+		return nil
+	}
+
 	return
 }

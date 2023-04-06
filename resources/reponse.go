@@ -31,10 +31,10 @@ func (response *Response) FromError(err *fiber.Error) {
 }
 
 // FromValidationErrs fills response from the given validation errors
-func (response *Response) FromValidationErrs(errs []*exceptions.ValidationError) {
+func (response *Response) FromValidationErrs(validationErrs *exceptions.ValidationErrors) {
 	response.Code = fiber.StatusUnprocessableEntity
 	response.Errors = map[string]string{}
-	for index, err := range errs {
+	for index, err := range validationErrs.Errors {
 		if index == 0 {
 			response.Message = err.Message
 		}
