@@ -3,10 +3,14 @@ package gormh
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/synch"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -20,6 +24,20 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 		go func(filter requests.QueryFilter) {
 			defer syncronizer.WG().Done()
 			var scope func(*gorm.DB) *gorm.DB
+
+			filter.Values = sliceh.Map(filter.Values, func(value any) any {
+				valueStr := fmt.Sprintf("%v", value)
+				// Parse value
+				if value, err := strconv.ParseFloat(valueStr, 10); err == nil {
+					return value
+				} else if value, err := strconv.ParseBool(valueStr); err == nil {
+					return value
+				} else if value, err := time.Parse(time.RFC3339, valueStr); err == nil {
+					return value
+				} else {
+					return valueStr
+				}
+			})
 
 			switch filter.Operator {
 			case "==", "=":
@@ -49,7 +67,12 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 				break
 			case "--", "-":
 				scope = func(*gorm.DB) *gorm.DB {
-					return db.Where(filter.Column+" BETWEEN ? AND ?", filter.Values[0], filter.Values[1])
+					logrus.Info("Values0: ", filter.Values[0].(time.Time))
+					logrus.Info("Values1: ", filter.Values[1].(time.Time))
+					return db.Where(filter.Column+" BETWEEN ? AND ?",
+						filter.Values[0].(time.Time),
+						filter.Values[1].(time.Time),
+					)
 				}
 				break
 			case ".%", "LIKE%":
