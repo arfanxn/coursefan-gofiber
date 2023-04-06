@@ -89,11 +89,9 @@ func (query *Query) setFiltersFromContext(c *fiber.Ctx) (err error) {
 				operator := boolh.Ternary(filter.Operator == "%", "%", ".")
 				operator += boolh.Ternary(secondOperator == "%", "%", ".")
 				filter.Operator = operator
-				filter.Values = filter.Values[0:0]
 			} else if strings.Contains(secondOperator, "-") {
 				// if contains,then set as "between" operator
 				filter.Operator = "--"
-				filter.Values = filter.Values[0:1]
 			} else {
 				// Default is "equal" operator
 				filter.Operator = "=="
