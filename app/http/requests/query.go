@@ -57,6 +57,9 @@ func (query *Query) decodeFiltersFromQueryString(queryStr string) (err error) {
 	for _, filterString := range filterStrings {
 		expression := regexp.MustCompile("^(\\w+):([=!<>%]{1,2})?([`]{1}[^`]+[`]{1})([|%-]{1,2})?(`{1}[^`]+`{1})?")
 		filterArgs := expression.FindStringSubmatch(filterString)
+		if len(filterArgs) == 0 {
+			continue
+		}
 
 		var filter QueryFilter
 		filter.Column = filterArgs[1]
