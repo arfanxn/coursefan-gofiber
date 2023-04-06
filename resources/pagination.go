@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -78,11 +79,14 @@ func (pagination *Pagination[T]) SetURL(urlStruct *url.URL) error {
 
 	page, err := int64(0), error(nil)
 	if pageStr := urlStruct.Query().Get("page"); pageStr != "" {
-		page, err = strconv.ParseInt(pageStr, 10, 64)
-		return err
+		if page, err = strconv.ParseInt(pageStr, 10, 64); err != nil {
+			return err
+		}
 	} else {
 		page = 1
 	}
+
+	logrus.Info("pagination url: ", urlStruct)
 
 	pagination.CurrentPage = page
 
