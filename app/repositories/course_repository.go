@@ -32,9 +32,15 @@ func (repository *CourseRepository) All(c *fiber.Ctx, queries ...requests.Query)
 	return
 }
 
-// Find finds model by id
-func (repository *CourseRepository) Find(c *fiber.Ctx, id string) (course models.Course, err error) {
+// FindById finds model by id
+func (repository *CourseRepository) FindById(c *fiber.Ctx, id string) (course models.Course, err error) {
 	err = repository.db.Where("id = ?", id).First(&course).Error
+	return
+}
+
+// FindBySlug finds model by slug
+func (repository *CourseRepository) FindBySlug(c *fiber.Ctx, id string) (course models.Course, err error) {
+	err = repository.db.Where("slug = ?", id).First(&course).Error
 	return
 }
 
