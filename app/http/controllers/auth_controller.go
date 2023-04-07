@@ -26,7 +26,7 @@ func NewAuthController(service *services.AuthService) *AuthController {
 // Login
 func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 	var input requests.AuthLogin
-	c.BodyParser(&input)
+	input.FromContext(c)
 	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
 		return err
 	}
@@ -78,8 +78,7 @@ func (controller *AuthController) Logout(c *fiber.Ctx) error {
 // Register
 func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 	var input requests.AuthRegister
-	c.BodyParser(&input)
-	input.Avatar = ctxh.GetFileHeader(c, "avatar")
+	input.FromContext(c)
 	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
 		return err
 	}
@@ -99,7 +98,7 @@ func (controller *AuthController) Register(c *fiber.Ctx) (err error) {
 // ForgotPassword
 func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthForgotPassword
-	c.BodyParser(&input)
+	input.FromContext(c)
 	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
 		return err
 	}
@@ -118,7 +117,7 @@ func (controller *AuthController) ForgotPassword(c *fiber.Ctx) (err error) {
 // ResetPassword
 func (controller *AuthController) ResetPassword(c *fiber.Ctx) (err error) {
 	var input requests.AuthResetPassword
-	c.BodyParser(&input)
+	input.FromContext(c)
 	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
 		return err
 	}
