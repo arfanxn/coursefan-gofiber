@@ -3,6 +3,8 @@ package repositories
 import (
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -20,8 +22,13 @@ func NewLecturePartRepository(db *gorm.DB) *LecturePartRepository {
 }
 
 // All returns all lectureParts in the database
-func (repository *LecturePartRepository) All(c *fiber.Ctx) (lectureParts []models.LecturePart, err error) {
-	err = repository.db.Find(&lectureParts).Error
+func (repository *LecturePartRepository) All(c *fiber.Ctx, queries ...requests.Query) (
+	lectureParts []models.LecturePart, err error) {
+	db := repository.db
+	if len(queries) != 0 {
+		db = gormh.BuildFromRequestQuery(repository.db, queries[0])
+	}
+	err = db.Find(&lectureParts).Error
 	return
 }
 
