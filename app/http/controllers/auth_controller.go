@@ -50,7 +50,10 @@ func (controller *AuthController) Login(c *fiber.Ctx) (err error) {
 		MaxAge:   int(authExpSec),
 		Expires:  time.Now().Add(time.Duration(authExpSec) * time.Second),
 	})
-
+	// if "AUTH_RETURN_TOKEN" set to false, don't return token on response body after successful login
+	if isTrue, err := strconv.ParseBool(os.Getenv("AUTH_RETURN_TOKEN")); (isTrue == false) && (err == nil) {
+		data.AccessToken = ""
+	}
 	return responseh.Write(c, resources.Response{
 		Code:    fiber.StatusOK,
 		Message: "Login successfully",

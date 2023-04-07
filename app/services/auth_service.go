@@ -80,10 +80,7 @@ func (service *AuthService) Login(c *fiber.Ctx, input requests.AuthLogin) (data 
 	data.Email = userMdl.Email
 	data.CreatedAt = userMdl.CreatedAt
 	data.UpdatedAt = userMdl.UpdatedAt
-	// if "AUTH_RETURN_TOKEN" set to true, return token on response body after successful login
-	if isTrue, err := strconv.ParseBool(os.Getenv("AUTH_RETURN_TOKEN")); isTrue && (err == nil) {
-		data.AccessToken = token
-	}
+	data.AccessToken = token
 	return
 }
 
