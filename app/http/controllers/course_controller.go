@@ -51,7 +51,7 @@ func (controller *CourseController) Create(c *fiber.Ctx) (err error) {
 	}
 
 	return responseh.Write(c, resources.Response{
-		Code:    fiber.StatusOK,
+		Code:    fiber.StatusCreated,
 		Message: "Successfully create course",
 		Data:    data,
 	})
