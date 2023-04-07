@@ -8,6 +8,7 @@ package controllerp
 
 import (
 	"github.com/arfanxn/coursefan-gofiber/app/http/controllers"
+	"github.com/arfanxn/coursefan-gofiber/app/policies"
 	"github.com/arfanxn/coursefan-gofiber/app/repositories"
 	"github.com/arfanxn/coursefan-gofiber/app/services"
 	"gorm.io/gorm"
@@ -26,7 +27,8 @@ func InitAuthController(db *gorm.DB) *controllers.AuthController {
 
 func InitCourseController(db *gorm.DB) *controllers.CourseController {
 	courseRepository := repositories.NewCourseRepository(db)
-	authService := services.NewCourseService(courseRepository)
-	courseController := controllers.NewCourseController(authService)
+	courseService := services.NewCourseService(courseRepository)
+	coursePolicy := policies.NewCoursePolicy(db)
+	courseController := controllers.NewCourseController(coursePolicy, courseService)
 	return courseController
 }
