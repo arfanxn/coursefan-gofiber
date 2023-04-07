@@ -5,18 +5,26 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/responseh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/validatorh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
+	"github.com/arfanxn/coursefan-gofiber/app/policies"
 	"github.com/arfanxn/coursefan-gofiber/app/services"
 	"github.com/arfanxn/coursefan-gofiber/resources"
 	"github.com/gofiber/fiber/v2"
 )
 
 type CourseController struct {
+	policy  *policies.CoursePolicy
 	service *services.CourseService
 }
 
 // NewCourseController instantiates a new CourseController
-func NewCourseController(service *services.CourseService) *CourseController {
-	return &CourseController{service: service}
+func NewCourseController(
+	policy *policies.CoursePolicy,
+	service *services.CourseService,
+) *CourseController {
+	return &CourseController{
+		policy:  policy,
+		service: service,
+	}
 }
 
 // All
@@ -91,6 +99,10 @@ func (controller *CourseController) Update(c *fiber.Ctx) (err error) {
 	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
 		return err
 	}
+	err = controller.policy.Update(c, input)
+	if err != nil {
+		return
+	}
 	data, err := controller.service.Update(c, input)
 	if err != nil {
 		return err
@@ -111,6 +123,10 @@ func (controller *CourseController) Delete(c *fiber.Ctx) (err error) {
 	}
 	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
 		return err
+	}
+	err = controller.policy.Delete(c, input)
+	if err != nil {
+		return
 	}
 	err = controller.service.Delete(c, input)
 	if err != nil {
