@@ -48,6 +48,20 @@ func (service *CourseService) All(c *fiber.Ctx, input requests.Query) (
 	return
 }
 
+// Find
+func (service *CourseService) Find(c *fiber.Ctx, input requests.Query) (
+	data resources.Course, err error) {
+	courseMdls, err := service.repository.All(c, input)
+	if err != nil {
+		return
+	} else if len(courseMdls) == 0 {
+		err = fiber.ErrNotFound
+		return
+	}
+	data.FromModel(courseMdls[0])
+	return
+}
+
 // Create
 func (service *CourseService) Create(c *fiber.Ctx, input requests.CourseCreate) (
 	courseRes resources.Course, err error) {
@@ -61,5 +75,43 @@ func (service *CourseService) Create(c *fiber.Ctx, input requests.CourseCreate) 
 	}
 	courseRes = resources.Course{}
 	courseRes.FromModel(courseMdl)
+	return
+}
+
+// Update
+func (service *CourseService) Update(c *fiber.Ctx, input requests.CourseUpdate) (
+	courseRes resources.Course, err error) {
+	courseMdl, err := service.repository.FindById(c, input.Id)
+	if errorh.IsGormErrRecordNotFound(err) {
+		err = fiber.ErrNotFound
+		return
+	} else if err != nil {
+		return
+	}
+	courseMdl.Name = input.Name
+	courseMdl.Description = input.Description
+	_, err = service.repository.UpdateById(c, &courseMdl)
+	if err != nil {
+		return
+	}
+	courseRes = resources.Course{}
+	courseRes.FromModel(courseMdl)
+	return
+}
+
+// Delete
+func (service *CourseService) Delete(c *fiber.Ctx, input requests.CourseDelete) (err error) {
+	var courseMdl models.Course
+	courseMdl, err = service.repository.FindById(c, input.Id)
+	if errorh.IsGormErrRecordNotFound(err) {
+		err = fiber.ErrNotFound
+		return
+	} else if err != nil {
+		return
+	}
+	_, err = service.repository.DeleteByIds(c, &courseMdl)
+	if err != nil {
+		return
+	}
 	return
 }
