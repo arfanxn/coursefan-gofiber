@@ -6,9 +6,9 @@ import (
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/boolh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/strh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/synch"
 	"github.com/gofiber/fiber/v2"
-	"github.com/iancoleman/strcase"
 )
 
 type QueryFilter struct {
@@ -65,7 +65,7 @@ func (query *Query) setFiltersFromContext(c *fiber.Ctx) (err error) {
 		syncronizer.WG().Add(1)
 		go func(filterString string) {
 			defer syncronizer.WG().Done()
-			expression := regexp.MustCompile("^(\\w+):([=!<>%]{1,2})?([`]{1}[^`]+[`]{1})([|%-]{1,2})?(`{1}[^`]+`{1})?")
+			expression := regexp.MustCompile("^([\\w.]+):([=!<>%]{1,2})?([`]{1}[^`]+[`]{1})([|%-]{1,2})?(`{1}[^`]+`{1})?")
 			filterArgs := expression.FindStringSubmatch(filterString)
 			if len(filterArgs) == 0 {
 				return
@@ -137,17 +137,9 @@ func (query *Query) setOrderBysFromContext(c *fiber.Ctx) (err error) {
 // setWithsFromContext will set Query.Withs from the the context
 func (query *Query) setWithsFromContext(c *fiber.Ctx) (err error) {
 	queryStr := c.Query("withs")
-
 	var withs []string
 	for _, with := range strings.Split(queryStr, ";") {
-		with = strings.Join(
-			sliceh.Map(
-				strings.Split(with, "."), func(s string) string {
-					return strcase.ToCamel(s)
-				},
-			),
-			".",
-		)
+		with = strh.StrToDelimetedCamel(with, ".")
 		withs = append(withs, with)
 	}
 	query.Withs = withs
