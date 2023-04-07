@@ -5,8 +5,18 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 )
+
+// GetUser returns current logged in user in from the given context
+func GetUser(c *fiber.Ctx) *models.User {
+	if userAny := c.Locals("user"); userAny != nil {
+		user := userAny.(models.User)
+		return &user
+	}
+	return nil
+}
 
 // GetAcceptLang returns the client's Accept language from request headers or query
 func GetAcceptLang(c *fiber.Ctx) string {
