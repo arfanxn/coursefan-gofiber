@@ -16,3 +16,7 @@ type Course struct {
 	UpdatedAt    null.Time     `json:"updated_at" gorm:"autoUpdateTime"`
 	LectureParts []LecturePart `json:"lecture_parts" gorm:"foreignKey:CourseId;references:Id"`
 }
+
+func (Course) TableName() string {
+	return "courses"
+}
