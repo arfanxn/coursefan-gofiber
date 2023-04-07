@@ -16,5 +16,5 @@ type User struct {
 	UpdatedAt null.Time `json:"updated_at" gorm:"autoUpdateTime"`
 
 	// Avatar relationship
-	Avatar Media `json:"avatar" gorm:"-"`
+	Avatar *Media `json:"avatar" gorm:"-"`
 }
