@@ -6,9 +6,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// registerLecturePartRouter registers course module routes into the router
+// registerLecturePartRouter registers lecture part module routes into the router
 func registerLecturePartRouter(router fiber.Router) {
 	lecturePartController := controllerp.InitLecturePartController(databasep.MustGetGormDB())
-	courses := router.Group("/courses")
-	courses.Get("", lecturePartController.AllByCourse)
+	coursesIdLectureParts := router.Group("/courses/{course_id}/lecture_parts")
+	coursesIdLectureParts.Get("", lecturePartController.AllByCourse)
 }
