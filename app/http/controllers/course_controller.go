@@ -36,3 +36,23 @@ func (controller *CourseController) All(c *fiber.Ctx) (err error) {
 		Pagination: pagination,
 	})
 }
+
+// Create
+func (controller *CourseController) Create(c *fiber.Ctx) (err error) {
+	input := requests.CourseCreate{}
+	err = input.FromContext(c)
+	if err != nil {
+		return
+	}
+
+	data, err := controller.service.Create(c, input)
+	if err != nil {
+		return err
+	}
+
+	return responseh.Write(c, resources.Response{
+		Code:    fiber.StatusOK,
+		Message: "Successfully create course",
+		Data:    data,
+	})
+}
