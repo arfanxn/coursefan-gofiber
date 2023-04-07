@@ -9,13 +9,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// GetUser returns current logged in user in from the given context
-func GetUser(c *fiber.Ctx) *models.User {
-	if userAny := c.Locals("user"); userAny != nil {
-		user := userAny.(models.User)
-		return &user
+// MustGetUser returns current logged in user in from the given context, or panic if not in the context
+func MustGetUser(c *fiber.Ctx) models.User {
+	userAny := c.Locals("user")
+	if userAny == nil {
+		panic(fiber.ErrNotFound)
 	}
-	return nil
+	return userAny.(models.User)
 }
 
 // GetAcceptLang returns the client's Accept language from request headers or query
