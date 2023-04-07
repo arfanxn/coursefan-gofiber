@@ -1,6 +1,10 @@
 package services
 
 import (
+	"net/url"
+
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/errorh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
@@ -36,5 +40,7 @@ func (service *CourseService) All(c *fiber.Ctx, input requests.Query) (
 	})
 	pagination.SetItems(courseRess)
 	pagination.SetPageFromOffsetLimit(int64(input.Offset), input.Limit)
+	pagination.SetURL(errorh.Must(url.Parse(ctxh.GetFullURIString(c))))
+
 	return
 }

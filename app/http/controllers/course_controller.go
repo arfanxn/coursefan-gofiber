@@ -1,9 +1,6 @@
 package controllers
 
 import (
-	"net/url"
-
-	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/responseh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/services"
@@ -32,11 +29,6 @@ func (controller *CourseController) All(c *fiber.Ctx) (err error) {
 	if err != nil {
 		return err
 	}
-	url, err := url.Parse(ctxh.GetFullURIString(c))
-	if err != nil {
-		return
-	}
-	pagination.SetURL(url)
 
 	return responseh.Write(c, resources.Response{
 		Code:       fiber.StatusOK,
