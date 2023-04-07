@@ -25,9 +25,16 @@ func (repository *CourseUserRoleRepository) All(c *fiber.Ctx) (courseUserRoles [
 	return
 }
 
-// Find finds model by id
-func (repository *CourseUserRoleRepository) Find(c *fiber.Ctx, id string) (courseUserRole models.CourseUserRole, err error) {
+// FindById finds model by id
+func (repository *CourseUserRoleRepository) FindById(c *fiber.Ctx, id string) (courseUserRole models.CourseUserRole, err error) {
 	err = repository.db.Where("id = ?", id).First(&courseUserRole).Error
+	return
+}
+
+// Find finds model by model
+func (repository *CourseUserRoleRepository) FindByModel(c *fiber.Ctx, model models.CourseUserRole) (
+	courseUserRole models.CourseUserRole, err error) {
+	err = repository.db.First(&courseUserRole, model).Error
 	return
 }
 
