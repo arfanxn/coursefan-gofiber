@@ -19,7 +19,6 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/resources"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/guregu/null.v4"
 	"gorm.io/gorm"
@@ -166,8 +165,7 @@ func (service *AuthService) ForgotPassword(c *fiber.Ctx, input requests.AuthForg
 		tokenMdl.UsedAt = null.NewTime(time.Time{}, false)
 		tokenMdl.ExpiredAt = null.NewTime(time.Now().Add(time.Hour/2), true) // give 30 mins expiration
 		tokenMdl.BodyGenerate(models.TokenBodyNumeric, 6)
-		affected, err := service.tokenRepository.Save(c, &tokenMdl)
-		logrus.Info(fmt.Sprintf("Affected %v", affected))
+		_, err := service.tokenRepository.Save(c, &tokenMdl)
 		if err != nil {
 			return err
 		}

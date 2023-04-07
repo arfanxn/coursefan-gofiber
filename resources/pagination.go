@@ -4,7 +4,6 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/sirupsen/logrus"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -85,8 +84,6 @@ func (pagination *Pagination[T]) SetURL(urlStruct *url.URL) error {
 	} else {
 		page = 1
 	}
-
-	logrus.Info("pagination url: ", urlStruct)
 
 	pagination.CurrentPage = page
 
