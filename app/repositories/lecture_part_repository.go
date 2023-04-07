@@ -25,9 +25,15 @@ func (repository *LecturePartRepository) All(c *fiber.Ctx) (lectureParts []model
 	return
 }
 
-// Find finds model by id
-func (repository *LecturePartRepository) Find(c *fiber.Ctx, id string) (lecturePart models.LecturePart, err error) {
+// FindById finds model by id
+func (repository *LecturePartRepository) FindById(c *fiber.Ctx, id string) (lecturePart models.LecturePart, err error) {
 	err = repository.db.Where("id = ?", id).First(&lecturePart).Error
+	return
+}
+
+// FindByModel finds model by model
+func (repository *LecturePartRepository) FindByModel(c *fiber.Ctx, model models.LecturePart) (lecturePart models.LecturePart, err error) {
+	err = repository.db.First(&lecturePart, model).Error
 	return
 }
 
