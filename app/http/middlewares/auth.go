@@ -10,10 +10,12 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/exceptions"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/jwth"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
+	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/arfanxn/coursefan-gofiber/resources"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/skip"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 func Auth() fiber.Handler {
@@ -29,7 +31,12 @@ func Auth() fiber.Handler {
 		signature := os.Getenv("APP_KEY")
 		tokenizer, err := jwth.Decode(signature, token) // parse jwt token from cookie access token
 		claims, ok := tokenizer.Claims.(jwt.MapClaims)  // get jwt claims
-		c.Locals("user", claims["user"])                // set claims user into context
+		userMap := claims["user"].(map[string]any)
+		c.Locals("user", models.User{
+			Id:    uuid.MustParse(userMap["id"].(string)),
+			Name:  userMap["name"].(string),
+			Email: userMap["email"].(string),
+		}) // set claims user into context
 
 		if err != nil {
 			v, _ := err.(*jwt.ValidationError)
