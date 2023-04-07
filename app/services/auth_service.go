@@ -67,8 +67,12 @@ func (service *AuthService) Login(c *fiber.Ctx, input requests.AuthLogin) (data 
 
 	token, err := jwth.Encode(os.Getenv("APP_KEY"), map[string]any{
 		"authorized": true,
-		"user":       any(userMdl),
-		"exp":        time.Now().Add(time.Minute * time.Duration(authExpSec)).Unix(),
+		"user": models.User{
+			Id:    userMdl.Id,
+			Name:  userMdl.Name,
+			Email: userMdl.Email,
+		},
+		"exp": time.Now().Add(time.Minute * time.Duration(authExpSec)).Unix(),
 	})
 	if err != nil {
 		return
