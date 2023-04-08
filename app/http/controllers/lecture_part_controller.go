@@ -30,6 +30,10 @@ func (controller *LecturePartController) AllByCourse(c *fiber.Ctx) (err error) {
 	if err != nil {
 		return
 	}
+	err = controller.policy.AllByCourse(c, input)
+	if err != nil {
+		return
+	}
 	pagination, err := controller.service.AllByCourse(c, input)
 	if err != nil {
 		return err
