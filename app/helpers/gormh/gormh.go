@@ -44,7 +44,7 @@ func BuildFromRequestQuery(tx *gorm.DB, query requests.Query) *gorm.DB {
 		go func(with string) {
 			defer syncronizer.WG().Done()
 			syncronizer.M().Lock()
-			tx = tx.Preload(with)
+			tx = tx.Preload(with, func(tx *gorm.DB) *gorm.DB { return tx.Order("created_at asc") })
 			syncronizer.M().Unlock()
 		}(with)
 	}
