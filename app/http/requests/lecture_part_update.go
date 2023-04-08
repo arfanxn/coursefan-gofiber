@@ -11,5 +11,10 @@ type LecturePartUpdate struct {
 
 func (input *LecturePartUpdate) FromContext(c *fiber.Ctx) (err error) {
 	err = c.BodyParser(input)
+	if err != nil {
+		return
+	}
+	input.Id = c.Params("lecture_part_id")
+	input.CourseId = c.Params("course_id")
 	return
 }
