@@ -12,7 +12,7 @@ type LecturePart struct {
 	CourseId  string    `json:"course_id"`
 	Course    *Course   `json:"course,omitempty"`
 	Part      int       `json:"part"`
-	Name      string    `json:"title"`
+	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt null.Time `json:"updated_at"`
 	Lectures  []Lecture `json:"lectures,omitempty"`
@@ -33,6 +33,6 @@ func (resource *LecturePart) FromModel(model models.LecturePart) {
 	for _, lecturesMdl := range model.Lectures {
 		lectureRes := Lecture{}
 		lectureRes.FromModel(lecturesMdl)
-		resource.Lectures = append(resource.Lectures,lectureRes)
+		resource.Lectures = append(resource.Lectures, lectureRes)
 	}
 }

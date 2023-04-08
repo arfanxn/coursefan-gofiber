@@ -9,8 +9,8 @@ import (
 
 type Lecture struct {
 	Id            string       `json:"id"`
-	LecturePartId string       `json:"course_id"`
-	LecturePart   *LecturePart `json:"course"`
+	LecturePartId string       `json:"lecture_part_id"`
+	LecturePart   *LecturePart `json:"lecture_part,omitempty"`
 	Name          string       `json:"name"`
 	Order         int          `json:"order"`
 	CreatedAt     time.Time    `json:"created_at"`
