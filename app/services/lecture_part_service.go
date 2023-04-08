@@ -23,14 +23,14 @@ func NewLecturePartService(repository *repositories.LecturePartRepository) *Lect
 	}
 }
 
-// GetByCourse get lecture parts by course
-func (service *LecturePartService) GetByCourse(c *fiber.Ctx, input requests.Query) (
+// AllByCourse get lecture parts by course
+func (service *LecturePartService) AllByCourse(c *fiber.Ctx, input requests.Query) (
 	pagination resources.Pagination[resources.LecturePart], err error) {
-	courseMdls, err := service.repository.All(c, input)
+	lecturePartMdls, err := service.repository.AllByCourse(c, input)
 	if err != nil {
 		return
 	}
-	lecturePartRess := sliceh.Map(courseMdls, func(lpMdl models.LecturePart) resources.LecturePart {
+	lecturePartRess := sliceh.Map(lecturePartMdls, func(lpMdl models.LecturePart) resources.LecturePart {
 		lpRes := resources.LecturePart{}
 		lpRes.FromModel(lpMdl)
 		return lpRes
