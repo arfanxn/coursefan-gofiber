@@ -53,6 +53,11 @@ func (query *Query) FromContext(c *fiber.Ctx) error {
 	return nil
 }
 
+// AddFilter append the given QueryFilter to the Query.FIlters
+func (query *Query) AddFilter(filters ...QueryFilter) {
+	query.Filters = append(query.Filters, filters...)
+}
+
 // setFiltersFromContext will set Query.Filters from the the given context
 func (query *Query) setFiltersFromContext(c *fiber.Ctx) (err error) {
 	queryStr := c.Query("filters")
