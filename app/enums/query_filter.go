@@ -34,10 +34,15 @@ const (
 	QueryFilterOperatorLesserThanEqual   string = "lte"
 	QueryFilterOperatorOrLesserThanEqual string = "olte"
 
-	QueryFilterOperatorIn    string = "in"
-	QueryFilterOperatorNotIn string = "nin"
+	QueryFilterOperatorIn      string = "in"
+	QueryFilterOperatorOrIn    string = "oin"
+	QueryFilterOperatorNotIn   string = "nin"
+	QueryFilterOperatorOrNotIn string = "onin"
 
-	QueryFilterOperatorBetween string = "bt"
+	QueryFilterOperatorBetween      string = "bt"
+	QueryFilterOperatorOrBetween    string = "obt"
+	QueryFilterOperatorNotBetween   string = "nbt"
+	QueryFilterOperatorOrNotBetween string = "onbt"
 )
 
 // QueryFilterOperators returns slice of requests.QueryFilter.Operator enums
@@ -76,8 +81,13 @@ func QueryFilterOperators() []string {
 		QueryFilterOperatorOrLesserThanEqual,
 
 		QueryFilterOperatorIn,
+		QueryFilterOperatorOrIn,
 		QueryFilterOperatorNotIn,
+		QueryFilterOperatorOrNotIn,
 
 		QueryFilterOperatorBetween,
+		QueryFilterOperatorOrBetween,
+		QueryFilterOperatorNotBetween,
+		QueryFilterOperatorOrNotBetween,
 	}
 }
