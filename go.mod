@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/clarketm/json v1.17.1
+	github.com/davecgh/go-spew v1.1.1
 	github.com/gabriel-vasile/mimetype v1.4.2
 	github.com/go-faker/faker/v4 v4.1.0
 	github.com/go-playground/locales v0.14.1
@@ -12,7 +13,6 @@ require (
 	github.com/gofiber/fiber/v2 v2.43.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.3.0
-	github.com/google/wire v0.5.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/joho/godotenv v1.5.1
 	github.com/ramadani/go-filestorage v0.0.0-20181209121202-7256972fe37b
@@ -27,7 +27,6 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
