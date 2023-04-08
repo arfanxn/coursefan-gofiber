@@ -10,5 +10,9 @@ type LecturePartCreate struct {
 
 func (input *LecturePartCreate) FromContext(c *fiber.Ctx) (err error) {
 	err = c.BodyParser(input)
+	if err != nil {
+		return
+	}
+	input.CourseId = c.Params("course_id")
 	return
 }
