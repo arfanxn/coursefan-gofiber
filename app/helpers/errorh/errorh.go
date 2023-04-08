@@ -54,3 +54,13 @@ func Must[T any](myvar T, err error) T {
 	}
 	return myvar
 }
+
+// AnyToErrorOrNil parse any to error, if unparseable then return nil
+func AnyToErrorOrNil(errAny any) error {
+	if errAny != nil {
+		if err, ok := errAny.(error); ok {
+			return err
+		}
+	}
+	return nil
+}
