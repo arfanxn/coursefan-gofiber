@@ -9,6 +9,7 @@ func RegisterApp(app *fiber.App) {
 
 	router := app.Group("")
 	registerMiddlewareRouter(router)
+	registerSandboxRouter(router)
 
 	router.Static("/public", "./public") // File server route
 
