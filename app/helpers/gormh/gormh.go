@@ -14,20 +14,16 @@ import (
 )
 
 // BuildFromRequestQuery builds a gorm query from the given requests.Query
-func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
+func BuildFromRequestQuery(tx *gorm.DB, query requests.Query) *gorm.DB {
 	syncronizer := synch.NewSyncronizer()
 	defer syncronizer.Close()
 	scopes := [](func(*gorm.DB) *gorm.DB){}
 	for _, filter := range query.Filters {
-		// skips if the filter column name is contains dot
-		if strings.Contains(filter.Column, ".") {
-			continue
-		}
 		syncronizer.WG().Add(1)
 		go func(filter requests.QueryFilter) {
 			defer syncronizer.WG().Done()
 			syncronizer.M().Lock()
-			scopes = append(scopes, buildScopeFromRequestQueryFilter(db, filter))
+			scopes = append(scopes, buildWhereScopeFromRequestQueryFilter(tx, filter))
 			syncronizer.M().Unlock()
 		}(filter)
 	}
@@ -36,7 +32,7 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 		go func(column, orderingType string) {
 			defer syncronizer.WG().Done()
 			syncronizer.M().Lock()
-			db = db.Order(column + " " + strings.ToLower(orderingType))
+			tx = tx.Order(column + " " + strings.ToLower(orderingType))
 			syncronizer.M().Unlock()
 		}(column, orderingType)
 	}
@@ -48,19 +44,19 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 		go func(with string) {
 			defer syncronizer.WG().Done()
 			syncronizer.M().Lock()
-			db = db.Preload(with)
+			tx = tx.Preload(with)
 			syncronizer.M().Unlock()
 		}(with)
 	}
 	syncronizer.WG().Wait()
 	if len(scopes) != 0 {
-		db = db.Scopes(scopes...)
+		tx = tx.Scopes(scopes...)
 	}
-	db = db.Offset(query.Offset).Limit(query.Limit)
-	return db
+	tx = tx.Offset(query.Offset).Limit(query.Limit)
+	return tx
 }
 
-func buildScopeFromRequestQueryFilter(db *gorm.DB, filter requests.QueryFilter) (
+func buildWhereScopeFromRequestQueryFilter(tx *gorm.DB, filter requests.QueryFilter) (
 	scope func(*gorm.DB) *gorm.DB) {
 	filter.Values = sliceh.Map(filter.Values, func(value any) any {
 		valueStr := fmt.Sprintf("%v", value)
@@ -77,34 +73,34 @@ func buildScopeFromRequestQueryFilter(db *gorm.DB, filter requests.QueryFilter) 
 	})
 
 	switch filter.Operator {
-	case "==", "=":
+	case "==", "=", "":
 		scope = func(*gorm.DB) *gorm.DB {
-			db = db.Where(filter.Column+" = ?", filter.Values[0])
+			tx = tx.Where(filter.Column+" = ?", filter.Values[0])
 			// Loop start from index one not index zero
 			for i := 1; i < len(filter.Values); i++ {
-				db.Or(filter.Column+" = ?", filter.Values[i])
+				tx = tx.Or(filter.Column+" = ?", filter.Values[i])
 			}
-			return db
+			return tx
 		}
 		break
 	case "!=", "!":
 		scope = func(*gorm.DB) *gorm.DB {
-			db = db.Not(filter.Column+" = ?", filter.Values[0])
+			tx = tx.Not(filter.Column+" = ?", filter.Values[0])
 			// Loop start from index one not index zero
 			for i := 1; i < len(filter.Values); i++ {
-				db.Or(filter.Column+" = ?", filter.Values[i])
+				tx = tx.Or(filter.Column+" = ?", filter.Values[i])
 			}
-			return db
+			return tx
 		}
 		break
 	case ">", ">=", "<", "<=":
 		scope = func(*gorm.DB) *gorm.DB {
-			return db.Where(filter.Column+" "+filter.Operator+" ?", filter.Values[0])
+			return tx.Where(filter.Column+" "+filter.Operator+" ?", filter.Values[0])
 		}
 		break
 	case "--", "-":
 		scope = func(*gorm.DB) *gorm.DB {
-			return db.Where(filter.Column+" BETWEEN ? AND ?",
+			return tx.Where(filter.Column+" BETWEEN ? AND ?",
 				filter.Values[0],
 				filter.Values[1],
 			)
@@ -112,7 +108,7 @@ func buildScopeFromRequestQueryFilter(db *gorm.DB, filter requests.QueryFilter) 
 		break
 	case ".%", "LIKE%":
 		scope = func(*gorm.DB) *gorm.DB {
-			return db.Where(
+			return tx.Where(
 				filter.Column+" LIKE ?",
 				fmt.Sprintf("%v%s", filter.Values[0], "%"),
 			)
@@ -120,7 +116,7 @@ func buildScopeFromRequestQueryFilter(db *gorm.DB, filter requests.QueryFilter) 
 		break
 	case "%.", "%LIKE":
 		scope = func(*gorm.DB) *gorm.DB {
-			return db.Where(
+			return tx.Where(
 				filter.Column+" LIKE  ?",
 				fmt.Sprintf("%s%v", "%", filter.Values[0]),
 			)
@@ -128,7 +124,7 @@ func buildScopeFromRequestQueryFilter(db *gorm.DB, filter requests.QueryFilter) 
 		break
 	case "%%", "%.%", "%LIKE%":
 		scope = func(*gorm.DB) *gorm.DB {
-			return db.Where(
+			return tx.Where(
 				filter.Column+" LIKE ?",
 				fmt.Sprintf("%s%v%s", "%", filter.Values[0], "%"),
 			)
