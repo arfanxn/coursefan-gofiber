@@ -11,4 +11,8 @@ func registerLecturePartRouter(router fiber.Router) {
 	lecturePartController := controllerp.InitLecturePartController(databasep.MustGetGormDB())
 	coursesIdLectureParts := router.Group("/courses/:course_id/lecture_parts")
 	coursesIdLectureParts.Get("", lecturePartController.AllByCourse)
+	coursesIdLectureParts.Get("/:lecture_part_id", lecturePartController.Find)
+	coursesIdLectureParts.Post("", lecturePartController.Create)
+	coursesIdLectureParts.Get("/:lecture_part_id", lecturePartController.Update)
+	coursesIdLectureParts.Get("/:lecture_part_id", lecturePartController.Delete)
 }

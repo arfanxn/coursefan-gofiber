@@ -27,6 +27,7 @@ func NewLecturePartPolicy(
 	}
 }
 
+// / AllByCourse policy ensures that the user has the right permissions for access a lecture parts.
 func (policy *LecturePartPolicy) AllByCourse(c *fiber.Ctx, input requests.Query) (err error) {
 	curMdl, err := policy.curRepository.FindByModel(c, models.CourseUserRole{
 		CourseId: uuid.MustParse(c.Params("course_id")),
@@ -38,9 +39,139 @@ func (policy *LecturePartPolicy) AllByCourse(c *fiber.Ctx, input requests.Query)
 	} else if err != nil {
 		return
 	} else if sliceh.Contains([]string{
+		// allow course participants and lecturer to access the lecture parts
 		enums.CourseUserRoleRelationParticipant,
 		enums.CourseUserRoleRelationLecturer,
 	}, curMdl.Relation) == false {
+		err = fiber.ErrForbidden
+		return
+	}
+	return nil
+}
+
+// Find policy ensures that the user has the right permissions for access a lecture part.
+func (policy *LecturePartPolicy) Find(c *fiber.Ctx, input requests.Query) (err error) {
+	lecturePartId, courseId := c.Params("lecture_part_id"), c.Params("course_id")
+	curMdl, err := policy.curRepository.FindByModel(c, models.CourseUserRole{
+		CourseId: uuid.MustParse(courseId),
+		UserId:   ctxh.MustGetUser(c).Id,
+	})
+	if errorh.IsGormErrRecordNotFound(err) || curMdl.Id == uuid.Nil {
+		err = fiber.ErrForbidden
+		return
+	} else if err != nil {
+		return
+	} else if sliceh.Contains([]string{
+		// allow course participants and lecturer to access the lecture part
+		enums.CourseUserRoleRelationParticipant,
+		enums.CourseUserRoleRelationLecturer,
+	}, curMdl.Relation) == false {
+		err = fiber.ErrForbidden
+		return
+	}
+	lecturePartMdl, err := policy.repository.FindByModel(c, models.LecturePart{Id: uuid.MustParse(lecturePartId)})
+	if errorh.IsGormErrRecordNotFound(err) || lecturePartMdl.Id == uuid.Nil {
+		err = fiber.ErrNotFound
+		return
+	} else if err != nil {
+		return
+	} else if curMdl.CourseId != lecturePartMdl.CourseId {
+		err = fiber.ErrForbidden
+		return
+	}
+	return nil
+}
+
+// Create policy ensures that the user has the right permissions for creating a new lecture part.
+func (policy *LecturePartPolicy) Create(c *fiber.Ctx, input requests.Query) (err error) {
+	lecturePartId, courseId := c.Params("lecture_part_id"), c.Params("course_id")
+	curMdl, err := policy.curRepository.FindByModel(c, models.CourseUserRole{
+		CourseId: uuid.MustParse(courseId),
+		UserId:   ctxh.MustGetUser(c).Id,
+	})
+	if errorh.IsGormErrRecordNotFound(err) || curMdl.Id == uuid.Nil {
+		err = fiber.ErrForbidden
+		return
+	} else if err != nil {
+		return
+	} else if sliceh.Contains([]string{
+		// Only allow lecturer of the course to create the lecture part
+		enums.CourseUserRoleRelationLecturer,
+	}, curMdl.Relation) == false {
+		err = fiber.ErrForbidden
+		return
+	}
+	lecturePartMdl, err := policy.repository.FindByModel(c, models.LecturePart{Id: uuid.MustParse(lecturePartId)})
+	if errorh.IsGormErrRecordNotFound(err) || lecturePartMdl.Id == uuid.Nil {
+		err = fiber.ErrNotFound
+		return
+	} else if err != nil {
+		return
+	} else if curMdl.CourseId != lecturePartMdl.CourseId {
+		err = fiber.ErrForbidden
+		return
+	}
+	return nil
+}
+
+// Update policy ensures that the user has the right permissions for updating a lecture part.
+func (policy *LecturePartPolicy) Update(c *fiber.Ctx, input requests.LecturePartUpdate) (err error) {
+	lecturePartId, courseId := input.Id, input.CourseId
+	curMdl, err := policy.curRepository.FindByModel(c, models.CourseUserRole{
+		CourseId: uuid.MustParse(courseId),
+		UserId:   ctxh.MustGetUser(c).Id,
+	})
+	if errorh.IsGormErrRecordNotFound(err) || curMdl.Id == uuid.Nil {
+		err = fiber.ErrForbidden
+		return
+	} else if err != nil {
+		return
+	} else if sliceh.Contains([]string{
+		// Only allow lecturer of the course to update the lecture part
+		enums.CourseUserRoleRelationLecturer,
+	}, curMdl.Relation) == false {
+		err = fiber.ErrForbidden
+		return
+	}
+	lecturePartMdl, err := policy.repository.FindByModel(c, models.LecturePart{Id: uuid.MustParse(lecturePartId)})
+	if errorh.IsGormErrRecordNotFound(err) || lecturePartMdl.Id == uuid.Nil {
+		err = fiber.ErrNotFound
+		return
+	} else if err != nil {
+		return
+	} else if curMdl.CourseId != lecturePartMdl.CourseId {
+		err = fiber.ErrForbidden
+		return
+	}
+	return nil
+}
+
+// Delete policy ensures that the user has the right permissions for deleting a lecture part.
+func (policy *LecturePartPolicy) Delete(c *fiber.Ctx, input requests.LecturePartDelete) (err error) {
+	lecturePartId, courseId := input.Id, input.CourseId
+	curMdl, err := policy.curRepository.FindByModel(c, models.CourseUserRole{
+		CourseId: uuid.MustParse(courseId),
+		UserId:   ctxh.MustGetUser(c).Id,
+	})
+	if errorh.IsGormErrRecordNotFound(err) || curMdl.Id == uuid.Nil {
+		err = fiber.ErrForbidden
+		return
+	} else if err != nil {
+		return
+	} else if sliceh.Contains([]string{
+		// Only allow lecturer of the course to delete the lecture part
+		enums.CourseUserRoleRelationLecturer,
+	}, curMdl.Relation) == false {
+		err = fiber.ErrForbidden
+		return
+	}
+	lecturePartMdl, err := policy.repository.FindByModel(c, models.LecturePart{Id: uuid.MustParse(lecturePartId)})
+	if errorh.IsGormErrRecordNotFound(err) || lecturePartMdl.Id == uuid.Nil {
+		err = fiber.ErrNotFound
+		return
+	} else if err != nil {
+		return
+	} else if curMdl.CourseId != lecturePartMdl.CourseId {
 		err = fiber.ErrForbidden
 		return
 	}
