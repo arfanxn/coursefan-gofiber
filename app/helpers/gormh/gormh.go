@@ -27,7 +27,7 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 		go func(filter requests.QueryFilter) {
 			defer syncronizer.WG().Done()
 			syncronizer.M().Lock()
-			scopes = append(scopes, buildWhereScopeFromRequestQueryFilter(db, filter))
+			scopes = append(scopes, buildScopeFromRequestQueryFilter(db, filter))
 			syncronizer.M().Unlock()
 		}(filter)
 	}
@@ -48,27 +48,7 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 		go func(with string) {
 			defer syncronizer.WG().Done()
 			syncronizer.M().Lock()
-			db = db.Preload(with, func(tx *gorm.DB) *gorm.DB {
-				// TODO: complete this
-				// snakeCaseDelimetedWith := strh.StrToDelimetedSnake(with, ".")
-				// var scopes [](func(*gorm.DB) *gorm.DB)
-				// logrus.Info("snakeCaseDelimetedWith: ", snakeCaseDelimetedWith)
-				// for _, filter := range query.Filters {
-				// 	logrus.Info("filter.Column: ", filter.Column)
-				// 	if regexp.MustCompile("^" + snakeCaseDelimetedWith + ".+").MatchString(filter.Column) {
-				// 		scopes = append(scopes, buildWhereScopeFromRequestQueryFilter(tx, filter))
-				// 	}
-				// }
-				// if len(scopes) != 0 {
-				// 	tx = tx.Scopes(scopes...)
-				// }
-				// for column, orderingType := range query.OrderBys {
-				// 	if regexp.MustCompile("^" + snakeCaseDelimetedWith + ".+").MatchString(column) {
-				// 		tx = tx.Order(column + " " + strings.ToLower(orderingType))
-				// 	}
-				// }
-				return tx
-			})
+			db = db.Preload(with)
 			syncronizer.M().Unlock()
 		}(with)
 	}
@@ -80,7 +60,7 @@ func BuildFromRequestQuery(db *gorm.DB, query requests.Query) *gorm.DB {
 	return db
 }
 
-func buildWhereScopeFromRequestQueryFilter(db *gorm.DB, filter requests.QueryFilter) (
+func buildScopeFromRequestQueryFilter(db *gorm.DB, filter requests.QueryFilter) (
 	scope func(*gorm.DB) *gorm.DB) {
 	filter.Values = sliceh.Map(filter.Values, func(value any) any {
 		valueStr := fmt.Sprintf("%v", value)
