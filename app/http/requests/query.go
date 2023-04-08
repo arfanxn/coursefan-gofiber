@@ -1,10 +1,14 @@
 package requests
 
 import (
+	"fmt"
+	"net/url"
 	"regexp"
 	"strings"
 
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/boolh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/errorh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/strh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/synch"
@@ -158,5 +162,122 @@ func (query *Query) setLimitOffsetFromContext(c *fiber.Ctx) (err error) {
 		"offset",
 		((c.QueryInt("page", 1) - 1) * query.Limit),
 	)
+	return
+}
+
+type QueryFilterExp struct {
+	// Column
+	Column string
+	// Operator, e.g. == or != or > or >= or < or <= or %% or --
+	Operator string
+	// Value
+	Value any
+}
+
+type QueryIncludeExp struct {
+	Column  string
+	Selects []string
+}
+
+type QuerySortExp struct {
+	Column    string
+	Direction string
+}
+
+type QueryExp struct {
+	// querystring : select=column,column2,column3
+	Selects []string
+	// querystring : include=table:column1,column2;tabl2.table3;
+	Includes []QueryIncludeExp
+	// querystring : scope=hasComment,hasLike
+	Scopes []string
+	// querystring : withCount=table,table2
+	Counts []string
+	// querystring : sort=table.column:desc,table.column:rand
+	Sorts []QuerySortExp
+	// querystring : filter[column][operator]=value
+	Filters []QueryFilterExp
+}
+
+// AddFilter append the given QueryFilter to the Query.FIlters
+func (query *QueryExp) AddFilter(filters ...QueryFilterExp) {
+	query.Filters = append(query.Filters, filters...)
+}
+
+func (input *QueryExp) FromContext(c *fiber.Ctx) (err error) {
+	defer func() { // incase of error by unprocessable entity
+		err = errorh.AnyToErrorOrNil(recover())
+		if err != nil {
+			err = fiber.ErrUnprocessableEntity
+		}
+	}()
+	syncronizer := synch.NewSyncronizer()
+	defer syncronizer.Close()
+	fullUriStr := string(c.Request().URI().FullURI())
+	url, err := url.Parse(fullUriStr)
+	if err != nil {
+		return
+	}
+
+	for key, values := range url.Query() {
+		syncronizer.WG().Add(1)
+		go func(key string, values []string) {
+			defer syncronizer.WG().Done()
+			if regexp.MustCompile("^selects?$").MatchString(key) {
+				for _, values := range values {
+					input.Selects = append(input.Selects, strings.Split(values, ",")...)
+				}
+			} else if regexp.MustCompile("^includes?$").MatchString(key) {
+				for _, values := range values {
+					for _, value := range strings.Split(values, ";") {
+						var (
+							splitted = strings.Split(value, ":")
+							column   = splitted[0]
+							selects  = []string{}
+						)
+						if len(splitted) > 1 && (splitted[1] != "") {
+							selects = strings.Split(splitted[1], ",")
+						}
+						input.Includes = append(input.Includes, QueryIncludeExp{
+							Column:  column,
+							Selects: selects,
+						})
+					}
+				}
+			} else if regexp.MustCompile("^scopes?$").MatchString(key) {
+				for _, values := range values {
+					input.Scopes = append(input.Scopes, strings.Split(values, ",")...)
+				}
+			} else if regexp.MustCompile("^counts?$").MatchString(key) {
+				for _, values := range values {
+					input.Counts = append(input.Counts, strings.Split(values, ",")...)
+				}
+			} else if regexp.MustCompile("^sorts?$").MatchString(key) {
+				for _, values := range values {
+					for _, value := range strings.Split(values, ",") {
+						splitted := strings.Split(value, ":")
+						column := splitted[0]
+						direction := splitted[1]
+						input.Sorts = append(input.Sorts, QuerySortExp{
+							Column:    column,
+							Direction: direction,
+						})
+					}
+				}
+			} else if matcheds := regexp.MustCompile(
+				fmt.Sprintf(`^filters?\[([\w.]+)\]\[(%s)\]`, strings.Join(enums.QueryFilterOperators(), "|")),
+			).FindStringSubmatch(key); len(matcheds) != 0 {
+				column := matcheds[1]
+				operator := matcheds[2]
+				input.AddFilter(QueryFilterExp{
+					Column:   column,
+					Operator: operator,
+					Value:    values[0],
+				})
+			}
+		}(key, values)
+	}
+	syncronizer.WG().Wait()
+
 	return
 }
