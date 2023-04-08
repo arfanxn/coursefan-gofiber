@@ -18,3 +18,7 @@ type User struct {
 	// Avatar relationship
 	Avatar *Media `json:"avatar" gorm:"-"`
 }
+
+func (User) TableName() string {
+	return "users"
+}
