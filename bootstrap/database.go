@@ -16,7 +16,9 @@ func NewGormDB() (*gorm.DB, error) {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
 
-	config := &gorm.Config{}
+	config := &gorm.Config{
+		QueryFields: true,
+	}
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", username, password, host, port, database)
 	db, err := gorm.Open(mysql.Open(dsn), config)
