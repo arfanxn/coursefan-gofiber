@@ -1,6 +1,7 @@
 package strh
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
@@ -29,4 +30,9 @@ func StrToDelimetedSnake(s, delimeter string) string {
 		),
 		delimeter,
 	)
+}
+
+// AnyToStr converts any to string
+func AnyToStr(value any) string {
+	return fmt.Sprintf("%v", value)
 }
