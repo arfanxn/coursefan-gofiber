@@ -10,7 +10,7 @@ import (
 type UserProfile struct {
 	Id          uuid.UUID   `json:"id" gorm:"primaryKey;type:CHAR(36)"`
 	UserId      uuid.UUID   `json:"user_id" gorm:"type:CHAR(36);NOT NULL"`
-	User        User        `json:"user" gorm:"foreignKey:UserId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	User        *User       `json:"user" gorm:"foreignKey:UserId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Headline    null.String `json:"headline" gorm:"type:VARCHAR(50)"`
 	Biography   null.String `json:"biography" gorm:"type:VARCHAR(256)"`
 	Language    string      `json:"language" gorm:"type:CHAR(2) NOT NULL"`
