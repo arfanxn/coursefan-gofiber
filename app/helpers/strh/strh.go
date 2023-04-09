@@ -33,6 +33,7 @@ func StrToDelimetedSnake(s, delimeter string) string {
 }
 
 // AnyToStr converts any to string
-func AnyToStr(value any) string {
-	return fmt.Sprintf("%v", value)
-}
+func AnyToStr(value any) string { return fmt.Sprintf("%v", value) }
+
+// StrToAny converts string to any
+func StrToAny(value string) any { return any(value) }
