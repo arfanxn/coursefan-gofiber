@@ -27,7 +27,7 @@ func (repository *LecturePartRepository) All(c *fiber.Ctx, queries ...requests.Q
 	lectureParts []models.LecturePart, err error) {
 	db := repository.db
 	if len(queries) != 0 {
-		db = gormh.BuildFromRequestQuery(repository.db, queries[0])
+		db = gormh.BuildFromRequestQuery(repository.db, models.LecturePart{}, queries[0])
 	}
 	err = db.Find(&lectureParts).Error
 	return
@@ -37,7 +37,7 @@ func (repository *LecturePartRepository) All(c *fiber.Ctx, queries ...requests.Q
 func (repository *LecturePartRepository) AllByCourse(c *fiber.Ctx, query requests.Query) (
 	lectureParts []models.LecturePart, err error) {
 	courseId := c.Params("course_id")
-	err = gormh.BuildFromRequestQuery(repository.db, query).
+	err = gormh.BuildFromRequestQuery(repository.db, models.LecturePart{}, query).
 		Joins(
 			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
 				models.Course{}.TableName(),

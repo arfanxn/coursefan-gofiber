@@ -14,8 +14,8 @@ import (
 )
 
 // BuildFromRequestQuery builds a gorm query from the given requests.Query
-func BuildFromRequestQuery(tx *gorm.DB, query requests.Query) *gorm.DB {
-	mainModel := models.User{}
+func BuildFromRequestQuery[T models.Tabler](
+	tx *gorm.DB, mainModel T, query requests.Query) *gorm.DB {
 	tx = tx.Table(mainModel.TableName())
 	syncronizer := synch.NewSyncronizer()
 	defer syncronizer.Close()
