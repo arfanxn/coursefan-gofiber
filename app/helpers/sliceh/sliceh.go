@@ -63,3 +63,9 @@ func Random[T any](slice ...T) T {
 func Merge[T any](first, second []T) []T {
 	return append(first, second...)
 }
+
+// Last returns the last slice element
+func Last[T any](items []T) T {
+	length := len(items)
+	return items[length-1]
+}
