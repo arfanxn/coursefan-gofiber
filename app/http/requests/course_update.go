@@ -13,7 +13,7 @@ type CourseUpdate struct {
 // FromContext fills input from the given context
 func (input *CourseUpdate) FromContext(c *fiber.Ctx) (err error) {
 	err = c.BodyParser(input)
-	if id := c.Params("id"); id != "" {
+	if id := c.Params("course_id"); id != "" {
 		input.Id = id
 	}
 	return

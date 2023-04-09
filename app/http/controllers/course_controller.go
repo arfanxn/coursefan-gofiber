@@ -54,7 +54,7 @@ func (controller *CourseController) Find(c *fiber.Ctx) (err error) {
 		return
 	}
 	input.AddFilter(requests.QueryFilter{
-		Column: "id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("id")},
+		Column: "id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("course_id")},
 	})
 
 	data, err := controller.service.Find(c, input)

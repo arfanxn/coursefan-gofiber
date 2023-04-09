@@ -7,7 +7,7 @@ type CourseDelete struct {
 }
 
 func (input *CourseDelete) FromContext(c *fiber.Ctx) (err error) {
-	if id := c.Params("id"); id != "" {
+	if id := c.Params("course_id"); id != "" {
 		input.Id = id
 	} else {
 		err = c.BodyParser(input)
