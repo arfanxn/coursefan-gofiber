@@ -10,6 +10,7 @@ import (
 
 	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/boolh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/errorh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/strh"
@@ -61,8 +62,7 @@ func (input *Query) FromContext(c *fiber.Ctx) (err error) {
 	}()
 	syncronizer := synch.NewSyncronizer()
 	defer syncronizer.Close()
-	fullUriStr := string(c.Request().URI().FullURI())
-	url, err := url.Parse(fullUriStr)
+	url, err := url.Parse(ctxh.GetFullURIString(c))
 	if err != nil {
 		return
 	}
