@@ -36,7 +36,7 @@ func (service *LecturePartService) AllByCourse(c *fiber.Ctx, input requests.Quer
 		return lpRes
 	})
 	pagination.SetItems(lecturePartRess)
-	pagination.SetPageFromOffsetLimit(int64(input.Offset), input.Limit)
+	pagination.SetPageFromOffsetLimit(int64(input.Offset), int(input.Limit.Int64))
 	pagination.SetURL(errorh.Must(url.Parse(ctxh.GetFullURIString(c))))
 	return
 }

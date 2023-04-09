@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/responseh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/policies"
@@ -49,11 +50,11 @@ func (controller *LecturePartController) Find(c *fiber.Ctx) (err error) {
 		return
 	}
 	input.AddFilter(requests.QueryFilter{
-		Column: "id", Operator: "==", Values: []any{c.Params("lecture_part_id")},
+		Column: "id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("lecture_part_id")},
+	}, requests.QueryFilter{
+		Column: "course_id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("course_id")},
 	})
-	input.AddFilter(requests.QueryFilter{
-		Column: "course_id", Operator: "==", Values: []any{c.Params("course_id")},
-	})
+
 	data, err := controller.service.Find(c, input)
 	if err != nil {
 		return err

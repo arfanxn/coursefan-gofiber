@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/responseh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/validatorh"
@@ -29,12 +30,12 @@ func NewCourseController(
 
 // All
 func (controller *CourseController) All(c *fiber.Ctx) (err error) {
-	// input := requests.Query{}
-	// err = input.FromContext(c)
-	// if err != nil {
-	// 	return
-	// }
-	pagination, err := controller.service.All(c)
+	input := requests.Query{}
+	err = input.FromContext(c)
+	if err != nil {
+		return
+	}
+	pagination, err := controller.service.All(c, input)
 	if err != nil {
 		return err
 	}
@@ -45,28 +46,28 @@ func (controller *CourseController) All(c *fiber.Ctx) (err error) {
 	})
 }
 
-// // Find
-// func (controller *CourseController) Find(c *fiber.Ctx) (err error) {
-// 	input := requests.Query{}
-// 	err = input.FromContext(c)
-// 	if err != nil {
-// 		return
-// 	}
-// 	input.Filters = append(input.Filters, requests.QueryFilter{
-// 		Column: "id", Operator: "==", Values: []any{c.Params("id")},
-// 	})
+// Find
+func (controller *CourseController) Find(c *fiber.Ctx) (err error) {
+	input := requests.Query{}
+	err = input.FromContext(c)
+	if err != nil {
+		return
+	}
+	input.AddFilter(requests.QueryFilter{
+		Column: "id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("id")},
+	})
 
-// 	data, err := controller.service.Find(c, input)
-// 	if err != nil {
-// 		return err
-// 	}
+	data, err := controller.service.Find(c, input)
+	if err != nil {
+		return err
+	}
 
-// 	return responseh.Write(c, resources.Response{
-// 		Code:    fiber.StatusOK,
-// 		Message: "Successfully retrieve course",
-// 		Data:    data,
-// 	})
-// }
+	return responseh.Write(c, resources.Response{
+		Code:    fiber.StatusOK,
+		Message: "Successfully retrieve course",
+		Data:    data,
+	})
+}
 
 // Create
 func (controller *CourseController) Create(c *fiber.Ctx) (err error) {

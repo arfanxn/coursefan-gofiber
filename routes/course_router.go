@@ -11,7 +11,7 @@ func registerCourseRouter(router fiber.Router) {
 	courseController := controllerp.InitCourseController(databasep.MustGetGormDB())
 	courses := router.Group("/courses")
 	courses.Get("", courseController.All)
-	// courses.Get("/:id", courseController.Find)
+	courses.Get("/:id", courseController.Find)
 	courses.Post("", courseController.Create)
 	courses.Put("/:id", courseController.Update)
 	courses.Delete("/:id", courseController.Delete)

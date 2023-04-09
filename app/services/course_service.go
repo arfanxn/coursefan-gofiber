@@ -28,9 +28,9 @@ func NewCourseService(
 }
 
 // All
-func (service *CourseService) All(c *fiber.Ctx) (
+func (service *CourseService) All(c *fiber.Ctx, input requests.Query) (
 	pagination resources.Pagination[resources.Course], err error) {
-	courseMdls, err := service.repository.All(c)
+	courseMdls, err := service.repository.All(c, input)
 	if err != nil {
 		return
 	}

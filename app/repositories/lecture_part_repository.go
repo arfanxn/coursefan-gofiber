@@ -34,28 +34,27 @@ func (repository *LecturePartRepository) All(c *fiber.Ctx, queries ...requests.Q
 }
 
 // AllByCourse returns all lectureParts by course
-func (repository *LecturePartRepository) AllByCourse(c *fiber.Ctx, queries ...requests.Query) (
+func (repository *LecturePartRepository) AllByCourse(c *fiber.Ctx, query requests.Query) (
 	lectureParts []models.LecturePart, err error) {
 	courseId := c.Params("course_id")
-	tx := repository.db
-	if len(queries) != 0 {
-		tx = gormh.BuildFromRequestQuery(repository.db, queries[0])
-	}
-	err = tx.Joins(
-		fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
-			models.Course{}.TableName(),
-			models.Course{}.TableName(),
-			"id",
-			models.LecturePart{}.TableName(),
-			"course_id",
-		)).Joins(
-		fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
-			models.CourseUserRole{}.TableName(),
-			models.CourseUserRole{}.TableName(),
-			"course_id",
-			models.Course{}.TableName(),
-			"id",
-		)).Where(models.Course{}.TableName()+".id = ?", courseId).
+	err = gormh.BuildFromRequestQuery(repository.db, query).
+		Joins(
+			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
+				models.Course{}.TableName(),
+				models.Course{}.TableName(),
+				"id",
+				models.LecturePart{}.TableName(),
+				"course_id",
+			)).
+		Joins(
+			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
+				models.CourseUserRole{}.TableName(),
+				models.CourseUserRole{}.TableName(),
+				"course_id",
+				models.Course{}.TableName(),
+				"id",
+			)).
+		Where(models.Course{}.TableName()+".id = ?", courseId).
 		Distinct().Find(&lectureParts).Error
 
 	return
