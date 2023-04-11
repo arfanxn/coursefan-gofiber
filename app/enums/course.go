@@ -5,7 +5,7 @@ const (
 	CourseQueryScopeLectured     string = "lecturerd"
 	CourseQueryScopeParticipated string = "participated"
 	CourseQueryScopeWishlist     string = "wishlist"
-	CourseQueryScopeInCart       string = "in_cart"
+	CourseQueryScopeCart       string = "in_cart"
 )
 
 // CourseQueryScopes returns slice of Course query scope enums
@@ -14,6 +14,6 @@ func CourseQueryScopes() []string {
 		CourseQueryScopeLectured,
 		CourseQueryScopeParticipated,
 		CourseQueryScopeWishlist,
-		CourseQueryScopeInCart,
+		CourseQueryScopeCart,
 	}
 }
