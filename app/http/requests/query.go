@@ -123,8 +123,9 @@ func (input *Query) FromContext(c *fiber.Ctx) (err error) {
 					Limit: nullIntLimit,
 				})
 			} else if regexp.MustCompile("^scopes?$").MatchString(key) {
-				// Query scopes
-				input.Scopes = sliceh.Merge(input.Scopes, strings.Split(values[0], ","))
+				for _, values := range values {
+					input.Scopes = sliceh.Merge(input.Scopes, strings.Split(values, ","))
+				}
 			} else if matcheds := regexp.MustCompile(`^aggregates?\[([\w.]+)\]$`).
 				// Query Aggregates
 				FindStringSubmatch(key); len(matcheds) != 0 {
