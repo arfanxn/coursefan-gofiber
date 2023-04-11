@@ -80,7 +80,10 @@ func (controller *LecturePartController) Create(c *fiber.Ctx) (err error) {
 	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
 		return err
 	}
-	// TODO: register policy for this method
+	err = controller.policy.Create(c, input)
+	if err != nil {
+		return
+	}
 	data, err := controller.service.Create(c, input)
 	if err != nil {
 		return err
@@ -103,7 +106,10 @@ func (controller *LecturePartController) Update(c *fiber.Ctx) (err error) {
 	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
 		return err
 	}
-	// TODO: register policy for this method
+	err = controller.policy.Update(c, input)
+	if err != nil {
+		return
+	}
 	data, err := controller.service.Update(c, input)
 	if err != nil {
 		return err
@@ -126,7 +132,10 @@ func (controller *LecturePartController) Delete(c *fiber.Ctx) (err error) {
 	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
 		return err
 	}
-	// TODO: register policy for this method
+	err = controller.policy.Delete(c, input)
+	if err != nil {
+		return
+	}
 	err = controller.service.Delete(c, input)
 	if err != nil {
 		return err
