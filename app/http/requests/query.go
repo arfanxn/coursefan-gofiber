@@ -32,7 +32,7 @@ type Query struct {
 	Includes []QueryInclude
 	// Scopes represents query scope to be included in the query
 	// querystring/formdata : scope=hasFriends,hasEmployees
-	Scopes []string
+	Scopes []QueryScopeName
 	// Aggregates represents aggregates to be included in the query
 	// querystring/formdata : aggregate[users]=count or aggregate[wallet.balance]=sum
 	Aggregates []QueryAggregate
@@ -46,6 +46,11 @@ type Query struct {
 	Limit null.Int
 	// Offset represents the total items to be offseted in the query
 	Offset int
+}
+
+// HasScope checks whether the query has the given scope
+func (query *Query) HasScope(scope string) bool {
+	return sliceh.Contains(query.Scopes, scope)
 }
 
 // AddFilter append the given QueryFilter to the Query.FIlters
