@@ -14,7 +14,7 @@ type Course struct {
 	Description  string        `json:"description" gorm:"type:LONGTEXT;NOT NULL"`
 	CreatedAt    time.Time     `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	UpdatedAt    null.Time     `json:"updated_at" gorm:"autoUpdateTime"`
-	LectureParts []LecturePart `json:"lecture_parts" gorm:"foreignKey:CourseId;references:Id"`
+	LectureParts []LecturePart `json:"lecture_parts" gorm:"foreignKey:CourseId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (Course) TableName() string {
