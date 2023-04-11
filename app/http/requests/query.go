@@ -48,9 +48,14 @@ type Query struct {
 	Offset int
 }
 
-// HasScope checks whether the query has the given scope
-func (query *Query) HasScope(scope string) bool {
-	return sliceh.Contains(query.Scopes, scope)
+// HasScope checks whether the query has the given scope(s)
+func (query *Query) HasScope(scopes ...string) bool {
+	for _, scope := range scopes {
+		if sliceh.Contains(query.Scopes, scope) {
+			return true
+		}
+	}
+	return false
 }
 
 // AddFilter append the given QueryFilter to the Query.FIlters
