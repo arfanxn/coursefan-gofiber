@@ -22,6 +22,7 @@ func BuildFromRequestQuery[T models.Tabler](
 	for _, filter := range query.Filters {
 		syncronizer.WG().Add(1)
 		go func(filter requests.QueryFilter) {
+			defer syncronizer.WG().Done()
 			if filter.TableName() != mainModel.TableName() {
 				return
 			}
