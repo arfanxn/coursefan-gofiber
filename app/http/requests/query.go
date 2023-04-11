@@ -32,7 +32,7 @@ type Query struct {
 	Includes []QueryInclude
 	// Scopes represents query scope to be included in the query
 	// querystring/formdata : scope=hasFriends,hasEmployees
-	Scopes []QueryScopeName
+	Scopes []string
 	// Aggregates represents aggregates to be included in the query
 	// querystring/formdata : aggregate[users]=count or aggregate[wallet.balance]=sum
 	Aggregates []QueryAggregate
