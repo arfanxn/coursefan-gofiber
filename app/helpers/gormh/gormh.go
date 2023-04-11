@@ -20,42 +20,62 @@ func BuildFromRequestQuery[T models.Tabler](
 	syncronizer := synch.NewSyncronizer()
 	defer syncronizer.Close()
 	for _, filter := range query.Filters {
-		if filter.TableName() != mainModel.TableName() {
-			continue
-		}
-		filter.CastValues()
-		tx = buildFromRequestQueryFilter(tx, filter)
+		syncronizer.WG().Add(1)
+		go func(filter requests.QueryFilter) {
+			if filter.TableName() != mainModel.TableName() {
+				return
+			}
+			_ = filter.CastValues()
+			syncronizer.M().Lock()
+			tx = buildFromRequestQueryFilter(tx, filter)
+			syncronizer.M().Unlock()
+		}(filter)
 	}
 	for _, include := range query.Includes {
-		tx.Preload(strh.StrToDelimetedCamel(include.Relation, "."), func(tx *gorm.DB) *gorm.DB {
-			relationTableNames := include.TableNames()
-			lastRelationTableName := sliceh.Last(relationTableNames)
-			for _, filter := range query.Filters {
-				if filter.TableName() != lastRelationTableName {
-					continue
+		syncronizer.WG().Add(1)
+		go func(include requests.QueryInclude) {
+			defer syncronizer.WG().Done()
+			preloadTx := tx.Preload(strh.StrToDelimetedCamel(include.Relation, "."), func(tx *gorm.DB) *gorm.DB {
+				relationTableNames := include.TableNames()
+				lastRelationTableName := sliceh.Last(relationTableNames)
+				for _, filter := range query.Filters {
+					if filter.TableName() != lastRelationTableName {
+						continue
+					}
+					_ = filter.CastValues()
+					tx = buildFromRequestQueryFilter(tx, filter)
 				}
-				tx = buildFromRequestQueryFilter(tx, filter)
-			}
-			for _, sort := range query.Sorts {
-				if sort.TableName() != lastRelationTableName {
-					continue
+				for _, sort := range query.Sorts {
+					if sort.TableName() != lastRelationTableName {
+						continue
+					}
+					tx = tx.Order(fmt.Sprintf("%s %s", sort.Column, sort.Direction))
 				}
-				tx = tx.Order(fmt.Sprintf("%s %s", sort.Column, sort.Direction))
-			}
-			if include.Limit.Valid {
-				tx = tx.Limit(int(include.Limit.Int64))
-			} else if query.Limit.Valid {
-				tx = tx.Limit(int(query.Limit.Int64))
-			}
-			return tx
-		})
+				if include.Limit.Valid {
+					tx = tx.Limit(int(include.Limit.Int64))
+				} else if query.Limit.Valid {
+					tx = tx.Limit(int(query.Limit.Int64))
+				}
+				return tx
+			})
+			syncronizer.M().Lock()
+			tx = preloadTx
+			syncronizer.M().Unlock()
+		}(include)
 	}
 	for _, sort := range query.Sorts {
-		if sort.TableName() != mainModel.TableName() {
-			continue
-		}
-		tx = tx.Order(fmt.Sprintf("%s %s", sort.Column, sort.Direction))
+		syncronizer.WG().Add(1)
+		go func(sort requests.QuerySort) {
+			defer syncronizer.WG().Done()
+			if sort.TableName() != mainModel.TableName() {
+				return
+			}
+			syncronizer.M().Lock()
+			tx = tx.Order(fmt.Sprintf("%s %s", sort.Column, sort.Direction))
+			syncronizer.M().Unlock()
+		}(sort)
 	}
+	syncronizer.WG().Wait()
 	if query.Limit.Valid {
 		tx = tx.Limit(int(query.Limit.Int64))
 	}
