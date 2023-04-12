@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
@@ -36,7 +37,7 @@ func (repository *LecturePartRepository) All(c *fiber.Ctx, queries ...requests.Q
 // AllByCourse returns all lectureParts by course
 func (repository *LecturePartRepository) AllByCourse(c *fiber.Ctx, query requests.Query) (
 	lectureParts []models.LecturePart, err error) {
-	courseId := c.Params("course_id")
+	courseIdFilter := query.GetFilter("lecture_parts.course_id", enums.QueryFilterOperatorEquals)
 	err = gormh.BuildFromRequestQuery(repository.db, models.LecturePart{}, query).
 		Joins(
 			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
@@ -54,7 +55,7 @@ func (repository *LecturePartRepository) AllByCourse(c *fiber.Ctx, query request
 				models.Course{}.TableName(),
 				"id",
 			)).
-		Where(models.Course{}.TableName()+".id = ?", courseId).
+		Where(models.Course{}.TableName()+".id = ?", courseIdFilter.Values[0]).
 		Distinct().Find(&lectureParts).Error
 
 	return

@@ -33,7 +33,13 @@ func (controller *LecturePartController) AllByCourse(c *fiber.Ctx) (err error) {
 	if err != nil {
 		return
 	}
-	// TODO: register policy for this method
+	input.AddFilter(requests.QueryFilter{
+		Column: "lecture_parts.course_id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("course_id")},
+	})
+	err = controller.policy.AllByCourse(c, input)
+	if err != nil {
+		return
+	}
 	pagination, err := controller.service.AllByCourse(c, input)
 	if err != nil {
 		return err
@@ -53,11 +59,14 @@ func (controller *LecturePartController) Find(c *fiber.Ctx) (err error) {
 		return
 	}
 	input.AddFilter(requests.QueryFilter{
-		Column: "id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("lecture_part_id")},
+		Column: "lecture_parts.id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("lecture_part_id")},
 	}, requests.QueryFilter{
-		Column: "course_id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("course_id")},
+		Column: "lecture_parts.course_id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("course_id")},
 	})
-	// TODO: register policy for this method
+	err = controller.policy.Find(c, input)
+	if err != nil {
+		return
+	}
 	data, err := controller.service.Find(c, input)
 	if err != nil {
 		return err
