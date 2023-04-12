@@ -27,8 +27,14 @@ func (repository *MediaRepository) All(c *fiber.Ctx) (medias []models.Media, err
 }
 
 // Find finds model by id
-func (repository *MediaRepository) FindById(c *fiber.Ctx, id string) (lecture models.Lecture, err error) {
+func (repository *MediaRepository) FindById(c *fiber.Ctx, id string) (lecture models.Media, err error) {
 	err = repository.db.Where("id = ?", id).First(&lecture).Error
+	return
+}
+
+// FindByModel finds model by model
+func (repository *MediaRepository) FindByModel(c *fiber.Ctx, model models.Media) (lecture models.Media, err error) {
+	err = repository.db.First(&lecture, model).Error
 	return
 }
 
