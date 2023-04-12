@@ -63,6 +63,23 @@ func (query *Query) AddFilter(filters ...QueryFilter) {
 	query.Filters = append(query.Filters, filters...)
 }
 
+// GetFilter retrieve Filter by the given column and or operator (operator is opetional) from Query.FIlters
+func (query *Query) GetFilter(column string, operators ...string) *QueryFilter {
+	filters := sliceh.Filter(query.Filters, func(filter QueryFilter) bool {
+		if len(operators) != 0 {
+			operator := operators[0]
+			if filter.Operator != operator {
+				return false
+			}
+		}
+		return filter.Column == column
+	})
+	if len(filters) == 0 {
+		return nil
+	}
+	return &filters[0]
+}
+
 func (input *Query) FromContext(c *fiber.Ctx) (err error) {
 	defer func() { // incase of error by unprocessable entity
 		err = errorh.AnyToErrorOrNil(recover())
