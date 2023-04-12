@@ -26,6 +26,12 @@ func (repository *MediaRepository) All(c *fiber.Ctx) (medias []models.Media, err
 	return
 }
 
+// Find finds model by id
+func (repository *MediaRepository) FindById(c *fiber.Ctx, id string) (lecture models.Lecture, err error) {
+	err = repository.db.Where("id = ?", id).First(&lecture).Error
+	return
+}
+
 // Insert inserts medias into the database
 func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media) (int64, error) {
 	var savedFilePaths []string
