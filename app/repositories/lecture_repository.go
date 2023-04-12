@@ -31,6 +31,12 @@ func (repository *LectureRepository) Find(c *fiber.Ctx, id string) (lecture mode
 	return
 }
 
+// FindByModel finds model by model
+func (repository *LectureRepository) FindByModel(c *fiber.Ctx, model models.Lecture) (lecture models.Lecture, err error) {
+	err = repository.db.First(&lecture, model).Error
+	return
+}
+
 // Insert inserts models into the database
 func (repository *LectureRepository) Insert(c *fiber.Ctx, lectures ...*models.Lecture) (int64, error) {
 	for _, lecture := range lectures {
