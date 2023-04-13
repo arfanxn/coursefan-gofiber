@@ -8,6 +8,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"gopkg.in/guregu/null.v4"
 	"gorm.io/gorm"
 )
 
@@ -27,14 +28,14 @@ func (repository *MediaRepository) All(c *fiber.Ctx) (medias []models.Media, err
 }
 
 // Find finds model by id
-func (repository *MediaRepository) FindById(c *fiber.Ctx, id string) (lecture models.Media, err error) {
-	err = repository.db.Where("id = ?", id).First(&lecture).Error
+func (repository *MediaRepository) FindById(c *fiber.Ctx, id string) (media models.Media, err error) {
+	err = repository.db.Where("id = ?", id).First(&media).Error
 	return
 }
 
 // FindByModel finds model by model
-func (repository *MediaRepository) FindByModel(c *fiber.Ctx, model models.Media) (lecture models.Media, err error) {
-	err = repository.db.First(&lecture, model).Error
+func (repository *MediaRepository) FindByModel(c *fiber.Ctx, model models.Media) (media models.Media, err error) {
+	err = repository.db.First(&media, model).Error
 	return
 }
 
@@ -107,6 +108,48 @@ func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media)
 		return 0, err
 	}
 	result := repository.db.Create(medias)
+	return result.RowsAffected, result.Error
+}
+
+// UpdateById updates model in the database by given id
+func (repository *MediaRepository) UpdateById(c *fiber.Ctx, media *models.Media) (int64, error) {
+	// refresh model updated at
+	media.UpdatedAt = null.NewTime(time.Now(), true)
+
+	// if the file is also updated
+	if media.FileHeader != nil {
+		err := fileh.BatchRemove(media.GetFilePath())
+		if err != nil {
+			return 0, err
+		}
+
+		mediaMimeType, err := media.GetMimeType()
+		if err != nil {
+			return 0, err
+		}
+		mediaSize, err := media.GetSize()
+		if err != nil {
+			return 0, err
+		}
+		media.FileName = media.GetFileName()
+		media.Disk = media.GetDisk()
+		media.Size = mediaSize
+		media.MimeType = mediaMimeType
+
+		mediaFilePath := media.GetFilePath()
+		file, err := media.FileHeader.Open()
+		if err != nil {
+			return 0, err
+		}
+		defer file.Close()
+		err = fileh.Save(mediaFilePath, file)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	// update
+	result := repository.db.Model(media).Updates(media)
 	return result.RowsAffected, result.Error
 }
 
