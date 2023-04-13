@@ -13,6 +13,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.43.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.3.0
+	github.com/google/wire v0.5.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/joho/godotenv v1.5.1
 	github.com/ramadani/go-filestorage v0.0.0-20181209121202-7256972fe37b
