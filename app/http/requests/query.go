@@ -205,6 +205,13 @@ func (filter QueryFilter) TableName() string {
 	return strings.Split(filter.Column, ".")[0]
 }
 
+// StringValues returns values from  QueryFilter.Values as a string
+func (filter *QueryFilter) StringValues() []string {
+	return sliceh.Map(filter.Values, func(value any) string {
+		return fmt.Sprintf("%v", value)
+	})
+}
+
 // CastValues casts data on QueryFilter.Values to the appropriate types, this function also returns the casted QueryFilter.Values
 func (filter *QueryFilter) CastValues() []any {
 	filter.Values = sliceh.Map(filter.Values, func(value any) any {
