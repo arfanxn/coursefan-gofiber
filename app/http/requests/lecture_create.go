@@ -3,6 +3,7 @@ package requests
 import (
 	"mime/multipart"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -19,10 +20,6 @@ func (input *LectureCreate) FromContext(c *fiber.Ctx) (err error) {
 		return
 	}
 	input.LecturePartId = c.Params("lecture_part_id")
-	lectureVideo, err := c.FormFile("video")
-	if err != nil {
-		return
-	}
-	input.Video = lectureVideo
+	input.Video = ctxh.GetFileHeader(c, "video")
 	return
 }
