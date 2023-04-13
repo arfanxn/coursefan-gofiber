@@ -12,7 +12,7 @@ func registerLecturePartRouter(router fiber.Router) {
 	coursesIdLectureParts := router.Group("/courses/:course_id/lecture_parts")
 	coursesIdLectureParts.Get("", lecturePartController.AllByCourse)
 	coursesIdLectureParts.Get("/:lecture_part_id", lecturePartController.Find)
-	coursesIdLectureParts.Post("/", lecturePartController.Create)
+	coursesIdLectureParts.Post("", lecturePartController.Create)
 	coursesIdLectureParts.Put("/:lecture_part_id", lecturePartController.Update)
 	coursesIdLectureParts.Delete("/:lecture_part_id", lecturePartController.Delete)
 }
