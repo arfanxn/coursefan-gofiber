@@ -13,7 +13,7 @@ type Lecture struct {
 	LecturePart   *LecturePart `json:"lecture_part,omitempty"`
 	Name          string       `json:"name"`
 	Order         int          `json:"order"`
-	VideoUrl      string       `json:"video_url"`
+	Video         Media        `json:"video"`
 	CreatedAt     time.Time    `json:"created_at"`
 	UpdatedAt     null.Time    `json:"updated_at"`
 }
