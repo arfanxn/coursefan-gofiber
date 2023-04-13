@@ -108,7 +108,12 @@ func (repository *MediaRepository) Insert(c *fiber.Ctx, medias ...*models.Media)
 		return 0, err
 	}
 	result := repository.db.Create(medias)
-	return result.RowsAffected, result.Error
+	err := result.Error
+	if err != nil {
+		fileh.BatchRemove(savedFilePaths...)
+		return 0, err
+	}
+	return result.RowsAffected, nil
 }
 
 // UpdateById updates model in the database by given id
