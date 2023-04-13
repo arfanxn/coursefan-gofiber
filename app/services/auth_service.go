@@ -125,6 +125,7 @@ func (service *AuthService) Register(c *fiber.Ctx, input requests.AuthRegister) 
 	if input.Avatar != nil {
 		avatarMediaMdl.ModelType = reflecth.GetTypeName(userMdl)
 		avatarMediaMdl.ModelId = userMdl.Id
+		avatarMediaMdl.CollectionName = null.StringFrom(enums.MediaCollectionNameUserAvatar)
 		avatarMediaMdl.SetFileHeader(input.Avatar)
 		_, err = service.mediaRepository.Insert(c, &avatarMediaMdl)
 		if err != nil {
