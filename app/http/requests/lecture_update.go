@@ -12,7 +12,7 @@ type LectureUpdate struct {
 	LecturePartId string                `json:"course_id" validate:"required,uuid"`
 	Name          string                `json:"name" validate:"required"`
 	Order         int                   `json:"order" validate:"required,min=1"`
-	Video         *multipart.FileHeader `json:"video" fhlidate:"required,max=500"`
+	Video         *multipart.FileHeader `json:"video" fhlidate:"max=500"`
 }
 
 func (input *LectureUpdate) FromContext(c *fiber.Ctx) (err error) {
