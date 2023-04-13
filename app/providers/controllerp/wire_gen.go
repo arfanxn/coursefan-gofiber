@@ -43,3 +43,12 @@ func InitLecturePartController(db *gorm.DB) *controllers.LecturePartController {
 	lecturePartController := controllers.NewLecturePartController(lecturePartPolicy, lecturePartService)
 	return lecturePartController
 }
+
+func InitLectureController(db *gorm.DB) *controllers.LectureController {
+	lectureRepository := repositories.NewLectureRepository(db)
+	mediaRepository := repositories.NewMediaRepository(db)
+	lectureService := services.NewLectureService(lectureRepository, mediaRepository)
+	lecturePolicy := &policies.LecturePolicy{}
+	lectureController := controllers.NewLectureController(lecturePolicy, lectureService)
+	return lectureController
+}
