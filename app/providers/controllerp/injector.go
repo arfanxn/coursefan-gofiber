@@ -28,6 +28,6 @@ func InitLecturePartController(db *gorm.DB) *controllers.LecturePartController {
 }
 
 func InitLectureController(db *gorm.DB) *controllers.LectureController {
-	wire.Build(repositories.NewCourseUserRoleRepository, repositories.NewLectureRepository, repositories.NewMediaRepository, services.NewLectureService, policies.NewLecturePolicy, controllers.NewLectureController)
+	wire.Build(repositories.NewPermissionRepository, repositories.NewLectureRepository, repositories.NewMediaRepository, services.NewLectureService, policies.NewLecturePolicy, controllers.NewLectureController)
 	return nil
 }
