@@ -26,10 +26,12 @@ func InitAuthController(db *gorm.DB) *controllers.AuthController {
 }
 
 func InitCourseController(db *gorm.DB) *controllers.CourseController {
-	courseUserRoleRepository := repositories.NewCourseUserRoleRepository(db)
-	coursePolicy := policies.NewCoursePolicy(courseUserRoleRepository)
+	permissionRepository := repositories.NewPermissionRepository(db)
+	coursePolicy := policies.NewCoursePolicy(permissionRepository)
 	courseRepository := repositories.NewCourseRepository(db)
-	courseService := services.NewCourseService(courseRepository)
+	courseUserRoleRepository := repositories.NewCourseUserRoleRepository(db)
+	roleRepository := repositories.NewRoleRepository(db)
+	courseService := services.NewCourseService(courseRepository, courseUserRoleRepository, roleRepository)
 	courseController := controllers.NewCourseController(coursePolicy, courseService)
 	return courseController
 }
@@ -41,14 +43,4 @@ func InitLecturePartController(db *gorm.DB) *controllers.LecturePartController {
 	lecturePartService := services.NewLecturePartService(lecturePartRepository)
 	lecturePartController := controllers.NewLecturePartController(lecturePartPolicy, lecturePartService)
 	return lecturePartController
-}
-
-func InitLectureController(db *gorm.DB) *controllers.LectureController {
-	permissionRepository := repositories.NewPermissionRepository(db)
-	lecturePolicy := policies.NewLecturePolicy(permissionRepository)
-	lectureRepository := repositories.NewLectureRepository(db)
-	mediaRepository := repositories.NewMediaRepository(db)
-	lectureService := services.NewLectureService(lectureRepository, mediaRepository)
-	lectureController := controllers.NewLectureController(lecturePolicy, lectureService)
-	return lectureController
 }
