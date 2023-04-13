@@ -50,6 +50,16 @@ func Contains[T comparable](items []T, predicate T) bool {
 	return false
 }
 
+// NotContains check whether the given items not contains the given predicate
+func NotContains[T comparable](items []T, predicate T) bool {
+	for _, item := range items {
+		if item != predicate {
+			return true
+		}
+	}
+	return false
+}
+
 // Random return a random T from the given slice of T
 func Random[T any](slice ...T) T {
 	if len(slice) > 1 {
