@@ -3,6 +3,9 @@ package repositories
 import (
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -25,8 +28,19 @@ func (repository *LectureRepository) All(c *fiber.Ctx) (lectures []models.Lectur
 	return
 }
 
+// AllByLecturePart returns all lectures by lecture part
+func (repository *LectureRepository) AllByLecturePart(c *fiber.Ctx, query requests.Query) (
+	lectureParts []models.Lecture, err error) {
+	lpFilter := query.GetFilter(models.Lecture{}.TableName()+".lecture_part_id", enums.QueryFilterOperatorEquals)
+	err = gormh.BuildFromRequestQuery(repository.db, models.Lecture{}, query).
+		Where(models.Lecture{}.TableName()+".lecture_part_id = ?", lpFilter.Values[0]).
+		Distinct().Find(&lectureParts).Error
+
+	return
+}
+
 // Find finds model by id
-func (repository *LectureRepository) Find(c *fiber.Ctx, id string) (lecture models.Lecture, err error) {
+func (repository *LectureRepository) FindById(c *fiber.Ctx, id string) (lecture models.Lecture, err error) {
 	err = repository.db.Where("id = ?", id).First(&lecture).Error
 	return
 }
