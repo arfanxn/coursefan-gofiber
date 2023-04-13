@@ -7,9 +7,8 @@ import (
 )
 
 type LectureUpdate struct {
-	Id            string `json:"id" validate:"required,uuid"`
-	LecturePartId string `json:"course_id" validate:"required,uuid"`
-	int           `json:""  validate:"required,number,min=0"`
+	Id            string                `json:"id" validate:"required,uuid"`
+	LecturePartId string                `json:"course_id" validate:"required,uuid"`
 	Name          string                `json:"name" validate:"required"`
 	Order         int                   `json:"order" validate:"required,min=1"`
 	Video         *multipart.FileHeader `json:"video" fhlidate:"required,max=500"`
