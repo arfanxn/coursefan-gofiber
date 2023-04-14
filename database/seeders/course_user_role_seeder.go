@@ -70,7 +70,7 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 		go func(course models.Course) {
 			defer syncronizer.WG().Done()
 			var curs []*models.CourseUserRole
-			totalEachRelationKind := (len(users) / len(enums.CourseUserRoleRelations())) - 1
+			totalEachRelationKind := (len(users) / len(enums.RoleNames())) - 1
 
 			shuffledUsers := sliceh.Shuffle(users)
 			courseLecturerUser := shuffledUsers[0]
