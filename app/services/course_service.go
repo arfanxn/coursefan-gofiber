@@ -89,7 +89,6 @@ func (service *CourseService) Create(c *fiber.Ctx, input requests.CourseCreate) 
 		return
 	}
 	curMdl.RoleId = roleMdl.Id
-	curMdl.Relation = enums.CourseUserRoleRelationLecturer
 	_, err = service.curRepository.Insert(c, &curMdl)
 	if err != nil {
 		return

@@ -80,7 +80,7 @@ func (dbs *DatabaseSeeder) DefaultSeeders() []SeederContract {
 		NewCourseSeeder(courseRepository, userRepository),
 		NewCourseUserRoleSeeder(cusRepository, courseRepository, userRepository, roleRepository),
 		NewTransactionSeeder(transactionRepository, courseRepository, walletRepository),
-		NewReviewSeeder(reviewRepository, cusRepository),
+		NewReviewSeeder(reviewRepository, cusRepository, roleRepository),
 		NewLecturePartSeeder(lecturePartRepository, courseRepository),
 		NewLectureSeeder(lectureRepository, lecturePartRepository),
 		NewProgressSeeder(progressRepository, lectureRepository),

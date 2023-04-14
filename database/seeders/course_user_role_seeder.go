@@ -85,7 +85,6 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 			cur.CourseId = course.Id
 			cur.RoleId = courseLecturerRole.Id
 			cur.UserId = courseLecturerUser.Id
-			cur.Relation = enums.CourseUserRoleRelationLecturer
 			curs = append(curs, &cur)
 
 			for _, user := range courseParticipantUsers {
@@ -93,7 +92,6 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 				cur.CourseId = course.Id
 				cur.RoleId = courseParticipantRole.Id
 				cur.UserId = user.Id
-				cur.Relation = enums.CourseUserRoleRelationParticipant
 				curs = append(curs, &cur)
 			}
 
@@ -102,7 +100,6 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 				cur.CourseId = course.Id
 				cur.RoleId = courseWishlisterRole.Id
 				cur.UserId = user.Id
-				cur.Relation = enums.CourseUserRoleRelationWishlist
 				curs = append(curs, &cur)
 			}
 
@@ -111,7 +108,6 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 				cur.CourseId = course.Id
 				cur.RoleId = courseCarterRole.Id
 				cur.UserId = user.Id
-				cur.Relation = enums.CourseUserRoleRelationCart
 				curs = append(curs, &cur)
 			}
 
