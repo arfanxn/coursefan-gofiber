@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
-	"github.com/arfanxn/coursefan-gofiber/app/helpers/errorh"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -73,14 +72,14 @@ func (repository *PermissionRepository) DeleteByIds(c *fiber.Ctx, permissions ..
 }
 
 /*
- *	Repository permission checker methods ⬇️
+ *	Repository permission name finder methods ⬇️
  */
 
-// HasCourseUserRolePermissionName will check if the user has the given permission name
-func (repository *PermissionRepository) HasCourseUserRolePermissionName(
+// FindByNameAndCUR retrieves permission by name and by the CourseUserRole model from the given context.
+func (repository *PermissionRepository) FindByNameAndCUR(
 	c *fiber.Ctx,
 	permissionName string,
-) (bool, error) {
+) (models.Permission, error) {
 	var (
 		tx            = repository.db.Model(&models.Permission{})
 		user          = ctxh.MustGetUser(c)
@@ -153,10 +152,5 @@ func (repository *PermissionRepository) HasCourseUserRolePermissionName(
 
 	tx = tx.First(&permission)
 	err := tx.Error
-	if errorh.IsGormErrRecordNotFound(err) {
-		return false, nil
-	} else if err != nil {
-		return false, err
-	}
-	return true, nil
+	return permission, err
 }
