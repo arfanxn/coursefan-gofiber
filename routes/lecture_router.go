@@ -9,10 +9,10 @@ import (
 // registerLectureRouter registers lecture module routes into the router
 func registerLectureRouter(router fiber.Router) {
 	lectureController := controllerp.InitLectureController(databasep.MustGetGormDB())
-	coursesIdLectureParts := router.Group("/lecture_parts/:lecture_part_id/lectures")
-	coursesIdLectureParts.Get("", lectureController.AllByLecturePart)
-	coursesIdLectureParts.Get("/:lecture_id", lectureController.Find)
-	coursesIdLectureParts.Post("", lectureController.Create)
-	coursesIdLectureParts.Put("/:lecture_id", lectureController.Update)
-	coursesIdLectureParts.Delete("/:lecture_id", lectureController.Delete)
+	lecturePartsIdLectures := router.Group("/lecture_parts/:lecture_part_id/lectures")
+	lecturePartsIdLectures.Get("", lectureController.AllByLecturePart)
+	lecturePartsIdLectures.Get("/:lecture_id", lectureController.Find)
+	lecturePartsIdLectures.Post("", lectureController.Create)
+	lecturePartsIdLectures.Put("/:lecture_id", lectureController.Update)
+	lecturePartsIdLectures.Delete("/:lecture_id", lectureController.Delete)
 }
