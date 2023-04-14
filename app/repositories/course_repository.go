@@ -45,28 +45,32 @@ func (repository *CourseRepository) All(c *fiber.Ctx, queries ...requests.Query)
 					"course_id",
 					models.Course{}.TableName(),
 					"id",
-				))
+				)).Joins(
+				fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
+					models.Role{}.TableName(),
+					models.Role{}.TableName(),
+					"id",
+					models.CourseUserRole{}.TableName(),
+					"role_id",
+				)).
+				Where(models.CourseUserRole{}.TableName()+".user_id", ctxh.MustGetUser(c).Id)
 
 			if query.HasScope(enums.CourseQueryScopeLectured) {
 				db = db.
-					Where(models.CourseUserRole{}.TableName()+".relation", enums.CourseUserRoleRelationLecturer).
-					Where(models.CourseUserRole{}.TableName()+".user_id", ctxh.MustGetUser(c).Id)
+					Where(models.Role{}.TableName()+".name", enums.RoleNameCourseLecturer)
 			} else if query.HasScope(enums.CourseQueryScopeParticipated) {
 				db = db.
-					Where(models.CourseUserRole{}.TableName()+".relation", enums.CourseUserRoleRelationParticipant).
-					Where(models.CourseUserRole{}.TableName()+".user_id", ctxh.MustGetUser(c).Id)
+					Where(models.Role{}.TableName()+".name", enums.RoleNameCourseParticipant)
 			} else if query.HasScope(enums.CourseQueryScopeCart) {
 				db = db.
-					Where(models.CourseUserRole{}.TableName()+".relation", enums.CourseUserRoleRelationCart).
-					Where(models.CourseUserRole{}.TableName()+".user_id", ctxh.MustGetUser(c).Id)
+					Where(models.Role{}.TableName()+".name", enums.RoleNameCourseCarter)
 			} else if query.HasScope(enums.CourseQueryScopeWishlist) {
 				db = db.
-					Where(models.CourseUserRole{}.TableName()+".relation", enums.CourseUserRoleRelationWishlist).
-					Where(models.CourseUserRole{}.TableName()+".user_id", ctxh.MustGetUser(c).Id)
+					Where(models.Role{}.TableName()+".name", enums.RoleNameCourseWishlister)
 			}
 		}
 	}
-	err = db.Find(&courses).Error
+	err = db.Distinct().Find(&courses).Error
 	return
 }
 
