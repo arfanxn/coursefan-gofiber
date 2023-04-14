@@ -6,7 +6,6 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/errorh"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -119,21 +118,26 @@ func (repository *PermissionRepository) HasCourseUserRolePermissionName(
 			"id",
 			models.CourseUserRole{}.TableName(),
 			"course_id",
-		)).
-		Joins(fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s",
+		))
+	if lecturePartId != "" || lectureId != "" {
+		tx = tx.Joins(fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s",
 			models.LecturePart{}.TableName(),
 			models.LecturePart{}.TableName(),
 			"course_id",
 			models.Course{}.TableName(),
 			"id",
-		)).
-		Joins(fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s",
+		))
+	}
+	if lectureId != "" {
+		tx = tx.Joins(fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s",
 			models.Lecture{}.TableName(),
 			models.Lecture{}.TableName(),
 			"lecture_part_id",
 			models.LecturePart{}.TableName(),
 			"id",
-		)).
+		))
+	}
+	tx = tx.
 		Where(models.Permission{}.TableName()+".name = ?", permissionName).
 		Where(models.CourseUserRole{}.TableName()+".user_id = ?", user.Id.String())
 
@@ -153,7 +157,6 @@ func (repository *PermissionRepository) HasCourseUserRolePermissionName(
 		return false, nil
 	} else if err != nil {
 		return false, err
-	} 
-	spew.Dump("Permission: ", permission)
+	}
 	return true, nil
 }
