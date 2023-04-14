@@ -31,9 +31,6 @@ func NewPermissionRoleSeeder(
 
 // Run runs the seeder
 func (seeder *PermissionRoleSeeder) Run(c *fiber.Ctx) (err error) {
-	// TODO: fix duplicates entry on permission_role.id
-	// Skip this seeder because there an error
-
 	// Get all permissions
 	permissions, err := seeder.permissionRepository.All(c)
 	if err != nil {
@@ -49,7 +46,21 @@ func (seeder *PermissionRoleSeeder) Run(c *fiber.Ctx) (err error) {
 			enums.PermissionNameCourseReviewEdit,
 			enums.PermissionNameCourseReviewDelete,
 
+			enums.PermissionNameLecturePartView,
+
 			enums.PermissionNameLectureView,
+
+			enums.PermissionNameLectureDiscussionView,
+			enums.PermissionNameLectureDiscussionCreate,
+			enums.PermissionNameLectureDiscussionEdit,
+			enums.PermissionNameLectureDiscussionDelete,
+		}, permission.Name)
+	})
+	courseWishlisterAndCarterPermissions := sliceh.Filter(permissions, func(permission models.Permission) bool {
+		return sliceh.Contains([]string{
+			enums.PermissionNameCourseView,
+
+			enums.PermissionNameCourseReviewView,
 
 			enums.PermissionNameLecturePartView,
 		}, permission.Name)
@@ -74,6 +85,9 @@ func (seeder *PermissionRoleSeeder) Run(c *fiber.Ctx) (err error) {
 				break
 			case enums.RoleNameCourseParticipant:
 				permissionRole_permissions = courseParticipantPermissions
+				break
+			case enums.RoleNameCourseWishlister, enums.RoleNameCourseCarter:
+				permissionRole_permissions = courseWishlisterAndCarterPermissions
 				break
 			}
 			var prs []*models.PermissionRole

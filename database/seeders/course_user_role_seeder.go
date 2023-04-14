@@ -8,7 +8,6 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/repositories"
 	"github.com/arfanxn/coursefan-gofiber/database/factories"
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 )
 
 type CourseUserRoleSeeder struct {
@@ -54,6 +53,15 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 	if err != nil {
 		return
 	}
+	courseWishlisterRole, err := seeder.roleRepository.FindByName(c, enums.RoleNameCourseWishlister)
+	if err != nil {
+		return
+	}
+	courseCarterRole, err := seeder.roleRepository.FindByName(c, enums.RoleNameCourseCarter)
+	if err != nil {
+		return
+	}
+
 	// Seed
 	syncronizer := synch.NewSyncronizer()
 	var courseUserRoleModels []*models.CourseUserRole
@@ -61,7 +69,7 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 		syncronizer.WG().Add(1)
 		go func(course models.Course) {
 			defer syncronizer.WG().Done()
-			var cuss []*models.CourseUserRole
+			var curs []*models.CourseUserRole
 			totalEachRelationKind := (len(users) / len(enums.CourseUserRoleRelations())) - 1
 
 			shuffledUsers := sliceh.Shuffle(users)
@@ -73,39 +81,43 @@ func (seeder *CourseUserRoleSeeder) Run(c *fiber.Ctx) (err error) {
 			courseCarterUsersStartIdx := (len(courseParticipantUsers) + len(courseWishlisterUsers) + 1)
 			courseCarterUsers := shuffledUsers[courseCarterUsersStartIdx:(courseCarterUsersStartIdx + totalEachRelationKind)]
 
-			cus := factories.FakeCourseUserRole()
-			cus.CourseId = course.Id
-			cus.RoleId = uuid.NullUUID{UUID: courseLecturerRole.Id, Valid: true}
-			cus.UserId = courseLecturerUser.Id
-			cuss = append(cuss, &cus)
+			cur := factories.FakeCourseUserRole()
+			cur.CourseId = course.Id
+			cur.RoleId = courseLecturerRole.Id
+			cur.UserId = courseLecturerUser.Id
+			cur.Relation = enums.CourseUserRoleRelationLecturer
+			curs = append(curs, &cur)
 
 			for _, user := range courseParticipantUsers {
-				cus := factories.FakeCourseUserRole()
-				cus.CourseId = course.Id
-				cus.RoleId = uuid.NullUUID{UUID: courseParticipantRole.Id, Valid: true}
-				cus.UserId = user.Id
-				cuss = append(cuss, &cus)
+				cur := factories.FakeCourseUserRole()
+				cur.CourseId = course.Id
+				cur.RoleId = courseParticipantRole.Id
+				cur.UserId = user.Id
+				cur.Relation = enums.CourseUserRoleRelationParticipant
+				curs = append(curs, &cur)
 			}
 
 			for _, user := range courseWishlisterUsers {
-				cus := factories.FakeCourseUserRole()
-				cus.CourseId = course.Id
-				cus.RoleId = uuid.NullUUID{UUID: uuid.UUID{}, Valid: false}
-				cus.UserId = user.Id
-				cuss = append(cuss, &cus)
+				cur := factories.FakeCourseUserRole()
+				cur.CourseId = course.Id
+				cur.RoleId = courseWishlisterRole.Id
+				cur.UserId = user.Id
+				cur.Relation = enums.CourseUserRoleRelationWishlist
+				curs = append(curs, &cur)
 			}
 
 			for _, user := range courseCarterUsers {
-				cus := factories.FakeCourseUserRole()
-				cus.CourseId = course.Id
-				cus.RoleId = uuid.NullUUID{UUID: uuid.UUID{}, Valid: false}
-				cus.UserId = user.Id
-				cuss = append(cuss, &cus)
+				cur := factories.FakeCourseUserRole()
+				cur.CourseId = course.Id
+				cur.RoleId = courseCarterRole.Id
+				cur.UserId = user.Id
+				cur.Relation = enums.CourseUserRoleRelationCart
+				curs = append(curs, &cur)
 			}
 
 			syncronizer.M().Lock()
 			defer syncronizer.M().Unlock()
-			courseUserRoleModels = append(courseUserRoleModels, cuss...)
+			courseUserRoleModels = append(courseUserRoleModels, curs...)
 		}(course)
 	}
 	syncronizer.WG().Wait()
