@@ -37,9 +37,9 @@ func InitCourseController(db *gorm.DB) *controllers.CourseController {
 }
 
 func InitLecturePartController(db *gorm.DB) *controllers.LecturePartController {
+	permissionRepository := repositories.NewPermissionRepository(db)
+	lecturePartPolicy := policies.NewLecturePartPolicy(permissionRepository)
 	lecturePartRepository := repositories.NewLecturePartRepository(db)
-	courseUserRoleRepository := repositories.NewCourseUserRoleRepository(db)
-	lecturePartPolicy := policies.NewLecturePartPolicy(lecturePartRepository, courseUserRoleRepository)
 	lecturePartService := services.NewLecturePartService(lecturePartRepository)
 	lecturePartController := controllers.NewLecturePartController(lecturePartPolicy, lecturePartService)
 	return lecturePartController
