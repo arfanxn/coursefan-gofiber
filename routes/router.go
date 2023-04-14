@@ -11,7 +11,9 @@ func RegisterApp(app *fiber.App) {
 	registerMiddlewareRouter(router)
 	registerSandboxRouter(router)
 
-	router.Static("/public", "./public") // File server route
+	router.Static("/public", "./public", fiber.Static{
+		ByteRange: true,
+	}) // File server route
 
 	api := router.Group("/api")
 
