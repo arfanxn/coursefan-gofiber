@@ -27,7 +27,7 @@ func InitLecturePartController(db *gorm.DB) *controllers.LecturePartController {
 	return nil
 }
 
-// func InitLectureController(db *gorm.DB) *controllers.LectureController {
-// 	wire.Build(repositories.NewPermissionRepository, repositories.NewLectureRepository, repositories.NewMediaRepository, services.NewLectureService, policies.NewLecturePolicy, controllers.NewLectureController)
-// 	return nil
-// }
+func InitLectureController(db *gorm.DB) *controllers.LectureController {
+	wire.Build(repositories.NewPermissionRepository, repositories.NewLectureRepository, repositories.NewMediaRepository, services.NewLectureService, policies.NewLecturePolicy, controllers.NewLectureController)
+	return nil
+}
