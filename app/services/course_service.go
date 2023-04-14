@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/errorh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/numh"
@@ -17,15 +18,21 @@ import (
 )
 
 type CourseService struct {
-	repository *repositories.CourseRepository
+	repository     *repositories.CourseRepository
+	curRepository  *repositories.CourseUserRoleRepository
+	roleRepository *repositories.RoleRepository
 }
 
 // NewCourseService instantiates a new CourseService
 func NewCourseService(
 	repository *repositories.CourseRepository,
+	curRepository *repositories.CourseUserRoleRepository,
+	roleRepository *repositories.RoleRepository,
 ) *CourseService {
 	return &CourseService{
-		repository: repository,
+		repository:     repository,
+		curRepository:  curRepository,
+		roleRepository: roleRepository,
 	}
 }
 
@@ -72,6 +79,22 @@ func (service *CourseService) Create(c *fiber.Ctx, input requests.CourseCreate) 
 	if err != nil {
 		return
 	}
+
+	// Course User Role
+	curMdl := models.CourseUserRole{}
+	curMdl.CourseId = courseMdl.Id
+	curMdl.UserId = ctxh.MustGetUser(c).Id
+	roleMdl, err := service.roleRepository.FindByName(c, enums.RoleNameCourseLecturer)
+	if err != nil {
+		return
+	}
+	curMdl.RoleId = roleMdl.Id
+	curMdl.Relation = enums.CourseUserRoleRelationLecturer
+	_, err = service.curRepository.Insert(c, &curMdl)
+	if err != nil {
+		return
+	}
+
 	courseRes = resources.Course{}
 	courseRes.FromModel(courseMdl)
 	return
