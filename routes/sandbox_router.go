@@ -24,6 +24,21 @@ func registerSandboxRouter(router fiber.Router) {
 		}
 		spew.Dump("ERROR: ", err)
 		spew.Dump(userMdls)
+
+		c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+		err = c.SendString(`<html>
+		<body>
+		<video width="320" height="240" controls>
+		<source src="http://localhost:8080/public/medias/dc133137-8287-432a-9aef-cd53ae71fbb6/sample_3840x2160.mp4" type="video/mp4">
+	  Your browser does not support the video tag.
+	  </video>
+		</body>
+		</html>
+		`)
+		if err != nil {
+			return
+		}
+
 		return
 	})
 }
