@@ -15,5 +15,10 @@ type ReviewUpdate struct {
 // FromContext fills input from the given context
 func (input *ReviewUpdate) FromContext(c *fiber.Ctx) (err error) {
 	err = c.BodyParser(input)
+
+	if id := c.Params("review_id"); id != "" {
+		input.Id = id
+	}
+
 	return
 }

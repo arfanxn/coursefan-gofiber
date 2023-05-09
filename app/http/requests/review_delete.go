@@ -7,7 +7,7 @@ type ReviewDelete struct {
 }
 
 func (input *ReviewDelete) FromContext(c *fiber.Ctx) (err error) {
-	if id := c.Params("course_id"); id != "" {
+	if id := c.Params("review_id"); id != "" {
 		input.Id = id
 	} else {
 		err = c.BodyParser(input)
