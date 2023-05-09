@@ -31,6 +31,7 @@ func (resource *Review) FromModel(model models.Review) {
 		reviewerUserRes.FromModel(model.Reviewer)
 		resource.Reviewer = reviewerUserRes
 	}
+	resource.Rate = model.Rate
 	resource.Title = model.Title
 	resource.Body = model.Body
 	resource.CreatedAt = model.CreatedAt
