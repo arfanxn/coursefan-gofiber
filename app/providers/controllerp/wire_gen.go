@@ -54,3 +54,12 @@ func InitLectureController(db *gorm.DB) *controllers.LectureController {
 	lectureController := controllers.NewLectureController(lecturePolicy, lectureService)
 	return lectureController
 }
+
+func InitReviewController(db *gorm.DB) *controllers.ReviewController {
+	permissionRepository := repositories.NewPermissionRepository(db)
+	reviewPolicy := policies.NewReviewPolicy(permissionRepository)
+	reviewRepository := repositories.NewReviewRepository(db)
+	reviewService := services.NewReviewService(reviewRepository)
+	reviewController := controllers.NewReviewController(reviewPolicy, reviewService)
+	return reviewController
+}

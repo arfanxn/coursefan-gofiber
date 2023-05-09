@@ -31,3 +31,8 @@ func InitLectureController(db *gorm.DB) *controllers.LectureController {
 	wire.Build(repositories.NewPermissionRepository, repositories.NewLectureRepository, repositories.NewMediaRepository, services.NewLectureService, policies.NewLecturePolicy, controllers.NewLectureController)
 	return nil
 }
+
+func InitReviewController(db *gorm.DB) *controllers.ReviewController {
+	wire.Build(repositories.NewPermissionRepository, repositories.NewReviewRepository, services.NewReviewService, policies.NewReviewPolicy, controllers.NewReviewController)
+	return nil
+}
