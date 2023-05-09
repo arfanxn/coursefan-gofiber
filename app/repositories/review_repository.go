@@ -5,6 +5,7 @@ import (
 
 	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/reflecth"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
@@ -48,6 +49,7 @@ func (repository *ReviewRepository) AllByCourse(c *fiber.Ctx, query requests.Que
 				models.Course{}.TableName(),
 				"id",
 			)).
+		Where(models.Review{}.TableName()+".reviewable_type = ?", reflecth.GetTypeName(models.Course{})).
 		Where(models.Course{}.TableName()+".id = ?", courseIdFilter.Values[0]).
 		Distinct().Find(&reviews).Error
 
