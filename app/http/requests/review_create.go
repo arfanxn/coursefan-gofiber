@@ -6,7 +6,7 @@ import (
 )
 
 type ReviewCreate struct {
-	ReviewableType string      `json:"reviewable_type" validate:"oneof=course instructor"`
+	ReviewableType string      `json:"reviewable_type" validate:"oneof=Course User Instructor"`
 	ReviewableId   string      `json:"reviewable_id" validate:"required,uuid"`
 	ReviewerId     string      `json:"reviewer_id" validate:"required,uuid"`
 	Rate           int         `json:"rate"  validate:"required,number"`
