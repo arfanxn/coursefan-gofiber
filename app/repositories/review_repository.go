@@ -28,6 +28,12 @@ func (repository *ReviewRepository) Find(c *fiber.Ctx, id string) (review models
 	return
 }
 
+// FindById finds model by id
+func (repository *ReviewRepository) FindById(c *fiber.Ctx, id string) (course models.Course, err error) {
+	err = repository.db.Where("id = ?", id).First(&course).Error
+	return
+}
+
 // Insert inserts models into the database
 func (repository *ReviewRepository) Insert(c *fiber.Ctx, reviews ...*models.Review) (int64, error) {
 	for _, review := range reviews {
