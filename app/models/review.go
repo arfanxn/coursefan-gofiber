@@ -13,7 +13,7 @@ type Review struct {
 	ReviewableId   uuid.UUID   `json:"reviewable_id" gorm:"type:VARCHAR(36) NOT NULL"`
 	ReviewerId     uuid.UUID   `json:"reviewer_id" gorm:"type:CHAR(36);NOT NULL"`
 	Reviewer       User        `json:"reviewer" gorm:"foreignKey:ReviewerId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Rate           int         `json:"collection_name"  gorm:"type:TINYINT UNSIGNED NOT NULL"`
+	Rate           int         `json:"rate"  gorm:"type:TINYINT UNSIGNED NOT NULL"`
 	Title          null.String `json:"title" gorm:"type:VARCHAR(50)"`
 	Body           null.String `json:"body" gorm:"type:VARCHAR(256)"`
 	CreatedAt      time.Time   `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
