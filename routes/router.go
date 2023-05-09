@@ -21,4 +21,5 @@ func RegisterApp(app *fiber.App) {
 	registerCourseRouter(api)
 	registerLecturePartRouter(api)
 	registerLectureRouter(api)
+	registerReviewRouter(api)
 }
