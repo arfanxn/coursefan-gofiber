@@ -1,0 +1,21 @@
+package requests
+
+import (
+	"github.com/gofiber/fiber/v2"
+	"gopkg.in/guregu/null.v4"
+)
+
+type ReviewCreate struct {
+	ReviewableType string      `json:"reviewable_type" validate:"required,oneof=course instructor"`
+	ReviewableId   string      `json:"reviewable_id" validate:"required,uuid"`
+	ReviewerId     string      `json:"reviewer_id" validate:"required,uuid"`
+	Rate           int         `json:"rate"  validate:"required,number"`
+	Title          null.String `json:"title"`
+	Body           null.String `json:"body"`
+}
+
+// FromContext fills input from the given context
+func (input *ReviewCreate) FromContext(c *fiber.Ctx) (err error) {
+	err = c.BodyParser(input)
+	return
+}
