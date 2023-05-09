@@ -29,8 +29,8 @@ func (repository *ReviewRepository) Find(c *fiber.Ctx, id string) (review models
 }
 
 // FindById finds model by id
-func (repository *ReviewRepository) FindById(c *fiber.Ctx, id string) (course models.Course, err error) {
-	err = repository.db.Where("id = ?", id).First(&course).Error
+func (repository *ReviewRepository) FindById(c *fiber.Ctx, id string) (review models.Review, err error) {
+	err = repository.db.Where("id = ?", id).First(&review).Error
 	return
 }
 
