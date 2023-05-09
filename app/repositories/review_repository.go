@@ -1,6 +1,11 @@
 package repositories
 
 import (
+	"fmt"
+
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -19,6 +24,33 @@ func NewReviewRepository(db *gorm.DB) *ReviewRepository {
 // All returns all reviews in the database
 func (repository *ReviewRepository) All(c *fiber.Ctx) (reviews []models.Review, err error) {
 	err = repository.db.Find(&reviews).Error
+	return
+}
+
+// AllByCourse returns all reviews by course
+func (repository *ReviewRepository) AllByCourse(c *fiber.Ctx, query requests.Query) (
+	reviews []models.Review, err error) {
+	courseIdFilter := query.GetFilter(models.Review{}.TableName()+".reviewable_id", enums.QueryFilterOperatorEquals)
+	err = gormh.BuildFromRequestQuery(repository.db, models.Review{}, query).
+		Joins(
+			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
+				models.Course{}.TableName(),
+				models.Course{}.TableName(),
+				"id",
+				models.Review{}.TableName(),
+				"reviewable_id",
+			)).
+		Joins(
+			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
+				models.CourseUserRole{}.TableName(),
+				models.CourseUserRole{}.TableName(),
+				"course_id",
+				models.Course{}.TableName(),
+				"id",
+			)).
+		Where(models.Course{}.TableName()+".id = ?", courseIdFilter.Values[0]).
+		Distinct().Find(&reviews).Error
+
 	return
 }
 
