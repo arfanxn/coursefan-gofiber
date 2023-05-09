@@ -19,3 +19,7 @@ type Review struct {
 	CreatedAt      time.Time   `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	UpdatedAt      null.Time   `json:"updated_at" gorm:"autoUpdateTime"`
 }
+
+func (Review) TableName() string {
+	return "reviews"
+}
