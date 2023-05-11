@@ -2,6 +2,12 @@ package enums
 
 // models.Permission.Name enums
 const (
+	// Notification module
+	PermissionNameNotificationView   string = "notification.view"
+	PermissionNameNotificationCreate string = "notification.create"
+	PermissionNameNotificationEdit   string = "notification.edit"
+	PermissionNameNotificationDelete string = "notification.delete"
+
 	// Course module
 	PermissionNameCourseView   string = "course.view"
 	PermissionNameCourseCreate string = "course.create"
@@ -55,6 +61,11 @@ const (
 // PermissionNames returns slice of models.Permission.Name enums
 func PermissionNames() []string {
 	return []string{
+		PermissionNameNotificationView,
+		PermissionNameNotificationCreate,
+		PermissionNameNotificationEdit,
+		PermissionNameNotificationDelete,
+
 		PermissionNameCourseView,
 		PermissionNameCourseCreate,
 		PermissionNameCourseEdit,
