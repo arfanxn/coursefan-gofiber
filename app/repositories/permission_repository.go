@@ -88,6 +88,7 @@ func (repository *PermissionRepository) FindByNameAndCUR(
 		lecturePartId string = c.Params("lecture_part_id")
 		lectureId     string = c.Params("lecture_id")
 		reviewId      string = c.Params("review_id")
+		discussionId  string = c.Params("discussion_id")
 	)
 
 	tx = tx.
@@ -149,6 +150,16 @@ func (repository *PermissionRepository) FindByNameAndCUR(
 			"user_id",
 		))
 	}
+	// If the discussion id is not empty, join the discussion table to check permissions
+	if discussionId != "" {
+		tx = tx.Joins(fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s",
+			models.Discussion{}.TableName(),
+			models.Discussion{}.TableName(),
+			"discusser_id",
+			models.CourseUserRole{}.TableName(),
+			"user_id",
+		))
+	}
 	tx = tx.
 		Where(models.Permission{}.TableName()+".name = ?", permissionName).
 		Where(models.CourseUserRole{}.TableName()+".user_id = ?", user.Id.String())
@@ -164,6 +175,9 @@ func (repository *PermissionRepository) FindByNameAndCUR(
 	}
 	if reviewId != "" {
 		tx = tx.Where(models.Review{}.TableName()+".id = ?", reviewId)
+	}
+	if discussionId != "" {
+		tx = tx.Where(models.Discussion{}.TableName()+".id = ?", discussionId)
 	}
 
 	tx = tx.First(&permission)
