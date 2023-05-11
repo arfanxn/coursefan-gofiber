@@ -9,12 +9,15 @@ import (
 // registerNotificationRouter registers notification module routes into the router
 func registerNotificationRouter(router fiber.Router) {
 	notificationController := controllerp.InitNotificationController(databasep.MustGetGormDB())
+
+	usersSelfNotifications := router.Group("users/self/notifications")
+	usersSelfNotifications.Get("", notificationController.AllByAuthUser)
+	usersSelfNotifications.Post("", notificationController.CreateByAuthUser)
+
 	notifications := router.Group("/notifications")
-	notifications.Get("", notificationController.AllByAuthUser)
-	notifications.Post("", notificationController.Create)
 	notifications.Get("/:notification_id", notificationController.Find)
 	notifications.Put("/:notification_id", notificationController.Update)
-	notifications.Put("/:notification_id/read", notificationController.MarkRead)
-	notifications.Put("/:notification_id/unread", notificationController.MarkUnread)
+	notifications.Patch("/:notification_id/read", notificationController.MarkRead)
+	notifications.Patch("/:notification_id/unread", notificationController.MarkUnread)
 	notifications.Delete("/:notification_id", notificationController.Delete)
 }
