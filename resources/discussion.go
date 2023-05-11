@@ -17,7 +17,6 @@ type Discussion struct {
 	DiscussionRepliedId null.String  `json:"discussion_replied_id"`
 	DiscussionReplied   *Discussion  `json:"discussion_replied,omitempty"`
 	DiscussionReplies   []Discussion `json:"discussion_replies,omitempty"`
-	Rate                int          `json:"rate"`
 	Title               string       `json:"title"`
 	Body                null.String  `json:"body"`
 	Upvote              int          `json:"upvote"`
