@@ -6,6 +6,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/reflecth"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
@@ -23,8 +24,12 @@ func NewReviewRepository(db *gorm.DB) *ReviewRepository {
 }
 
 // All returns all reviews in the database
-func (repository *ReviewRepository) All(c *fiber.Ctx) (reviews []models.Review, err error) {
-	err = repository.db.Find(&reviews).Error
+func (repository *ReviewRepository) All(c *fiber.Ctx, queries ...requests.Query) (reviews []models.Review, err error) {
+	tx := repository.db
+	if query := sliceh.FirstOrNil(queries); query != nil {
+		tx = gormh.BuildFromRequestQuery(repository.db, models.Review{}, *query)
+	}
+	err = tx.Find(&reviews).Error
 	return
 }
 
