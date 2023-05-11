@@ -31,7 +31,7 @@ func (repository *NotificationRepository) All(c *fiber.Ctx) (notifications []mod
 // AllByAuthUser returns all notifications by current logged in user
 func (repository *NotificationRepository) AllByAuthUser(c *fiber.Ctx, query requests.Query) (
 	notifications []models.Notification, err error) {
-	err = gormh.BuildFromRequestQuery(repository.db, models.Review{}, query).
+	err = gormh.BuildFromRequestQuery(repository.db, models.Notification{}, query).
 		Where(models.Notification{}.TableName()+".receiver_id = ?", ctxh.MustGetUser(c).Id.String()).
 		Distinct().Find(&notifications).Error
 
