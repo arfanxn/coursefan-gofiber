@@ -72,7 +72,7 @@ func (policy *DiscussionPolicy) Update(c *fiber.Ctx, input requests.DiscussionUp
 }
 
 // Upvote policy ensures that the user has the right permissions for upvote a discussion.
-func (policy *DiscussionPolicy) Upvote(c *fiber.Ctx, input requests.DiscussionUpdate) (err error) {
+func (policy *DiscussionPolicy) Upvote(c *fiber.Ctx, input requests.DiscussionId) (err error) {
 	_, err = policy.permissionRepository.FindByNameAndCUR(c, enums.PermissionNameDiscussionUpvote)
 	if errorh.IsGormErrRecordNotFound(err) {
 		return fiber.ErrForbidden
