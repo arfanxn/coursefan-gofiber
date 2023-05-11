@@ -17,6 +17,11 @@ func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	return nil
 }
 
+func InitNotificationController(db *gorm.DB) *controllers.NotificationController {
+	wire.Build(repositories.NewPermissionRepository, repositories.NewNotificationRepository, services.NewNotificationService, policies.NewNotificationPolicy, controllers.NewNotificationController)
+	return nil
+}
+
 func InitCourseController(db *gorm.DB) *controllers.CourseController {
 	wire.Build(repositories.NewCourseRepository, repositories.NewPermissionRepository, repositories.NewRoleRepository, repositories.NewCourseUserRoleRepository, services.NewCourseService, policies.NewCoursePolicy, controllers.NewCourseController)
 	return nil

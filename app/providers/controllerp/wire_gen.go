@@ -25,6 +25,15 @@ func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	return authController
 }
 
+func InitNotificationController(db *gorm.DB) *controllers.NotificationController {
+	permissionRepository := repositories.NewPermissionRepository(db)
+	notificationPolicy := policies.NewNotificationPolicy(permissionRepository)
+	notificationRepository := repositories.NewNotificationRepository(db)
+	notificationService := services.NewNotificationService(notificationRepository)
+	notificationController := controllers.NewNotificationController(notificationPolicy, notificationService)
+	return notificationController
+}
+
 func InitCourseController(db *gorm.DB) *controllers.CourseController {
 	permissionRepository := repositories.NewPermissionRepository(db)
 	coursePolicy := policies.NewCoursePolicy(permissionRepository)
