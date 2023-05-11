@@ -15,7 +15,7 @@ type Discussion struct {
 	Discusser           User          `json:"discusser" gorm:"foreignKey:DiscusserId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	DiscussionRepliedId uuid.NullUUID `json:"discussion_replied_id" gorm:"type:CHAR(36);comment:this column used for store the parent discussion id (replied discussion id), this can be null, if null it means the discussion is the parent (main discussion)"`
 	DiscussionReplied   *Discussion   `json:"discussion_replied" gorm:"foreignKey:DiscussionRepliedId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	DiscussionReplies   []Discussion  `json:"discussion_replies" gorm:"foreignKey:Id"`
+	DiscussionReplies   []Discussion  `json:"discussion_replies" gorm:"foreignKey:DiscussionRepliedId"`
 	Title               string        `json:"title" gorm:"type:VARCHAR(50) NOT NULL"`
 	Body                null.String   `json:"body" gorm:"type:TEXT"`
 	Upvote              int           `json:"upvote"  gorm:"index;type:INTEGER UNSIGNED NOT NULL;default:0"`
