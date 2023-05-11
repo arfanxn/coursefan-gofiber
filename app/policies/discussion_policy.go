@@ -71,8 +71,19 @@ func (policy *DiscussionPolicy) Update(c *fiber.Ctx, input requests.DiscussionUp
 	return nil
 }
 
+// Upvote policy ensures that the user has the right permissions for upvote a discussion.
+func (policy *DiscussionPolicy) Upvote(c *fiber.Ctx, input requests.DiscussionUpdate) (err error) {
+	_, err = policy.permissionRepository.FindByNameAndCUR(c, enums.PermissionNameDiscussionUpvote)
+	if errorh.IsGormErrRecordNotFound(err) {
+		return fiber.ErrForbidden
+	} else if err != nil {
+		return
+	}
+	return nil
+}
+
 // Delete policy ensures that the user has the right permissions for delete a discussion.
-func (policy *DiscussionPolicy) Delete(c *fiber.Ctx, input requests.DiscussionDelete) (err error) {
+func (policy *DiscussionPolicy) Delete(c *fiber.Ctx, input requests.DiscussionId) (err error) {
 	_, err = policy.permissionRepository.FindByNameAndCUR(c, enums.PermissionNameDiscussionDelete)
 	if errorh.IsGormErrRecordNotFound(err) {
 		return fiber.ErrForbidden
