@@ -74,6 +74,15 @@ func Merge[T any](first, second []T) []T {
 	return append(first, second...)
 }
 
+// FirstOrNil returns the first item from a slice or nil if no such item exists
+func FirstOrNil[T any](items []T) *T {
+	length := len(items)
+	if length == 0 {
+		return nil
+	}
+	return &items[0]
+}
+
 // Last returns the last slice element
 func Last[T any](items []T) T {
 	length := len(items)
