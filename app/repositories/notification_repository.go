@@ -3,6 +3,9 @@ package repositories
 import (
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -25,8 +28,18 @@ func (repository *NotificationRepository) All(c *fiber.Ctx) (notifications []mod
 	return
 }
 
+// AllByAuthUser returns all notifications by current logged in user
+func (repository *NotificationRepository) AllByAuthUser(c *fiber.Ctx, query requests.Query) (
+	notifications []models.Notification, err error) {
+	err = gormh.BuildFromRequestQuery(repository.db, models.Review{}, query).
+		Where(models.Notification{}.TableName()+".receiver_id = ?", ctxh.MustGetUser(c).Id.String()).
+		Distinct().Find(&notifications).Error
+
+	return
+}
+
 // Find finds model by id
-func (repository *NotificationRepository) Find(c *fiber.Ctx, id string) (notification models.Notification, err error) {
+func (repository *NotificationRepository) FindById(c *fiber.Ctx, id string) (notification models.Notification, err error) {
 	err = repository.db.Where("id = ?", id).First(&notification).Error
 	return
 }
