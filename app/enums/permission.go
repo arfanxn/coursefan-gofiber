@@ -36,6 +36,7 @@ const (
 	PermissionNameDiscussionView   string = "lecture.view"
 	PermissionNameDiscussionCreate string = "lecture.create"
 	PermissionNameDiscussionEdit   string = "lecture.edit"
+	PermissionNameDiscussionUpvote string = "lecture.upvote"
 	PermissionNameDiscussionDelete string = "lecture.delete"
 
 	// Lecture Discussion module
@@ -82,6 +83,7 @@ func PermissionNames() []string {
 		PermissionNameDiscussionView,
 		PermissionNameDiscussionCreate,
 		PermissionNameDiscussionEdit,
+		PermissionNameDiscussionUpvote,
 		PermissionNameDiscussionDelete,
 
 		PermissionNameLectureDiscussionView,
