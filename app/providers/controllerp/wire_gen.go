@@ -63,3 +63,12 @@ func InitReviewController(db *gorm.DB) *controllers.ReviewController {
 	reviewController := controllers.NewReviewController(reviewPolicy, reviewService)
 	return reviewController
 }
+
+func InitDiscussionController(db *gorm.DB) *controllers.DiscussionController {
+	permissionRepository := repositories.NewPermissionRepository(db)
+	discussionPolicy := policies.NewDiscussionPolicy(permissionRepository)
+	discussionRepository := repositories.NewDiscussionRepository(db)
+	discussionService := services.NewDiscussionService(discussionRepository)
+	discussionController := controllers.NewDiscussionController(discussionPolicy, discussionService)
+	return discussionController
+}

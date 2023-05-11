@@ -36,3 +36,8 @@ func InitReviewController(db *gorm.DB) *controllers.ReviewController {
 	wire.Build(repositories.NewPermissionRepository, repositories.NewReviewRepository, services.NewReviewService, policies.NewReviewPolicy, controllers.NewReviewController)
 	return nil
 }
+
+func InitDiscussionController(db *gorm.DB) *controllers.DiscussionController {
+	wire.Build(repositories.NewPermissionRepository, repositories.NewDiscussionRepository, services.NewDiscussionService, policies.NewDiscussionPolicy, controllers.NewDiscussionController)
+	return nil
+}
