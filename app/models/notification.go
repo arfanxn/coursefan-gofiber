@@ -17,7 +17,7 @@ type Notification struct {
 	ObjectId   uuid.NullUUID `json:"object_id" gorm:"type:VARCHAR(36)"`
 	Title      string        `json:"title" gorm:"type:VARCHAR(50) NOT NULL"`
 	Body       null.String   `json:"body" gorm:"type:TEXT"`
-	Type       string        `json:"type"  gorm:"type:VARCHAR(25) NOT NULL"`
+	Type       null.String   `json:"type"  gorm:"type:VARCHAR(25)"`
 	ReadedAt   null.Time     `json:"readed_at" gorm:"type:DATETIME(3)"`
 	CreatedAt  time.Time     `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	UpdatedAt  null.Time     `json:"updated_at" gorm:"autoUpdateTime"`

@@ -18,7 +18,7 @@ type Notification struct {
 	ObjectId   null.String `json:"object_id"`
 	Title      string      `json:"title"`
 	Body       null.String `json:"body"`
-	Type       string      `json:"type"`
+	Type       null.String `json:"type"`
 	ReadedAt   null.Time   `json:"readed_at"`
 	CreatedAt  time.Time   `json:"created_at"`
 	UpdatedAt  null.Time   `json:"updated_at"`
