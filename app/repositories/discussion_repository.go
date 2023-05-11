@@ -1,6 +1,11 @@
 package repositories
 
 import (
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/reflecth"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -17,14 +22,38 @@ func NewDiscussionRepository(db *gorm.DB) *DiscussionRepository {
 }
 
 // All returns all discussions in the database
-func (repository *DiscussionRepository) All(c *fiber.Ctx) (discussions []models.Discussion, err error) {
-	err = repository.db.Find(&discussions).Error
+func (repository *DiscussionRepository) All(c *fiber.Ctx, queries ...requests.Query) (
+	discussions []models.Discussion, err error) {
+	tx := repository.db
+	if query := sliceh.FirstOrNil(queries); query != nil {
+		tx = gormh.BuildFromRequestQuery(repository.db, models.Discussion{}, *query)
+	}
+	err = tx.Find(&discussions).Error
+	return
+}
+
+// AllByLecture returns all discussion by lecture
+func (repository *DiscussionRepository) AllByLecture(c *fiber.Ctx, query requests.Query) (
+	discussions []models.Discussion, err error) {
+	lectureIdFilter := query.GetFilter(
+		models.Discussion{}.TableName()+".discussable_id",
+		enums.QueryFilterOperatorEquals)
+	err = gormh.BuildFromRequestQuery(repository.db, models.Discussion{}, query).
+		Where(models.Discussion{}.TableName()+".discussable_type = ?", reflecth.GetTypeName(models.Lecture{})).
+		Where(models.Discussion{}.TableName()+".discussable_id = ?", lectureIdFilter.Values[0]).
+		Distinct().Find(&discussions).Error
 	return
 }
 
 // Find finds model by id
-func (repository *DiscussionRepository) Find(c *fiber.Ctx, id string) (discussion models.Discussion, err error) {
-	err = repository.db.Where("id = ?", id).First(&discussion).Error
+func (repository *DiscussionRepository) Find(c *fiber.Ctx, id string) (review models.Discussion, err error) {
+	err = repository.db.Where("id = ?", id).First(&review).Error
+	return
+}
+
+// FindById finds model by id
+func (repository *DiscussionRepository) FindById(c *fiber.Ctx, id string) (review models.Discussion, err error) {
+	err = repository.db.Where("id = ?", id).First(&review).Error
 	return
 }
 
