@@ -87,6 +87,7 @@ func (repository *PermissionRepository) FindByNameAndCUR(
 		courseId      string = c.Params("course_id")
 		lecturePartId string = c.Params("lecture_part_id")
 		lectureId     string = c.Params("lecture_id")
+		reviewId      string = c.Params("review_id")
 	)
 
 	tx = tx.
@@ -118,6 +119,7 @@ func (repository *PermissionRepository) FindByNameAndCUR(
 			models.CourseUserRole{}.TableName(),
 			"course_id",
 		))
+	// If the lecture part id or lecture id is not empty, join the lecture table to check permissions
 	if lecturePartId != "" || lectureId != "" {
 		tx = tx.Joins(fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s",
 			models.LecturePart{}.TableName(),
@@ -127,6 +129,7 @@ func (repository *PermissionRepository) FindByNameAndCUR(
 			"id",
 		))
 	}
+	// If the lecture id is not empty, join the lecture table to check permissions
 	if lectureId != "" {
 		tx = tx.Joins(fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s",
 			models.Lecture{}.TableName(),
@@ -134,6 +137,16 @@ func (repository *PermissionRepository) FindByNameAndCUR(
 			"lecture_part_id",
 			models.LecturePart{}.TableName(),
 			"id",
+		))
+	}
+	// If the review id is not empty, join the review table to check permissions
+	if reviewId != "" {
+		tx = tx.Joins(fmt.Sprintf("INNER JOIN %s ON %s.%s = %s.%s",
+			models.Review{}.TableName(),
+			models.Review{}.TableName(),
+			"reviewer_id",
+			models.CourseUserRole{}.TableName(),
+			"user_id",
 		))
 	}
 	tx = tx.
@@ -148,6 +161,9 @@ func (repository *PermissionRepository) FindByNameAndCUR(
 	}
 	if lectureId != "" {
 		tx = tx.Where(models.Lecture{}.TableName()+".id = ?", lectureId)
+	}
+	if reviewId != "" {
+		tx = tx.Where(models.Review{}.TableName()+".id = ?", reviewId)
 	}
 
 	tx = tx.First(&permission)

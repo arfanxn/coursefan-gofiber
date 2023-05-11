@@ -13,7 +13,9 @@ func registerReviewRouter(router fiber.Router) {
 	coursesIdReviews.Get("", reviewController.AllByCourse)
 	coursesIdReviews.Post("", reviewController.CreateByCourse)
 
-	reviewsId := router.Group("/reviews/:review_id")
+	reviews := router.Group("/reviews")
+	reviewsId := reviews.Group("/:review_id")
+	reviews.Post("", reviewController.Create)
 	reviewsId.Get("", reviewController.Find)
 	reviewsId.Put("", reviewController.Update)
 	reviewsId.Delete("", reviewController.Delete)

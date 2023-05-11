@@ -47,7 +47,7 @@ func (service *ReviewService) AllByCourse(c *fiber.Ctx, input requests.Query) (
 // Find
 func (service *ReviewService) Find(c *fiber.Ctx, input requests.Query) (
 	data resources.Review, err error) {
-	reviewMdls, err := service.repository.AllByCourse(c, input)
+	reviewMdls, err := service.repository.All(c, input)
 	if err != nil {
 		return
 	} else if len(reviewMdls) == 0 {
@@ -64,7 +64,7 @@ func (service *ReviewService) Create(c *fiber.Ctx, input requests.ReviewCreate) 
 	reviewMdl := models.Review{}
 	reviewMdl.ReviewableType = input.ReviewableType
 	reviewMdl.ReviewableId = uuid.MustParse(input.ReviewableId)
-	reviewMdl.ReviewerId = uuid.MustParse(input.ReviewerId)
+	reviewMdl.ReviewerId = ctxh.MustGetUser(c).Id
 	reviewMdl.Rate = input.Rate
 	reviewMdl.Title = input.Title
 	reviewMdl.Body = input.Body
@@ -82,7 +82,7 @@ func (service *ReviewService) CreateByCourse(c *fiber.Ctx, input requests.Review
 	reviewMdl := models.Review{}
 	reviewMdl.ReviewableType = reflecth.GetTypeName(models.Course{})
 	reviewMdl.ReviewableId = uuid.MustParse(input.ReviewableId)
-	reviewMdl.ReviewerId = uuid.MustParse(input.ReviewerId)
+	reviewMdl.ReviewerId = ctxh.MustGetUser(c).Id
 	reviewMdl.Rate = input.Rate
 	reviewMdl.Title = input.Title
 	reviewMdl.Body = input.Body
