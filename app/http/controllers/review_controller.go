@@ -39,10 +39,7 @@ func (controller *ReviewController) AllByCourse(c *fiber.Ctx) (err error) {
 	input.AddFilter(requests.QueryFilter{
 		Column: models.Review{}.TableName() + ".reviewable_id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("course_id")},
 	})
-	err = controller.policy.AllByCourse(c, input)
-	if err != nil {
-		return
-	}
+	// No api policy required, always allow anyone to access this resource
 	pagination, err := controller.service.AllByCourse(c, input)
 	if err != nil {
 		return err
@@ -64,10 +61,7 @@ func (controller *ReviewController) Find(c *fiber.Ctx) (err error) {
 	input.AddFilter(requests.QueryFilter{
 		Column: models.Review{}.TableName() + ".id", Operator: enums.QueryFilterOperatorEquals, Values: []any{c.Params("review_id")},
 	})
-	err = controller.policy.Find(c, input)
-	if err != nil {
-		return
-	}
+	// No api policy required, always allow anyone to access this resource
 	data, err := controller.service.Find(c, input)
 	if err != nil {
 		return err
