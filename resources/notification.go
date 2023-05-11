@@ -11,11 +11,12 @@ import (
 type Notification struct {
 	Id         string      `json:"id"`
 	SenderId   string      `json:"sender_id"`
-	Sender     User        `json:"sender"`
+	Sender     User        `json:"sender,omitempty"`
 	ReceiverId string      `json:"receiver_id"`
-	Receiver   User        `json:"receiver"`
+	Receiver   User        `json:"receiver,omitempty"`
 	ObjectType null.String `json:"object_type"`
 	ObjectId   null.String `json:"object_id"`
+	Object     any         `json:"object,omitempty"`
 	Title      string      `json:"title"`
 	Body       null.String `json:"body"`
 	Type       null.String `json:"type"`
@@ -35,11 +36,12 @@ func (resource *Notification) FromModel(model models.Notification) {
 	resource.ReceiverId = model.ReceiverId.String()
 	if model.Receiver.Id != uuid.Nil {
 		receiverUserRes := User{}
-		receiverUserRes.FromModel(model.Sender)
+		receiverUserRes.FromModel(model.Receiver)
 		resource.Receiver = receiverUserRes
 	}
 	resource.ObjectId = null.NewString(model.ObjectId.UUID.String(), model.ObjectId.Valid)
 	resource.ObjectType = model.ObjectType
+	resource.Object = model.Object
 	resource.Title = model.Title
 	resource.Body = model.Body
 	resource.Type = model.Type
