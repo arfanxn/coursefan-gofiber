@@ -6,7 +6,7 @@ import (
 )
 
 type NotificationUpdate struct {
-	Id         string      `json:"id" form:"id" validate:"required,uuid"`
+	Id         string      `json:"id" validate:"required,uuid"`
 	ObjectType null.String `json:"object_type" form:"object_type"`
 	ObjectId   null.String `json:"object_id" form:"object_id"`
 	Title      string      `json:"title" form:"title" validate:"required"`
