@@ -216,7 +216,7 @@ func (filter *QueryFilter) StringValues() []string {
 func (filter *QueryFilter) CastValues() []any {
 	filter.Values = sliceh.Map(filter.Values, func(value any) any {
 		valueStr := strh.AnyToStr(value)
-		if value, err := strconv.ParseFloat(valueStr, 10); err == nil {
+		if value, err := strconv.ParseFloat(valueStr, 64); err == nil {
 			return value
 		} else if value, err := strconv.ParseBool(valueStr); err == nil {
 			return value
