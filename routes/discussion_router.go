@@ -18,5 +18,6 @@ func registerDiscussionRouter(router fiber.Router) {
 	discussions.Post("", discussionController.Create)
 	discussionsId.Get("", discussionController.Find)
 	discussionsId.Put("", discussionController.Update)
+	discussionsId.Patch("/upvote", discussionController.Upvote)
 	discussionsId.Delete("", discussionController.Delete)
 }
