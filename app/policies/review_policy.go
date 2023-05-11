@@ -16,6 +16,8 @@ func NewReviewPolicy(permissionRepository *repositories.PermissionRepository) *R
 	return &ReviewPolicy{permissionRepository: permissionRepository}
 }
 
+/*
+! Disabled coz of this methods does not used anymore
 // AllByCourse policy ensures that the user has the right permissions for access a course reviews.
 func (policy *ReviewPolicy) AllByCourse(c *fiber.Ctx, input requests.Query) (err error) {
 	_, err = policy.permissionRepository.FindByNameAndCUR(c, enums.PermissionNameCourseReviewView)
@@ -37,6 +39,7 @@ func (policy *ReviewPolicy) Find(c *fiber.Ctx, input requests.Query) (err error)
 	}
 	return nil
 }
+*/
 
 // Create policy ensures that the user has the right permissions for create a review.
 func (policy *ReviewPolicy) Create(c *fiber.Ctx, input requests.ReviewCreate) (err error) {
@@ -73,7 +76,7 @@ func (policy *ReviewPolicy) Update(c *fiber.Ctx, input requests.ReviewUpdate) (e
 
 // Delete policy ensures that the user has the right permissions for delete a review.
 func (policy *ReviewPolicy) Delete(c *fiber.Ctx, input requests.ReviewDelete) (err error) {
-	_, err = policy.permissionRepository.FindByNameAndCUR(c, enums.PermissionNameCourseDelete)
+	_, err = policy.permissionRepository.FindByNameAndCUR(c, enums.PermissionNameReviewDelete)
 	if errorh.IsGormErrRecordNotFound(err) {
 		return fiber.ErrForbidden
 	} else if err != nil {
