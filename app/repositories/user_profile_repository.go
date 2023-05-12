@@ -25,8 +25,8 @@ func (repository *UserProfileRepository) All(c *fiber.Ctx) (userProfiles []model
 	return
 }
 
-// Find finds model by id
-func (repository *UserProfileRepository) Find(c *fiber.Ctx, id string) (user models.User, err error) {
+// FindById finds model by id
+func (repository *UserProfileRepository) FindById(c *fiber.Ctx, id string) (user models.User, err error) {
 	err = repository.db.Where("id = ?", id).First(&user).Error
 	return
 }
