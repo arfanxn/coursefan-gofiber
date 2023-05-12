@@ -54,6 +54,15 @@ func InitWalletController(db *gorm.DB) *controllers.WalletController {
 	return walletController
 }
 
+func InitTransactionController(db *gorm.DB) *controllers.TransactionController {
+	permissionRepository := repositories.NewPermissionRepository(db)
+	transactionPolicy := policies.NewTransactionPolicy(permissionRepository)
+	transactionRepository := repositories.NewTransactionRepository(db)
+	transactionService := services.NewTransactionService(transactionRepository)
+	transactionController := controllers.NewTransactionController(transactionPolicy, transactionService)
+	return transactionController
+}
+
 func InitNotificationController(db *gorm.DB) *controllers.NotificationController {
 	permissionRepository := repositories.NewPermissionRepository(db)
 	notificationPolicy := policies.NewNotificationPolicy(permissionRepository)
