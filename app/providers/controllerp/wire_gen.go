@@ -16,6 +16,17 @@ import (
 
 // Injectors from injector.go:
 
+func InitUserController(db *gorm.DB) *controllers.UserController {
+	permissionRepository := repositories.NewPermissionRepository(db)
+	userPolicy := policies.NewUserPolicy(permissionRepository)
+	userRepository := repositories.NewUserRepository(db)
+	mediaRepository := repositories.NewMediaRepository(db)
+	userProfileRepository := repositories.NewUserProfileRepository(db)
+	userService := services.NewUserService(userRepository, mediaRepository, userProfileRepository)
+	userController := controllers.NewUserController(userPolicy, userService)
+	return userController
+}
+
 func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	userRepository := repositories.NewUserRepository(db)
 	mediaRepository := repositories.NewMediaRepository(db)

@@ -12,6 +12,18 @@ import (
 	"gorm.io/gorm"
 )
 
+func InitUserController(db *gorm.DB) *controllers.UserController {
+	wire.Build(repositories.NewPermissionRepository,
+		repositories.NewUserRepository,
+		repositories.NewMediaRepository,
+		repositories.NewUserProfileRepository,
+		services.NewUserService,
+		policies.NewUserPolicy,
+		controllers.NewUserController,
+	)
+	return nil
+}
+
 func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	wire.Build(repositories.NewUserRepository, repositories.NewTokenRepository, repositories.NewMediaRepository, services.NewAuthService, controllers.NewAuthController)
 	return nil
