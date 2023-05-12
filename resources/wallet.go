@@ -9,8 +9,8 @@ import (
 
 type Wallet struct {
 	Id        string    `json:"id"`
-	OwnerId   string    `json:"user_id"`
-	Owner     *User     `json:"user,omitempty"`
+	OwnerId   string    `json:"owner_id"`
+	Owner     *User     `json:"owner,omitempty"`
 	Balance   int64     `json:"balance" `
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt null.Time `json:"updated_at"`
