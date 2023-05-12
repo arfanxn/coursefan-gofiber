@@ -10,7 +10,7 @@ import (
 func registerNotificationRouter(router fiber.Router) {
 	notificationController := controllerp.InitNotificationController(databasep.MustGetGormDB())
 
-	usersSelfNotifications := router.Group("users/self/notifications")
+	usersSelfNotifications := router.Group("/users/self/notifications")
 	usersSelfNotifications.Get("", notificationController.AllByAuthUser)
 	usersSelfNotifications.Post("", notificationController.CreateByAuthUser)
 
