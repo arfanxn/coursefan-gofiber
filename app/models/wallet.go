@@ -15,3 +15,7 @@ type Wallet struct {
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;NOT NULL"`
 	UpdatedAt null.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
+
+func (Wallet) TableName() string {
+	return "wallets"
+}
