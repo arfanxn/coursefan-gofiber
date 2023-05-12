@@ -27,6 +27,15 @@ func InitUserController(db *gorm.DB) *controllers.UserController {
 	return userController
 }
 
+func InitUserSettingController(db *gorm.DB) *controllers.UserSettingController {
+	permissionRepository := repositories.NewPermissionRepository(db)
+	userSettingPolicy := policies.NewUserSettingPolicy(permissionRepository)
+	userSettingRepository := repositories.NewUserSettingRepository(db)
+	userSettingService := services.NewUserSettingService(userSettingRepository)
+	userSettingController := controllers.NewUserSettingController(userSettingPolicy, userSettingService)
+	return userSettingController
+}
+
 func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	userRepository := repositories.NewUserRepository(db)
 	mediaRepository := repositories.NewMediaRepository(db)

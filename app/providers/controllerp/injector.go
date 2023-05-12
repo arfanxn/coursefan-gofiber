@@ -24,6 +24,11 @@ func InitUserController(db *gorm.DB) *controllers.UserController {
 	return nil
 }
 
+func InitUserSettingController(db *gorm.DB) *controllers.UserSettingController {
+	wire.Build(repositories.NewPermissionRepository, repositories.NewUserSettingRepository, services.NewUserSettingService, policies.NewUserSettingPolicy, controllers.NewUserSettingController)
+	return nil
+}
+
 func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	wire.Build(repositories.NewUserRepository, repositories.NewTokenRepository, repositories.NewMediaRepository, services.NewAuthService, controllers.NewAuthController)
 	return nil
