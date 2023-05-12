@@ -1,9 +1,11 @@
 package policies
 
+import "github.com/arfanxn/coursefan-gofiber/app/repositories"
+
 type UserPolicy struct {
+	permissionRepository *repositories.PermissionRepository
 }
 
-// NewUserPolicy instantiates a new UserPolicy
-func NewUserPolicy() *UserPolicy {
-	return &UserPolicy{}
+func NewUserPolicy(permissionRepository *repositories.PermissionRepository) *UserPolicy {
+	return &UserPolicy{permissionRepository: permissionRepository}
 }
