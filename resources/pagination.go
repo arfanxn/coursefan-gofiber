@@ -49,7 +49,7 @@ func (pagination *Pagination[T]) SetPage(perPage int, currentPage int64, lastPag
 	// only set if last page is valid and next page is less than or equal last page
 	if (lastPage.Valid) && (nextPage <= lastPage.Int64) {
 		pagination.NextPage = null.NewInt(currentPage+1, true) // set next page
-	} else if lastPage.Valid == false { // if last page is not valid then set next page
+	} else if !lastPage.Valid { // if last page is not valid then set next page
 		pagination.NextPage = null.NewInt(nextPage, true)
 	}
 
