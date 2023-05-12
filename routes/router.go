@@ -18,6 +18,7 @@ func RegisterApp(app *fiber.App) {
 	api := router.Group("/api")
 
 	registerAuthRouter(api)
+	registerUserRouter(api)
 	registerNotificationRouter(api)
 	registerCourseRouter(api)
 	registerLecturePartRouter(api)
