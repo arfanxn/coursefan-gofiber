@@ -1,8 +1,13 @@
 package repositories
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -20,8 +25,39 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 }
 
 // All returns all users in the database
-func (repository *UserRepository) All(c *fiber.Ctx) (users []models.User, err error) {
-	err = repository.db.Find(&users).Error
+func (repository *UserRepository) All(c *fiber.Ctx, queries ...requests.Query) (users []models.User, err error) {
+	tx := repository.db
+	if query := sliceh.FirstOrNil(queries); query != nil {
+		tx = gormh.BuildFromRequestQuery(repository.db, models.Review{}, *query)
+	}
+	err = tx.Find(&users).Error
+	return
+}
+
+// AllByCourse returns all users by course
+func (repository *UserRepository) AllByCourse(c *fiber.Ctx, query requests.Query) (
+	users []models.User, err error) {
+	courseIdFilter := query.GetFilter(models.Course{}.TableName()+".id", enums.QueryFilterOperatorEquals)
+	err = gormh.BuildFromRequestQuery(repository.db, models.User{}, query).
+		Joins(
+			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
+				models.CourseUserRole{}.TableName(),
+				models.CourseUserRole{}.TableName(),
+				"user_id",
+				models.User{}.TableName(),
+				"id",
+			)).
+		Joins(
+			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
+				models.Course{}.TableName(),
+				models.Course{}.TableName(),
+				"id",
+				models.CourseUserRole{}.TableName(),
+				"course_id",
+			)).
+		Where(models.Course{}.TableName()+".id = ?", courseIdFilter.Values[0]).
+		Distinct().Find(&users).Error
+
 	return
 }
 
