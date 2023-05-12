@@ -61,6 +61,12 @@ func (repository *UserRepository) AllByCourse(c *fiber.Ctx, query requests.Query
 	return
 }
 
+// FindById finds a user by id
+func (repository *UserRepository) FindById(c *fiber.Ctx, id string) (user models.User, err error) {
+	err = repository.db.Where("id = ?", id).First(&user).Error
+	return
+}
+
 // FindByEmail finds a user by email
 func (repository *UserRepository) FindByEmail(c *fiber.Ctx, email string) (user models.User, err error) {
 	err = repository.db.Where("email = ?", email).First(&user).Error
