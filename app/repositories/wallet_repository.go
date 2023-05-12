@@ -38,6 +38,13 @@ func (repository *WalletRepository) FindById(c *fiber.Ctx, id string) (wallet mo
 	return
 }
 
+// Find finds model by model
+func (repository *WalletRepository) FindByModel(c *fiber.Ctx, model models.Wallet) (
+	wallet models.Wallet, err error) {
+	err = repository.db.First(&wallet, model).Error
+	return
+}
+
 // Insert inserts models into the database
 func (repository *WalletRepository) Insert(c *fiber.Ctx, wallets ...*models.Wallet) (int64, error) {
 	for _, wallet := range wallets {
