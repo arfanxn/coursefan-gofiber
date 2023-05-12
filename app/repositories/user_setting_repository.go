@@ -3,6 +3,9 @@ package repositories
 import (
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -20,14 +23,26 @@ func NewUserSettingRepository(db *gorm.DB) *UserSettingRepository {
 }
 
 // All returns all user settings in the database
-func (repository *UserSettingRepository) All(c *fiber.Ctx) (userSettings []models.UserSetting, err error) {
-	err = repository.db.Find(&userSettings).Error
+func (repository *UserSettingRepository) All(c *fiber.Ctx, queries ...requests.Query) (
+	uss []models.UserSetting, err error) {
+	tx := repository.db
+	if query := sliceh.FirstOrNil(queries); query != nil {
+		tx = gormh.BuildFromRequestQuery(repository.db, models.UserSetting{}, *query)
+	}
+	err = tx.Find(&uss).Error
 	return
 }
 
 // Find finds model by id
-func (repository *UserSettingRepository) Find(c *fiber.Ctx, id string) (user models.User, err error) {
+func (repository *UserSettingRepository) FindById(c *fiber.Ctx, id string) (user models.UserSetting, err error) {
 	err = repository.db.Where("id = ?", id).First(&user).Error
+	return
+}
+
+// Find finds model by model
+func (repository *UserSettingRepository) FindByModel(c *fiber.Ctx, model models.UserSetting) (
+	us models.UserSetting, err error) {
+	err = repository.db.First(&us, model).Error
 	return
 }
 
