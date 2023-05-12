@@ -17,11 +17,11 @@ type UserUpdate struct {
 	Headline    null.String `json:"headline" validate:"max=50"`
 	Biography   null.String `json:"biography" validate:"max=256"`
 	Language    string      `json:"language" validate:"required,max=2,oneof=id en"`
-	WebsiteUrl  null.String `json:"website_url" validate:"max=256"`
-	FacebookUrl null.String `json:"facebook_url" validate:"max=256"`
-	LinkedinUrl null.String `json:"linkedin_url" validate:"max=256"`
-	TwitterUrl  null.String `json:"twitter_url" validate:"max=256"`
-	YoutubeUrl  null.String `json:"youtube_url" validate:"max=256"`
+	WebsiteUrl  null.String `json:"website_url" form:"website_url" validate:"max=256"`
+	FacebookUrl null.String `json:"facebook_url" form:"facebook_url" validate:"max=256"`
+	LinkedinUrl null.String `json:"linkedin_url" form:"linkedin_url" validate:"max=256"`
+	TwitterUrl  null.String `json:"twitter_url" form:"twitter_url" validate:"max=256"`
+	YoutubeUrl  null.String `json:"youtube_url" form:"youtube_url" validate:"max=256"`
 
 	// User's Media Model
 	Avatar *multipart.FileHeader `json:"avatar" form:"avatar" fhlidate:"max=10,mimes=image/jpeg"`
