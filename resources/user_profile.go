@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/models"
-	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -27,7 +26,7 @@ type UserProfile struct {
 func (resource *UserProfile) FromModel(model models.UserProfile) {
 	resource.Id = model.Id.String()
 	resource.UserId = model.UserId.String()
-	if (model.User != nil) && (model.User.Id != uuid.Nil) {
+	if model.User != nil {
 		userRes := User{}
 		userRes.FromModel(*model.User)
 		resource.User = &userRes

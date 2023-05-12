@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/models"
-	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -26,7 +25,7 @@ func (resource *Review) FromModel(model models.Review) {
 	resource.ReviewableType = model.ReviewableType
 	resource.ReviewableId = model.ReviewableId.String()
 	resource.ReviewerId = model.ReviewerId.String()
-	if model.Reviewer.Id != uuid.Nil {
+	if model.Reviewer != nil {
 		reviewerUserRes := User{}
 		reviewerUserRes.FromModel(*model.Reviewer)
 		resource.Reviewer = &reviewerUserRes

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/models"
-	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -29,7 +28,7 @@ func (resource *Discussion) FromModel(model models.Discussion) {
 	resource.DiscussableType = model.DiscussableType
 	resource.DiscussableId = model.DiscussableId.String()
 	resource.DiscusserId = model.DiscusserId.String()
-	if model.Discusser.Id != uuid.Nil {
+	if model.Discusser != nil {
 		discusserUserRes := User{}
 		discusserUserRes.FromModel(*model.Discusser)
 		resource.Discusser = &discusserUserRes
