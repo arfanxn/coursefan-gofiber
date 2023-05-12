@@ -18,10 +18,10 @@ func FakeTransaction() models.Transaction {
 		// Sender:, // will be filled in later
 		// ReceiverId:, // will be filled in later
 		// Receiver:, // will be filled in later
-		Amount:   1000 + rand.Int63n(9999),
-		Rate:     10 + rand.Int63n(100),
-		Discount: 10 + rand.Int63n(100),
-		Total:    1000 + rand.Int63n(11000),
+		Amount:   float64(1000 + rand.Int63n(9999)),
+		Rate:     float64(10 + rand.Int63n(100)),
+		Discount: float64(10 + rand.Int63n(100)),
+		Total:    float64(1000 + rand.Int63n(11000)),
 		CancelledAt: sliceh.Random(
 			null.NewTime(time.Now(), true),
 			null.NewTime(time.Time{}, false),
