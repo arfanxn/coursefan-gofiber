@@ -16,7 +16,7 @@ type User struct {
 	UserProfile *UserProfile `json:"user_profile,omitempty"`
 	UserSetting *UserSetting `json:"user_setting,omitempty"`
 
-	Avatar Media `json:"avatar,omitempty"`
+	Avatar *Media `json:"avatar,omitempty"`
 }
 
 func (resource *User) FromModel(model models.User) {
@@ -39,6 +39,6 @@ func (resource *User) FromModel(model models.User) {
 	if model.Avatar != nil {
 		avatarMediaRes := Media{}
 		avatarMediaRes.FromModel(*model.Avatar)
-		resource.Avatar = avatarMediaRes
+		resource.Avatar = &avatarMediaRes
 	}
 }
