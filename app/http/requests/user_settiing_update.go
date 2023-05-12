@@ -15,7 +15,7 @@ type UserSettingUpdate struct {
 func (input *UserSettingUpdate) FromContext(c *fiber.Ctx) (err error) {
 	err = c.BodyParser(input)
 
-	if settingKey := c.Params("setting_key"); settingKey != "" {
+	if settingKey := c.Params("user_setting_key"); settingKey != "" {
 		input.Key = settingKey
 	}
 
