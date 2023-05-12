@@ -13,7 +13,7 @@ type Discussion struct {
 	DiscussableType     string       `json:"discussable_type"`
 	DiscussableId       string       `json:"discussable_id"`
 	DiscusserId         string       `json:"discusser_id"`
-	Discusser           User         `json:"discusser,omitempty"`
+	Discusser           *User        `json:"discusser,omitempty"`
 	DiscussionRepliedId null.String  `json:"discussion_replied_id"`
 	DiscussionReplied   *Discussion  `json:"discussion_replied,omitempty"`
 	DiscussionReplies   []Discussion `json:"discussion_replies,omitempty"`
@@ -31,8 +31,8 @@ func (resource *Discussion) FromModel(model models.Discussion) {
 	resource.DiscusserId = model.DiscusserId.String()
 	if model.Discusser.Id != uuid.Nil {
 		discusserUserRes := User{}
-		discusserUserRes.FromModel(model.Discusser)
-		resource.Discusser = discusserUserRes
+		discusserUserRes.FromModel(*model.Discusser)
+		resource.Discusser = &discusserUserRes
 	}
 	resource.DiscussionRepliedId = null.NewString(
 		model.DiscussionRepliedId.UUID.String(),

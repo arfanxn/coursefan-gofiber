@@ -4,16 +4,15 @@ import (
 	"time"
 
 	"github.com/arfanxn/coursefan-gofiber/app/models"
-	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
 )
 
 type Notification struct {
 	Id         string      `json:"id"`
 	SenderId   string      `json:"sender_id"`
-	Sender     User        `json:"sender,omitempty"`
+	Sender     *User       `json:"sender,omitempty"`
 	ReceiverId string      `json:"receiver_id"`
-	Receiver   User        `json:"receiver,omitempty"`
+	Receiver   *User       `json:"receiver,omitempty"`
 	ObjectType null.String `json:"object_type"`
 	ObjectId   null.String `json:"object_id"`
 	Object     any         `json:"object,omitempty"`
@@ -28,16 +27,16 @@ type Notification struct {
 func (resource *Notification) FromModel(model models.Notification) {
 	resource.Id = model.Id.String()
 	resource.SenderId = model.SenderId.String()
-	if model.Sender.Id != uuid.Nil {
+	if model.Sender != nil {
 		senderUserRes := User{}
-		senderUserRes.FromModel(model.Sender)
-		resource.Sender = senderUserRes
+		senderUserRes.FromModel(*model.Sender)
+		resource.Sender = &senderUserRes
 	}
 	resource.ReceiverId = model.ReceiverId.String()
-	if model.Receiver.Id != uuid.Nil {
+	if model.Receiver != nil {
 		receiverUserRes := User{}
-		receiverUserRes.FromModel(model.Receiver)
-		resource.Receiver = receiverUserRes
+		receiverUserRes.FromModel(*model.Receiver)
+		resource.Receiver = &receiverUserRes
 	}
 	resource.ObjectId = null.NewString(model.ObjectId.UUID.String(), model.ObjectId.Valid)
 	resource.ObjectType = model.ObjectType

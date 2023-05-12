@@ -8,11 +8,13 @@ import (
 )
 
 type User struct {
-	Id        string    `json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt null.Time `json:"updated_at"`
+	Id          string       `json:"id"`
+	Name        string       `json:"name"`
+	Email       string       `json:"email"`
+	CreatedAt   time.Time    `json:"created_at"`
+	UpdatedAt   null.Time    `json:"updated_at"`
+	UserProfile *UserProfile `json:"user_profile,omitempty"`
+	UserSetting *UserSetting `json:"user_setting,omitempty"`
 
 	Avatar Media `json:"avatar,omitempty"`
 }

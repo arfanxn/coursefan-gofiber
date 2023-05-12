@@ -13,7 +13,7 @@ type Review struct {
 	ReviewableType string      `json:"reviewable_type"`
 	ReviewableId   string      `json:"reviewable_id"`
 	ReviewerId     string      `json:"reviewer_id"`
-	Reviewer       User        `json:"reviewer,omitempty"`
+	Reviewer       *User       `json:"reviewer,omitempty"`
 	Rate           int         `json:"rate"`
 	Title          null.String `json:"title"`
 	Body           null.String `json:"body"`
@@ -28,8 +28,8 @@ func (resource *Review) FromModel(model models.Review) {
 	resource.ReviewerId = model.ReviewerId.String()
 	if model.Reviewer.Id != uuid.Nil {
 		reviewerUserRes := User{}
-		reviewerUserRes.FromModel(model.Reviewer)
-		resource.Reviewer = reviewerUserRes
+		reviewerUserRes.FromModel(*model.Reviewer)
+		resource.Reviewer = &reviewerUserRes
 	}
 	resource.Rate = model.Rate
 	resource.Title = model.Title

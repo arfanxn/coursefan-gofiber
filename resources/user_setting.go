@@ -11,7 +11,7 @@ import (
 type UserSetting struct {
 	Id        string    `json:"id"`
 	UserId    string    `json:"user_id"`
-	User      User      `json:"user,omitempty"`
+	User      *User     `json:"user,omitempty"`
 	Key       string    `json:"key"`
 	Value     string    `json:"value"`
 	CreatedAt time.Time `json:"created_at"`
@@ -23,8 +23,8 @@ func (resource *UserSetting) FromModel(model models.UserSetting) {
 	resource.UserId = model.UserId.String()
 	if model.User.Id != uuid.Nil {
 		userRes := User{}
-		userRes.FromModel(model.User)
-		resource.User = userRes
+		userRes.FromModel(*model.User)
+		resource.User = &userRes
 	}
 	resource.Key = model.Key
 	resource.Value = model.Value
