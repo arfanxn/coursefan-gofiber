@@ -26,6 +26,16 @@ func (resource *User) FromModel(model models.User) {
 	resource.CreatedAt = model.CreatedAt
 	resource.UpdatedAt = model.UpdatedAt
 
+	if model.UserProfile != nil {
+		upRes := UserProfile{}
+		upRes.FromModel(*model.UserProfile)
+		resource.UserProfile = &upRes
+	}
+	if model.UserSetting != nil {
+		usRes := UserSetting{}
+		usRes.FromModel(*model.UserSetting)
+		resource.UserSetting = &usRes
+	}
 	if model.Avatar != nil {
 		avatarMediaRes := Media{}
 		avatarMediaRes.FromModel(*model.Avatar)
