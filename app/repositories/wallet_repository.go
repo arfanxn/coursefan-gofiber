@@ -3,6 +3,9 @@ package repositories
 import (
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -20,13 +23,17 @@ func NewWalletRepository(db *gorm.DB) *WalletRepository {
 }
 
 // All returns all wallets in the database
-func (repository *WalletRepository) All(c *fiber.Ctx) (wallets []models.Wallet, err error) {
-	err = repository.db.Find(&wallets).Error
+func (repository *WalletRepository) All(c *fiber.Ctx, queries ...requests.Query) (wallets []models.Wallet, err error) {
+	tx := repository.db
+	if query := sliceh.FirstOrNil(queries); query != nil {
+		tx = gormh.BuildFromRequestQuery(repository.db, models.Wallet{}, *query)
+	}
+	err = tx.Find(&wallets).Error
 	return
 }
 
-// Find finds model by id
-func (repository *WalletRepository) Find(c *fiber.Ctx, id string) (wallet models.Wallet, err error) {
+// FindById finds model by id
+func (repository *WalletRepository) FindById(c *fiber.Ctx, id string) (wallet models.Wallet, err error) {
 	err = repository.db.Where("id = ?", id).First(&wallet).Error
 	return
 }
