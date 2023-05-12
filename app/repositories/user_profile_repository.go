@@ -31,6 +31,12 @@ func (repository *UserProfileRepository) FindById(c *fiber.Ctx, id string) (user
 	return
 }
 
+// FindByUserId finds model by user id
+func (repository *UserProfileRepository) FindByUserId(c *fiber.Ctx, userId string) (user models.User, err error) {
+	err = repository.db.Where("user_id = ?", userId).First(&user).Error
+	return
+}
+
 // Insert inserts models into the database
 func (repository *UserProfileRepository) Insert(c *fiber.Ctx, userProfiles ...*models.UserProfile) (int64, error) {
 	for _, userProfile := range userProfiles {
