@@ -1,8 +1,13 @@
 package repositories
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/gormh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
+	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -19,9 +24,44 @@ func NewTransactionRepository(db *gorm.DB) *TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 
-// All returns all transactions in the database
-func (repository *TransactionRepository) All(c *fiber.Ctx) (transactions []models.Transaction, err error) {
-	err = repository.db.Find(&transactions).Error
+// All returns all reviews in the database
+func (repository *TransactionRepository) All(c *fiber.Ctx, queries ...requests.Query) (reviews []models.Transaction, err error) {
+	tx := repository.db
+	if query := sliceh.FirstOrNil(queries); query != nil {
+		tx = gormh.BuildFromRequestQuery(repository.db, models.Transaction{}, *query)
+	}
+	err = tx.Find(&reviews).Error
+	return
+}
+
+// AllByAuthUserWallet returns all transactions
+func (repository *TransactionRepository) AllByAuthUserWallet(c *fiber.Ctx, query requests.Query) (
+	reviews []models.Transaction, err error) {
+	err = gormh.BuildFromRequestQuery(repository.db, models.Transaction{}, query).
+		Joins(
+			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s OR %s.%s = %s.%s",
+				models.Wallet{}.TableName(),
+				// ----
+				models.Wallet{}.TableName(),
+				"id",
+				models.Transaction{}.TableName(),
+				"receiver_id",
+				// ----
+				models.Wallet{}.TableName(),
+				"id",
+				models.Transaction{}.TableName(),
+				"sender_id",
+			)).
+		Joins(
+			fmt.Sprintf("JOIN %s ON %s.%s = %s.%s",
+				models.User{}.TableName(),
+				models.User{}.TableName(),
+				"id",
+				models.Wallet{}.TableName(),
+				"owner_id",
+			)).
+		Where(models.User{}.TableName()+".id = ?", ctxh.MustGetUser(c).Id).
+		Distinct().Find(&reviews).Error
 	return
 }
 
