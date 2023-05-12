@@ -34,6 +34,11 @@ func InitAuthController(db *gorm.DB) *controllers.AuthController {
 	return nil
 }
 
+func InitWalletController(db *gorm.DB) *controllers.WalletController {
+	wire.Build(repositories.NewPermissionRepository, repositories.NewWalletRepository, services.NewWalletService, policies.NewWalletPolicy, controllers.NewWalletController)
+	return nil
+}
+
 func InitNotificationController(db *gorm.DB) *controllers.NotificationController {
 	wire.Build(repositories.NewPermissionRepository, repositories.NewNotificationRepository, services.NewNotificationService, policies.NewNotificationPolicy, controllers.NewNotificationController)
 	return nil
