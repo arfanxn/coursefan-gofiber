@@ -26,14 +26,14 @@ func (repository *UserProfileRepository) All(c *fiber.Ctx) (userProfiles []model
 }
 
 // FindById finds model by id
-func (repository *UserProfileRepository) FindById(c *fiber.Ctx, id string) (user models.User, err error) {
-	err = repository.db.Where("id = ?", id).First(&user).Error
+func (repository *UserProfileRepository) FindById(c *fiber.Ctx, id string) (userProfile models.UserProfile, err error) {
+	err = repository.db.Where("id = ?", id).First(&userProfile).Error
 	return
 }
 
 // FindByUserId finds model by user id
-func (repository *UserProfileRepository) FindByUserId(c *fiber.Ctx, userId string) (user models.User, err error) {
-	err = repository.db.Where("user_id = ?", userId).First(&user).Error
+func (repository *UserProfileRepository) FindByUserId(c *fiber.Ctx, userId string) (userProfile models.UserProfile, err error) {
+	err = repository.db.Where("user_id = ?", userId).First(&userProfile).Error
 	return
 }
 
