@@ -28,7 +28,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 func (repository *UserRepository) All(c *fiber.Ctx, queries ...requests.Query) (users []models.User, err error) {
 	tx := repository.db
 	if query := sliceh.FirstOrNil(queries); query != nil {
-		tx = gormh.BuildFromRequestQuery(repository.db, models.Review{}, *query)
+		tx = gormh.BuildFromRequestQuery(repository.db, models.User{}, *query)
 	}
 	err = tx.Find(&users).Error
 	return
