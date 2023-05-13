@@ -2,8 +2,11 @@ package services
 
 import (
 	"net/url"
+	"os"
+	"strconv"
 	"time"
 
+	"github.com/arfanxn/coursefan-gofiber/app/enums"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/errorh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/sliceh"
@@ -21,15 +24,21 @@ import (
 type CourseOrderService struct {
 	repository       *repositories.CourseOrderRepository
 	courseRepository *repositories.CourseRepository
+	curRepository    *repositories.CourseUserRoleRepository
+	roleRepository   *repositories.RoleRepository
 }
 
 func NewCourseOrderService(
 	repository *repositories.CourseOrderRepository,
 	courseRepository *repositories.CourseRepository,
+	curRepository *repositories.CourseUserRoleRepository,
+	roleRepository *repositories.RoleRepository,
 ) *CourseOrderService {
 	return &CourseOrderService{
 		repository:       repository,
 		courseRepository: courseRepository,
+		curRepository:    curRepository,
+		roleRepository:   roleRepository,
 	}
 }
 
@@ -72,10 +81,10 @@ func (service *CourseOrderService) Create(c *fiber.Ctx, input requests.CourseOrd
 	coMdl.UserId = uuid.MustParse(input.UserId)
 	coMdl.CourseId = uuid.MustParse(input.CourseId)
 	coMdl.Amount = courseMdl.Price
-	coMdl.Rate = 1000                                          // TODO: get rate based on environment variable
-	coMdl.Discount = 20000                                     // TODO: implement discount from discount code on the future
+	coMdl.Rate = errorh.Must(strconv.ParseFloat(os.Getenv("MIDTRANS_RATE_BANK_TRANSFER"), 32))
+	// TODO: implement discount from discount code on the future
+	coMdl.Discount = 0
 	coMdl.Total = (coMdl.Amount - coMdl.Discount) + coMdl.Rate // total of amount, discount and rate
-	coMdl.SettledAt = null.TimeFrom(time.Now())                // TODO: check whether settlement is already done from midtrans weebhook
 	_, err = service.repository.Insert(c, &coMdl)
 	if err != nil {
 		return
@@ -129,5 +138,109 @@ func (service *CourseOrderService) Find(c *fiber.Ctx, input requests.Query) (
 		return
 	}
 	data.FromModel(coMdls[0])
+	return
+}
+
+// UpdateByMidtransNotification
+func (service *CourseOrderService) UpdateByMidtransNotification(c *fiber.Ctx, input requests.MidtransNotification) (coRes resources.CourseOrder, err error) {
+	// Get order id from input
+	orderId := input.OrderId
+	if orderId == "" {
+		err = fiber.ErrUnprocessableEntity
+		return
+	}
+
+	// Find CourseOrder
+	coMdl, err := service.repository.FindById(c, orderId)
+	if errorh.IsGormErrRecordNotFound(err) {
+		err = fiber.ErrNotFound
+		return
+	} else if err != nil {
+		return
+	}
+
+	// Check transaction to Midtrans with param orderId
+	transactionStatusResp, midtransErr := coreapi.CheckTransaction(orderId)
+	if midtransErr != nil {
+		err = midtransErr
+		return
+	} else if transactionStatusResp == nil {
+		err = fiber.ErrInternalServerError
+		return
+	}
+
+	// Reset CourseOrder status
+	coMdl.CancelledAt = null.Time{}
+	coMdl.ChargebackedAt = null.Time{}
+	coMdl.ExpiredAt = null.Time{}
+	coMdl.FailedAt = null.Time{}
+	coMdl.RefundedAt = null.Time{}
+	coMdl.SettledAt = null.Time{}
+
+	// ----------------------------------------------------------------
+	// Do set transaction status based on response from check transaction status
+	if transactionStatusResp.TransactionStatus == "capture" {
+		if transactionStatusResp.FraudStatus == "challenge" {
+			// This condition only passed if the payment method is using credit card,
+			// set transaction status on your database to 'challenge'
+			// ? should we implement the credit card payment method in the future?
+		}
+		if transactionStatusResp.FraudStatus == "accept" {
+			// Set transaction status on your database to 'success'
+			coMdl.SettledAt = null.NewTime(time.Now(), true)
+		}
+	}
+	if transactionStatusResp.TransactionStatus == "settlement" {
+		// Set transaction status on your databaase to 'success'
+		coMdl.SettledAt = null.NewTime(time.Now(), true)
+	}
+	if transactionStatusResp.TransactionStatus == "deny" {
+		// you can ignore 'deny', because most of the time it allows payment retries
+		// and later can become success
+		// ? should we prefer to ignore this one?
+	}
+	if sliceh.Contains([]string{"cancel", "expire"}, transactionStatusResp.TransactionStatus) {
+		// set transaction status on your databaase to 'failure'
+		coMdl.FailedAt = null.NewTime(time.Now(), true)
+	}
+	if transactionStatusResp.TransactionStatus == "cancel" {
+		coMdl.CancelledAt = null.NewTime(time.Now(), true)
+	}
+	if transactionStatusResp.TransactionStatus == "expire" {
+		coMdl.ExpiredAt = null.NewTime(time.Now(), true)
+	}
+	if transactionStatusResp.TransactionStatus == "pending" {
+		coMdl.ChargebackedAt = null.NewTime(time.Now(), true)
+	}
+	// ----------------------------------------------------------------
+
+	// Update the CourseOrder
+	_, err = service.repository.UpdateById(c, &coMdl)
+	if err != nil {
+		return
+	}
+
+	// If the order/transaction is settled, then give a user role&permissions to access the course that user has purchased previously
+	if coMdl.SettledAt.Valid {
+		// Get participant role
+		var roleMdl models.Role
+		roleMdl, err = service.roleRepository.FindByName(c, enums.RoleNameCourseParticipant)
+		if err != nil {
+			return
+		}
+
+		// Give the user a participant role to access the purchased course
+		curMdl := models.CourseUserRole{
+			CourseId: coMdl.CourseId,
+			UserId:   coMdl.UserId,
+			RoleId:   roleMdl.Id,
+		}
+		_, err = service.curRepository.Insert(c, &curMdl)
+		if err != nil {
+			return
+		}
+	}
+
+	coRes.FromModel(coMdl)
 	return
 }
