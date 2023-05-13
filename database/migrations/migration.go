@@ -13,7 +13,6 @@ var tables []any = []any{
 	&models.UserSetting{},
 	&models.Notification{},
 	&models.Message{},
-	&models.Wallet{},
 	&models.Permission{},
 	&models.Role{},
 	&models.PermissionRole{},
