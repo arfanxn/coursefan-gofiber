@@ -12,3 +12,8 @@ func Ternary[T any](
 		return onFalse
 	}
 }
+
+// ToPointer converts the given boolean value to a pointer of boolean value
+func ToPointer(value bool) *bool {
+	return &value
+}
