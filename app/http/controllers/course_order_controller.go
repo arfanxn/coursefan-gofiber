@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"github.com/arfanxn/coursefan-gofiber/app/enums"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/boolh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/ctxh"
+	"github.com/arfanxn/coursefan-gofiber/app/helpers/funch"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/responseh"
 	"github.com/arfanxn/coursefan-gofiber/app/helpers/validatorh"
 	"github.com/arfanxn/coursefan-gofiber/app/http/requests"
@@ -11,6 +13,7 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/services"
 	"github.com/arfanxn/coursefan-gofiber/resources"
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 )
 
 type CourseOrderController struct {
@@ -103,81 +106,33 @@ func (controller *CourseOrderController) Find(c *fiber.Ctx) (err error) {
 	})
 }
 
-/*
-// Create By Course
-func (controller *CourseOrderController) CreateByCourse(c *fiber.Ctx) (err error) {
-	input := requests.CourseOrderCreate{}
+// UpdateByMidtransNotification
+func (controller *CourseOrderController) UpdateByMidtransNotification(c *fiber.Ctx) (err error) {
+	input := requests.MidtransNotification{}
 	err = input.FromContext(c)
 	if err != nil {
 		return
 	}
-	input.CourseOrderableType = reflecth.GetTypeName(models.Course{})
-	input.CourseOrderableId = c.Params("course_id")
-	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
-		return err
-	}
-	err = controller.policy.CreateByCourse(c, input)
-	if err != nil {
-		return
-	}
-	data, err := controller.service.CreateByCourse(c, input)
-	if err != nil {
-		return err
-	}
-	return responseh.Write(c, resources.Response{
-		Code:    fiber.StatusCreated,
-		Message: "Successfully create transaction",
-		Data:    data,
-	})
-}
 
-// Update
-func (controller *CourseOrderController) Update(c *fiber.Ctx) (err error) {
-	input := requests.CourseOrderUpdate{}
-	err = input.FromContext(c)
-	if err != nil {
-		return
-	}
-	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
-		return err
-	}
-	err = controller.policy.Update(c, input)
-	if err != nil {
-		return
-	}
-	data, err := controller.service.Update(c, input)
-	if err != nil {
-		return err
-	}
+	// No api policy required, only the authenticated user can access course order
+
+	go func() { // Do others on the goroutine thread so that we don't have to wait for the whole process to finish, we can just immediately return to the client side
+		var err error = nil
+		funch.Recursive(func(repeat *bool) {
+			_, err = controller.service.UpdateByMidtransNotification(c, input)
+			if err != nil {
+				repeat = boolh.ToPointer(true)
+				return
+			}
+			repeat = boolh.ToPointer(false)
+		}, 5)
+		if err != nil { // if error occurs after recursion call then log the error
+			logrus.Error(err)
+		}
+	}()
+
 	return responseh.Write(c, resources.Response{
 		Code:    fiber.StatusOK,
-		Message: "Successfully update transaction",
-		Data:    data,
+		Message: "Successfully update course order",
 	})
 }
-
-// Delete
-func (controller *CourseOrderController) Delete(c *fiber.Ctx) (err error) {
-	input := requests.CourseOrderDelete{}
-	err = input.FromContext(c)
-	if err != nil {
-		return
-	}
-	if err := validatorh.ValidateStruct(input, ctxh.GetAcceptLang(c)); err != nil {
-		return err
-	}
-	err = controller.policy.Delete(c, input)
-	if err != nil {
-		return
-	}
-	err = controller.service.Delete(c, input)
-	if err != nil {
-		return err
-	}
-	return responseh.Write(c, resources.Response{
-		Code:    fiber.StatusOK,
-		Message: "Successfully delete transaction",
-	})
-}
-
-*/
