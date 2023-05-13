@@ -87,6 +87,8 @@ func Auth() fiber.Handler {
 			"login", "register", "forgot-password", "reset-password",
 			// Sandbox route
 			"sandbox",
+			// Webhook routes
+			"webhooks/course-orders/update-by-midtrans-notification",
 			// General routes
 			"public/",
 		}
