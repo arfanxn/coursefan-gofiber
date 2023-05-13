@@ -34,5 +34,5 @@ func RegisterApp(app *fiber.App) {
 	registerDiscussionRouter(api)
 
 	// Webhook
-	registerWebhookRouter(router)
+	registerWebhookRouter(api)
 }
