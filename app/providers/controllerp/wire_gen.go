@@ -83,6 +83,16 @@ func InitCourseController(db *gorm.DB) *controllers.CourseController {
 	return courseController
 }
 
+func InitCourseOrderController(db *gorm.DB) *controllers.CourseOrderController {
+	permissionRepository := repositories.NewPermissionRepository(db)
+	courseOrderPolicy := policies.NewCourseOrderPolicy(permissionRepository)
+	courseOrderRepository := repositories.NewCourseOrderRepository(db)
+	courseRepository := repositories.NewCourseRepository(db)
+	courseOrderService := services.NewCourseOrderService(courseOrderRepository, courseRepository)
+	courseOrderController := controllers.NewCourseOrderController(courseOrderPolicy, courseOrderService)
+	return courseOrderController
+}
+
 func InitLecturePartController(db *gorm.DB) *controllers.LecturePartController {
 	permissionRepository := repositories.NewPermissionRepository(db)
 	lecturePartPolicy := policies.NewLecturePartPolicy(permissionRepository)

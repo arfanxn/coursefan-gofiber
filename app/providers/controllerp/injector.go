@@ -54,6 +54,11 @@ func InitCourseController(db *gorm.DB) *controllers.CourseController {
 	return nil
 }
 
+func InitCourseOrderController(db *gorm.DB) *controllers.CourseOrderController {
+	wire.Build(repositories.NewCourseOrderRepository, repositories.NewCourseRepository, repositories.NewPermissionRepository, services.NewCourseOrderService, policies.NewCourseOrderPolicy, controllers.NewCourseOrderController)
+	return nil
+}
+
 func InitLecturePartController(db *gorm.DB) *controllers.LecturePartController {
 	wire.Build(repositories.NewPermissionRepository, repositories.NewLecturePartRepository, services.NewLecturePartService, policies.NewLecturePartPolicy, controllers.NewLecturePartController)
 	return nil
