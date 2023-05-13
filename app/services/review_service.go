@@ -11,7 +11,6 @@ import (
 	"github.com/arfanxn/coursefan-gofiber/app/models"
 	"github.com/arfanxn/coursefan-gofiber/app/repositories"
 	"github.com/arfanxn/coursefan-gofiber/resources"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -107,8 +106,6 @@ func (service *ReviewService) Update(c *fiber.Ctx, input requests.ReviewUpdate) 
 	reviewMdl.Rate = input.Rate
 	reviewMdl.Title = input.Title
 	reviewMdl.Body = input.Body
-
-	spew.Dump(reviewMdl)
 
 	_, err = service.repository.UpdateById(c, &reviewMdl)
 	if err != nil {
