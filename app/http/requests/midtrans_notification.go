@@ -1,7 +1,6 @@
 package requests
 
 import (
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -30,8 +29,6 @@ type MidtransNotificationVANumbers struct {
 
 // FromContext fills input from the given context
 func (input *MidtransNotification) FromContext(c *fiber.Ctx) (err error) {
-	spew.Dump("Ctx:", string(c.Body()))
-
 	err = c.BodyParser(input)
 
 	return
