@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -25,4 +26,17 @@ type User struct {
 
 func (User) TableName() string {
 	return "users"
+}
+
+func (model User) FirstName() string {
+	names := strings.Split(model.Name, " ")
+	return names[0]
+}
+
+func (model User) LastName() string {
+	names := strings.Split(model.Name, " ")
+	if len(names) <= 1 {
+		return ""
+	}
+	return strings.Join(names[1:len(names)-1], " ")
 }
