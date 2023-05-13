@@ -241,14 +241,27 @@ func (service *CourseOrderService) UpdateByMidtransNotification(c *fiber.Ctx, in
 		}
 
 		// Give the user a participant role to access the purchased course
-		curMdl := models.CourseUserRole{
+		var curMdl models.CourseUserRole
+		curMdl, err = service.curRepository.FindByModel(c, models.CourseUserRole{
 			CourseId: coMdl.CourseId,
 			UserId:   coMdl.UserId,
-			RoleId:   roleMdl.Id,
-		}
-		_, err = service.curRepository.Insert(c, &curMdl)
-		if err != nil {
+		})
+		curMdl.CourseId = coMdl.CourseId
+		curMdl.UserId = coMdl.UserId
+		curMdl.RoleId = roleMdl.Id
+		if errorh.IsGormErrRecordNotFound(err) {
+			_, err = service.curRepository.Insert(c, &curMdl)
+			if err != nil {
+				return
+			}
 			return
+		} else if err != nil {
+			return
+		} else if curMdl.Id != uuid.Nil {
+			_, err = service.curRepository.UpdateById(c, &curMdl)
+			if err != nil {
+				return
+			}
 		}
 	}
 
