@@ -77,7 +77,18 @@ func (service *CourseOrderService) Create(c *fiber.Ctx, input requests.CourseOrd
 		return
 	}
 
-	coMdl := models.CourseOrder{}
+	// Prevent duplicate order by checking it against existing orders
+	coMdl, err := service.repository.FindByModel(c, models.CourseOrder{
+		UserId:   ctxh.MustGetUser(c).Id,
+		CourseId: courseMdl.Id,
+	})
+	if (err != nil) && !errorh.IsGormErrRecordNotFound(err) {
+		return
+	} else if coMdl.Id != uuid.Nil {
+		err = fiber.ErrConflict
+		return
+	}
+
 	coMdl.UserId = uuid.MustParse(input.UserId)
 	coMdl.CourseId = uuid.MustParse(input.CourseId)
 	coMdl.Amount = courseMdl.Price
