@@ -74,6 +74,7 @@ func (service *CourseService) Create(c *fiber.Ctx, input requests.CourseCreate) 
 	courseMdl := models.Course{}
 	courseMdl.Name = input.Name
 	courseMdl.Description = input.Description
+	courseMdl.Price = input.Price
 	courseMdl.Slug = fmt.Sprintf("%s-%d", strcase.ToKebab(courseMdl.Name), numh.Random(1000, 9999))
 	_, err = service.repository.Insert(c, &courseMdl)
 	if err != nil {
@@ -111,6 +112,7 @@ func (service *CourseService) Update(c *fiber.Ctx, input requests.CourseUpdate) 
 	}
 	courseMdl.Name = input.Name
 	courseMdl.Description = input.Description
+	courseMdl.Price = input.Price
 	_, err = service.repository.UpdateById(c, &courseMdl)
 	if err != nil {
 		return
