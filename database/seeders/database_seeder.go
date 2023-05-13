@@ -53,7 +53,6 @@ func (dbs *DatabaseSeeder) DefaultSeeders() []SeederContract {
 		notificationRepository   = repositories.NewNotificationRepository(db)
 		messageRepository        = repositories.NewMessageRepository(db)
 		walletRepository         = repositories.NewWalletRepository(db)
-		transactionRepository    = repositories.NewTransactionRepository(db)
 		courseRepository         = repositories.NewCourseRepository(db)
 		courseOrderRepository    = repositories.NewCourseOrderRepository(db)
 		cusRepository            = repositories.NewCourseUserRoleRepository(db)
@@ -81,7 +80,6 @@ func (dbs *DatabaseSeeder) DefaultSeeders() []SeederContract {
 		NewCourseSeeder(courseRepository, userRepository),
 		NewCourseOrderSeeder(courseOrderRepository, courseRepository, userRepository),
 		NewCourseUserRoleSeeder(cusRepository, courseRepository, userRepository, roleRepository),
-		NewTransactionSeeder(transactionRepository, courseRepository, walletRepository),
 		NewReviewSeeder(reviewRepository, cusRepository, roleRepository),
 		NewLecturePartSeeder(lecturePartRepository, courseRepository),
 		NewLectureSeeder(lectureRepository, lecturePartRepository),

@@ -14,7 +14,6 @@ var tables []any = []any{
 	&models.Notification{},
 	&models.Message{},
 	&models.Wallet{},
-	&models.Transaction{},
 	&models.Permission{},
 	&models.Role{},
 	&models.PermissionRole{},

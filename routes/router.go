@@ -20,7 +20,6 @@ func RegisterApp(app *fiber.App) {
 	registerAuthRouter(api)
 	registerUserRouter(api)
 	registerWalletRouter(api)
-	registerTransactionRouter(api)
 	registerNotificationRouter(api)
 	registerCourseRouter(api)
 	registerCourseOrderRouter(api)
