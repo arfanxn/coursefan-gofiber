@@ -19,6 +19,7 @@ var tables []any = []any{
 	&models.Role{},
 	&models.PermissionRole{},
 	&models.Course{},
+	&models.CourseOrder{},
 	&models.CourseUserRole{},
 	&models.Review{},
 	&models.LecturePart{},
