@@ -10,13 +10,13 @@ type MidtransNotification struct {
 	TransactionTime   string  `json:"transaction_time,omitempty" form:"transaction_time"`
 	TransactionStatus string  `json:"transaction_status,omitempty" form:"transaction_status"`
 	StatusMessage     string  `json:"status_message,omitempty" form:"status_message"`
-	StatusCode        int     `json:"status_code,string,omitempty" form:"-" validate:"number"`
+	StatusCode        int     `json:"status_code,string,omitempty" form:"status_code"`
 	SignatureKey      string  `json:"signature_key,omitempty" form:"signature_key"`
 	PaymentType       string  `json:"payment_type,omitempty" form:"payment_type"`
 	PaymentAmounts    []any   `json:"payment_amounts,omitempty" form:"payment_amounts"`
 	OrderId           string  `json:"order_id,omitempty" form:"order_id"`
 	MerchantId        string  `json:"merchant_id,omitempty" form:"merchant_id"`
-	GrossAmount       float64 `json:"gross_amount,string,omitempty" form:"-" validate:"number"`
+	GrossAmount       float64 `json:"gross_amount,string,omitempty" form:"gross_amount"`
 	FraudStatus       string  `json:"fraud_status,omitempty" form:"fraud_status"`
 	ExpiryTime        string  `json:"expiry_time,omitempty" form:"expiry_time"`
 	Currency          string  `json:"currency,omitempty" form:"currency"`
