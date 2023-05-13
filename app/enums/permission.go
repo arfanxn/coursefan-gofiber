@@ -15,6 +15,12 @@ const (
 	PermissionNameCourseEdit   string = "course.edit"
 	PermissionNameCourseDelete string = "course.delete"
 
+	// Course Order module
+	PermissionNameCourseOrderView   string = "course_order.view"
+	PermissionNameCourseOrderCreate string = "course_order.create"
+	PermissionNameCourseOrderEdit   string = "course_order.edit"
+	PermissionNameCourseOrderDelete string = "course_order.delete"
+
 	// Course Member/User module
 	PermissionNameCourseUserView   string = "course_user.view"
 	PermissionNameCourseUserCreate string = "course_user.create"
@@ -78,6 +84,11 @@ func PermissionNames() []string {
 		PermissionNameCourseCreate,
 		PermissionNameCourseEdit,
 		PermissionNameCourseDelete,
+
+		PermissionNameCourseOrderView,
+		PermissionNameCourseOrderCreate,
+		PermissionNameCourseOrderEdit,
+		PermissionNameCourseOrderDelete,
 
 		PermissionNameCourseUserView,
 		PermissionNameCourseUserCreate,
