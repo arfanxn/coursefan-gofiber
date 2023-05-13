@@ -10,9 +10,9 @@ import (
 type CourseOrder struct {
 	Id             uuid.UUID `json:"id" gorm:"primaryKey;type:char(36)"`
 	UserId         uuid.UUID `json:"user_id" gorm:"type:CHAR(36);NOT NULL"`
-	User           *User     `json:"user" gorm:"foreignKey:OwnerId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	User           *User     `json:"user" gorm:"foreignKey:UserId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CourseId       uuid.UUID `json:"course_id" gorm:"type:CHAR(36);NOT NULL"`
-	Course         *Course   `json:"course" gorm:"foreignKey:OwnerId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Course         *Course   `json:"course" gorm:"foreignKey:CourseId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Amount         float64   `json:"amount"  gorm:"type:BIGINT UNSIGNED NOT NULL"`
 	Rate           float64   `json:"rate"  gorm:"type:BIGINT UNSIGNED NOT NULL"`
 	Discount       float64   `json:"discount"  gorm:"type:BIGINT UNSIGNED NOT NULL"`
