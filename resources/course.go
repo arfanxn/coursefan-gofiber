@@ -12,6 +12,7 @@ type Course struct {
 	Name         string        `json:"name"`
 	Slug         string        `json:"slug"`
 	Description  string        `json:"description"`
+	Price        float64       `json:"price"`
 	CreatedAt    time.Time     `json:"created_at"`
 	UpdatedAt    null.Time     `json:"updated_at"`
 	LectureParts []LecturePart `json:"lecture_parts,omitempty"`
@@ -23,6 +24,7 @@ func (resource *Course) FromModel(model models.Course) {
 	resource.Name = model.Name
 	resource.Slug = model.Slug
 	resource.Description = model.Description
+	resource.Price = model.Price
 	resource.CreatedAt = model.CreatedAt
 	resource.UpdatedAt = model.UpdatedAt
 	for _, lecturePartMdl := range model.LectureParts {

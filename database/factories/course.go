@@ -19,6 +19,7 @@ func FakeCourse() models.Course {
 		Name:        courseName,
 		Slug:        strcase.ToKebab(courseName), // will be filled in later
 		Description: faker.Sentence(),            // will be filled in later
+		Price:       float64(0 + rand.Int63n(200000)),
 		CreatedAt:   time.Now(),
 		UpdatedAt: sliceh.Random(
 			null.NewTime(time.Now(), true),
