@@ -17,8 +17,8 @@ func FakeCourseOrder() models.CourseOrder {
 		// CourseId:, // will be filled in later
 		// Course:, // will be filled in later
 		Amount:   float64(1000 + rand.Int63n(9999)),
-		Rate:     float64(10 + rand.Int63n(100)),
-		Discount: float64(10 + rand.Int63n(100)),
+		Rate:     float64(1000 + rand.Int63n(100)),
+		Discount: float64(0 + rand.Int63n(100)),
 		Total:    float64(1000 + rand.Int63n(11000)),
 		CancelledAt: sliceh.Random(
 			null.NewTime(time.Now(), true),
