@@ -44,6 +44,13 @@ func (repository *CourseOrderRepository) FindBySlug(c *fiber.Ctx, id string) (co
 	return
 }
 
+// FindByModel finds model by model
+func (repository *CourseOrderRepository) FindByModel(c *fiber.Ctx, model models.CourseOrder) (
+	co models.CourseOrder, err error) {
+	err = repository.db.First(&co, model).Error
+	return
+}
+
 // Insert inserts models into the database
 func (repository *CourseOrderRepository) Insert(c *fiber.Ctx, courses ...*models.CourseOrder) (int64, error) {
 	for _, course := range courses {
