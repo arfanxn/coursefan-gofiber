@@ -70,7 +70,8 @@ func InitCourseOrderController(db *gorm.DB) *controllers.CourseOrderController {
 	courseOrderPolicy := policies.NewCourseOrderPolicy(permissionRepository)
 	courseOrderRepository := repositories.NewCourseOrderRepository(db)
 	courseRepository := repositories.NewCourseRepository(db)
-	courseOrderService := services.NewCourseOrderService(courseOrderRepository, courseRepository)
+	courseUserRoleRepository := repositories.NewCourseUserRoleRepository(db)
+	courseOrderService := services.NewCourseOrderService(courseOrderRepository, courseRepository, courseUserRoleRepository)
 	courseOrderController := controllers.NewCourseOrderController(courseOrderPolicy, courseOrderService)
 	return courseOrderController
 }

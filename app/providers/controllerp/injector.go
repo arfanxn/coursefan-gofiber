@@ -45,7 +45,7 @@ func InitCourseController(db *gorm.DB) *controllers.CourseController {
 }
 
 func InitCourseOrderController(db *gorm.DB) *controllers.CourseOrderController {
-	wire.Build(repositories.NewCourseOrderRepository, repositories.NewCourseRepository, repositories.NewPermissionRepository, services.NewCourseOrderService, policies.NewCourseOrderPolicy, controllers.NewCourseOrderController)
+	wire.Build(repositories.NewCourseOrderRepository, repositories.NewCourseRepository, repositories.NewCourseUserRoleRepository, repositories.NewPermissionRepository, services.NewCourseOrderService, policies.NewCourseOrderPolicy, controllers.NewCourseOrderController)
 	return nil
 }
 
