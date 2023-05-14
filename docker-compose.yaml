@@ -1,4 +1,31 @@
+# TODO: complete this compose
+
 services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/workspaces:cached
+        network_mode: service:db
+        command: sleep infinity
+
+    mysql:
+        image: mysql:latest
+        restart: always
+        environment:
+            MYSQL_DATABASE: "coursefan"
+            MYSQL_USER: "admin"
+            MYSQL_PASSWORD: "admin"
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+            MYSQL_ROOT_PASSWORD: ""
+        ports:
+            - "3307:3306"
+        expose:
+            - "3306"
+        volumes:
+            - ./docker/mysql:/var/lib/mysql
+
     ngrok:
         image: ngrok/ngrok:latest
         restart: unless-stopped
@@ -11,3 +38,6 @@ services:
             - ./ngrok.yml:/etc/ngrok.yml
         ports:
             - 4040:4040
+
+networks:
+    coursefan:
